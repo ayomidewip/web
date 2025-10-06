@@ -1,0 +1,41 @@
+{
+  "name": "app-base-web",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "React web application with advanced theming system",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@lexical/react": "^0.36.2",
+    "@lexical/yjs": "^0.36.2",
+    "@mdxeditor/editor": "^3.46.1",
+    "axios": "^1.11.0",
+    "lexical": "^0.36.2",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-icons": "^5.5.0",
+    "react-router-dom": "^7.6.2",
+    "y-websocket": "^3.0.0",
+    "yjs": "^13.6.27"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.5.1",
+    "vite": "^6.3.5"
+  },
+  "proseWrap": "preserve",
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

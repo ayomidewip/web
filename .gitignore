@@ -1,0 +1,24 @@
+# Dependency directories
+node_modules/
+
+# Build
+dist/
+
+# Package lock files
+package-lock.json
+
+# IDE folders
+.idea/
+.vscode/
+
+# Cache folders
+.npm
+.eslintcache
+.jest-cache/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Test cache folders
+/coverage

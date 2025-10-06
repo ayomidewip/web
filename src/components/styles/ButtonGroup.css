@@ -1,0 +1,224 @@
+/* Button Group Container */
+.button-group-container {
+    position: relative;
+    display: inline-block;
+}
+
+.button-group {
+    display: inline-flex;
+    align-items: center;
+    margin: var(--spacing-xs);
+    border-radius: var(--button-radius, var(--border-radius-md));
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+/* Remove margins from buttons inside group and adjust borders */
+.button-group .button.themed-button {
+    margin: 0 !important;
+    border-radius: 0 !important;
+    position: relative;
+    z-index: 1;
+}
+
+/* First button in group */
+.button-group .button.themed-button:first-child {
+    border-top-left-radius: var(--button-radius, var(--border-radius-md)) !important;
+    border-bottom-left-radius: var(--button-radius, var(--border-radius-md)) !important;
+}
+
+/* Last button in group */
+.button-group .button.themed-button:last-child {
+    border-top-right-radius: var(--button-radius, var(--border-radius-md)) !important;
+    border-bottom-right-radius: var(--button-radius, var(--border-radius-md)) !important;
+}
+
+/* Remove double borders between buttons */
+.button-group .button.themed-button:not(:first-child) {
+    border-left: none !important;
+}
+
+/* Hover states for grouped buttons */
+.button-group .button.themed-button:hover,
+.button-group .button.themed-button.selected {
+    z-index: 2;
+    transform: none !important; /* Remove individual button transform */
+}
+
+/* Group hover effect */
+.button-group:hover {
+    box-shadow: 0 4px 6px var(--shadow-color-hover);
+    transform: translateY(-1px);
+}
+
+/* Spaced button group variant */
+.button-group.spaced {
+    overflow: visible;
+    box-shadow: none;
+    background: transparent;
+}
+
+.button-group.spaced .button.themed-button {
+    border-radius: var(--button-radius, var(--border-radius-md)) !important;
+    margin: 0 var(--spacing-xs) !important;
+}
+
+.button-group.spaced.small {
+    margin: var(--spacing-xs);
+}
+
+.button-group.spaced.large {
+    margin: var(--spacing-md);
+}
+
+.button-group.spaced.small .button.themed-button {
+    margin: 0 var(--spacing-xs) !important;
+}
+
+.button-group.spaced.large .button.themed-button {
+    margin: 0 var(--spacing-sm) !important;
+}
+
+.button-group.spaced .button.themed-button.themed-button-secondary {
+    /* Ensure border is visible on all sides for secondary buttons */
+    border-width: 1px !important;
+    border-style: solid !important;
+    border-color: var(--secondary-color) !important;
+}
+
+/* Ensure border-shadow buttons maintain their distinctive styling in spaced groups */
+.button-group.spaced .button.themed-button.themed-button-border-shadow {
+    border: none !important;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.15) !important;
+}
+
+.button-group.spaced .button.themed-button.themed-button-border-shadow:hover,
+.button-group.spaced .button.themed-button.themed-button-border-shadow.selected {
+    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.25) !important;
+    background-color: var(--primary-color) !important;
+    color: var(--text-contrast-color) !important;
+}
+
+/* Variant-specific border handling for secondary buttons */
+.button-group .button.themed-button.themed-button-secondary:not(:first-child) {
+    border-left: none !important;
+}
+
+/* Border-shadow variant group handling */
+.button-group .button.themed-button.themed-button-border-shadow {
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.button-group .button.themed-button.themed-button-border-shadow:hover,
+.button-group .button.themed-button.themed-button-border-shadow.selected {
+    border: none !important;
+    box-shadow: none !important;
+    background-color: var(--primary-color) !important;
+    color: var(--text-contrast-color) !important;
+}
+
+.button-group .button.themed-button.themed-button-border-shadow:first-child {
+    box-shadow: 2px 0 4px rgba(0, 0, 0, 0.15) !important;
+}
+
+.button-group .button.themed-button.themed-button-border-shadow:last-child {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15) !important;
+}
+
+.button-group .button.themed-button.themed-button-border-shadow:first-child:last-child {
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .button-group {
+        margin: var(--spacing-xs);
+    }
+}
+
+/* Final overrides to ensure all buttons in spaced groups display properly */
+/* Apply these rules with highest specificity to override any conflicting styles */
+html body .button-group.spaced .button.themed-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+html body .button-group.spaced .button.themed-button.themed-button-primary {
+    border-width: 1px !important;
+    border-style: solid !important;
+    border-color: var(--primary-color) !important;
+}
+
+html body .button-group.spaced .button.themed-button.themed-button-secondary {
+    border-color: var(--secondary-color) !important;
+    border-width: 1px !important;
+    border-style: solid !important;
+}
+
+html body .button-group.spaced .button.themed-button.themed-button-border-shadow {
+    border: none !important;
+}
+
+/* ===== Genie Integration Support ===== */
+/* Ensure button groups can properly host floating cards */
+.button-group {
+    /* Required for absolute positioning of floating cards */
+    position: relative;
+    /* Prevent stacking context issues */
+    isolation: auto;
+}
+
+/* Button group hover effects that need to be disabled when floating card is active */
+.button-group.has-genie-active {
+    /* Disable transform-based hover effects */
+    transform: none !important;
+}
+
+/* Genie trigger styling for button groups */
+.button-group.genie-trigger {
+    cursor: pointer;
+}
+
+/* Button group background variants for floating card triggers */
+.button-group.floating-trigger-highlight:hover {
+    box-shadow: var(--shadow-lg) !important;
+}
+
+/* ===== ButtonGroup Container Support ===== */
+.button-group-container {
+    position: relative;
+    display: inline-block;
+    /* Ensure container doesn't add extra spacing */
+    margin: 0;
+    padding: 0;
+    /* DO NOT set isolation or z-index to avoid stacking context issues */
+}
+
+.button-group-container.has-genie {
+    /* DO NOT set z-index - let Genie handle its own stacking */
+    /* Ensure Genie positions correctly relative to button group */
+    position: relative;
+}
+
+/* JustifySelf utility classes for ButtonGroup components */
+.button-group.justify-self-auto {
+    justify-self: auto;
+}
+
+.button-group.justify-self-start {
+    justify-self: start;
+}
+
+.button-group.justify-self-end {
+    justify-self: end;
+}
+
+.button-group.justify-self-center {
+    justify-self: center;
+}
+
+.button-group.justify-self-stretch {
+    justify-self: stretch;
+}

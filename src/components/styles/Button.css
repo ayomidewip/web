@@ -1,0 +1,170 @@
+/* Button component structural styles */
+.button.themed-button {
+    display: flex;
+    height: 2.5rem; /* 40px - default size */
+    margin: var(--spacing-sm) 0;
+    padding: 0 var(--spacing-md); /* Reduced from lg to md for more compact buttons */
+    border: 1px solid var(--primary-color);
+    border-radius: var(--button-radius, var(--border-radius-md));
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    font-family: var(--font-family-medium, var(--font-family)), sans-serif;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    user-select: none;
+    white-space: nowrap;
+    /* Normal state: surface color background, primary color text, primary color border */
+    background-color: var(--surface-color) !important;
+    color: var(--primary-color) !important;
+    /* Required for absolute positioning of floating cards */
+    position: relative;
+    /* Prevent stacking context issues */
+    isolation: auto;
+    justify-content: center;
+}
+
+/* Ensure button content (icon + text) is always horizontally aligned */
+.button.themed-button .button-content {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+}
+
+/* Remove any unwanted focus outlines */
+.button.themed-button:focus {
+    outline: none;
+}
+
+/* Primary variant normal state */
+.button.themed-button.themed-button-primary {
+    background-color: var(--surface-color) !important;
+    color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+/* Hover and Selected states with highest specificity */
+.button.themed-button.themed-button-primary:hover,
+.button.themed-button.themed-button-primary.selected,
+.button.themed-button.selected,
+.button.themed-button.selected.themed-button-primary {
+    /* Hover + Selected states: primary color background, contrast text, primary color border */
+    background-color: var(--primary-color) !important;
+    color: var(--text-contrast-color) !important;
+    border-color: var(--primary-color) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px var(--shadow-color-hover);
+}
+
+.button.themed-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Button hover effects that need to be disabled when floating card is active */
+.button.themed-button.has-genie-active {
+    /* Disable transform-based hover effects */
+    transform: none !important;
+}
+
+/* Genie trigger styling for buttons */
+.button.themed-button.genie-trigger {
+    cursor: pointer;
+}
+
+/* Button background variants for floating card triggers */
+.button.themed-button.floating-trigger-highlight:hover {
+    background-color: var(--primary-accent-color) !important;
+}
+
+/* Secondary variant */
+.button.themed-button.themed-button-secondary {
+    /* Normal state: surface color background, secondary color text, secondary color border */
+    background-color: var(--surface-color) !important;
+    color: var(--secondary-color) !important;
+    border-color: var(--secondary-color) !important;
+}
+
+.button.themed-button.themed-button-secondary:hover,
+.button.themed-button.themed-button-secondary.selected {
+    /* Hover + Selected states: secondary color background, contrast text, secondary color border */
+    background-color: var(--secondary-color) !important;
+    color: var(--text-contrast-color) !important;
+    border-color: var(--secondary-color) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px var(--shadow-color-hover);
+}
+
+/* Tertiary variant */
+.button.themed-button.themed-button-tertiary {
+    /* Normal state: surface color background, tertiary color text, tertiary color border */
+    background-color: var(--surface-color) !important;
+    color: var(--tertiary-color) !important;
+    border-color: var(--tertiary-color) !important;
+}
+
+.button.themed-button.themed-button-tertiary:hover,
+.button.themed-button.themed-button-tertiary.selected {
+    /* Hover + Selected states: tertiary color background, contrast text, tertiary color border */
+    background-color: var(--tertiary-color) !important;
+    color: var(--text-contrast-color) !important;
+    border-color: var(--tertiary-color) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px var(--shadow-color-hover);
+}
+
+/* Button variant: border-shadow */
+.button.themed-button.themed-button-border-shadow {
+    /* Normal state: surface color background, primary color text, no border, bottom and left shadow */
+    background-color: var(--surface-color) !important;
+    color: var(--primary-color) !important;
+    border: none !important;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.button.themed-button.themed-button-border-shadow:hover,
+.button.themed-button.themed-button-border-shadow.selected {
+    /* Hover + Selected states: primary color background, contrast text, stronger shadow */
+    background-color: var(--primary-color) !important;
+    color: var(--text-contrast-color) !important;
+    border: none !important;
+    box-shadow: 0 6px 8px var(--shadow-color-hover);
+    transform: translateY(-1px);
+}
+
+/* Size variations */
+.button.themed-button.small {
+    height: 2rem; /* 32px - small size */
+    margin: var(--spacing-xs) 0;
+    padding: 0 var(--spacing-sm); /* Reduced from md to sm for small buttons */
+    font-size: var(--font-size-xs);
+}
+
+.button.themed-button.large {
+    height: 3rem; /* 48px - large size */
+    margin: var(--spacing-md) 0; /* Reduced from xl to lg for large buttons */
+    padding: 0 var(--spacing-lg); /* Reduced from xl to lg for large buttons */
+    font-size: var(--font-size-base);
+}
+
+/* JustifySelf utility classes for Button components */
+.button.themed-button.justify-self-auto {
+    justify-self: auto;
+}
+
+.button.themed-button.justify-self-start {
+    justify-self: start;
+}
+
+.button.themed-button.justify-self-end {
+    justify-self: end;
+}
+
+.button.themed-button.justify-self-center {
+    justify-self: center;
+}
+
+.button.themed-button.justify-self-stretch {
+    justify-self: stretch;
+}

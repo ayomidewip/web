@@ -1,0 +1,106 @@
+/* Minimal Theme CSS */
+/* This theme focuses only on colors, fonts, and border radius */
+
+/* Google Fonts - All weights */
+@import url('https://fonts.googleapis.com/css2?family=Sofia&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Berkshire+Swash&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nova+Mono&display=swap');
+
+.theme-fancy {
+  /* Enhanced Color System - Fancy Theme */
+
+  /* Basic Color System */
+  --primary-color: #D6822D;
+  --primary-accent-color: #B55C04;
+
+  --secondary-color: #8F8B1B;
+  --secondary-accent-color: #65780A;
+
+  --tertiary-color: #DBBB07;
+  --tertiary-accent-color: #D44822;
+
+  --neutral-color: #F7F5F3;
+  --neutral-accent-color: #B67C84;
+  
+  /* Semantic Colors */
+  --success-color: #047857;
+  --success-accent-color: #065f46;
+  
+  --warning-color: #d97706;
+  --warning-accent-color: #92400e;
+  
+  --error-color: #b91c1c;
+  --error-accent-color: #7f1d1d;
+  
+  /* Surface and Border Colors */
+  --background-color: #410B13;
+  --surface-color: #905159;
+  --surface-accent-color: #B67C84;
+  --border-color: #C3AC98;
+  --border-light: #f3f4f6;
+  --text-color: #F7F5F3;
+  --text-contrast-color: #e9e8e8; /* Contrast text color matches surface color */
+
+  /* Overlay and Backdrop Colors */
+  --backdrop-color: rgba(55, 65, 81, 0.4); /* Semi-transparent gray for minimal theme */
+
+  /* Font System - 7 Font Weights */
+  --font-family: 'Sofia', 'Brush Script MT', cursive;
+
+  /* Primary Font Family (Sofia - Handwritten Style) */
+  --font-family-primary: 'Sofia', 'Brush Script MT', cursive;
+  --font-family-primary-light: 'Sofia', 'Brush Script MT', cursive;
+  --font-family-primary-normal: 'Sofia', 'Brush Script MT', cursive;
+  --font-family-primary-medium: 'Sofia', 'Brush Script MT', cursive;
+  --font-family-primary-semibold: 'Sofia', 'Brush Script MT', cursive;
+  --font-family-primary-bold: 'Sofia', 'Brush Script MT', cursive;
+  --font-family-primary-extrabold: 'Sofia', 'Brush Script MT', cursive;
+  --font-family-primary-black: 'Sofia', 'Brush Script MT', cursive;
+  
+  /* Secondary Font Family (Berkshire Swash - Decorative & Elegant) */
+  --font-family-secondary: 'Berkshire Swash', 'Brush Script MT', cursive;
+  --font-family-secondary-light: 'Berkshire Swash', 'Brush Script MT', cursive;
+  --font-family-secondary-normal: 'Berkshire Swash', 'Brush Script MT', cursive;
+  --font-family-secondary-medium: 'Berkshire Swash', 'Brush Script MT', cursive;
+  --font-family-secondary-semibold: 'Berkshire Swash', 'Brush Script MT', cursive;
+  --font-family-secondary-bold: 'Berkshire Swash', 'Brush Script MT', cursive;
+  --font-family-secondary-extrabold: 'Berkshire Swash', 'Brush Script MT', cursive;
+  --font-family-secondary-black: 'Berkshire Swash', 'Brush Script MT', cursive;
+  
+  /* Monospace Font Family (Nova Mono - Simple & Geometric) */
+  --font-family-monospace: 'Nova Mono', 'Courier New', monospace;
+
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semi-bold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extra-bold: 800;
+  --font-weight-black: 900;
+
+  /* Border Radius System - Minimal theme uses no border radius */
+  --border-radius: 0;
+  --card-radius: 0;
+  --input-radius: 0;
+  --button-radius: 0;
+  --checkbox-radius: 0;
+  --fab-radius: 0;
+  --progress-radius: 0;
+  --notification-radius: 0;
+    /* Shadow System - Minimal theme uses subtle grey shadows */
+  --shadow-color: rgba(55, 65, 81, 0.1);
+  --shadow-color-hover: rgba(55, 65, 81, 0.15);
+  --shadow-sm: 0 1px 2px var(--shadow-color);
+  --shadow-md: 0 2px 4px var(--shadow-color);
+  --shadow-lg: 0 2px 8px var(--shadow-color);
+  --shadow-xl: 0 4px 12px var(--shadow-color);
+  --shadow-2xl: 0 6px 20px var(--shadow-color);
+      /* Red - attribute values */
+}
+
+/* Minimal theme uses Nova Mono for code editing */
+.theme-minimal .code-editor-font,
+.theme-minimal .monaco-editor {
+  font-family: 'Nova Mono', 'Courier New', monospace !important;
+  letter-spacing: 0.01em;
+}
