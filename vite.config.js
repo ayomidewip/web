@@ -6,7 +6,7 @@ import path from 'path';
 export default defineConfig({
   plugins: [react()],
   server: {
-    port: 8088
+    port: 8083
   },
   css: {
     // CSS preprocessing

@@ -1,9 +1,10 @@
-# App Base Web - Advanced React Theming System
+# App Base Web - React Frontend
 
-A comprehensive React web application demonstrating an advanced theming system with dynamic component styling, interactive demos, and a complete UI component library.
+> **React Application with Advanced Theming and Complete UI Component Library**
+
+A comprehensive React web application with an advanced theming system, complete UI component library, and robust API client integration.
 
 ## 🌟 Key Features
-
 - **Dynamic Theming System**: 7 beautiful themes with instant switching
 - **Complete Component Library**: 20+ production-ready UI components  
 - **Advanced Layout System**: Flex, Grid, Multi-column, and Positioned layouts
@@ -13,6 +14,9 @@ A comprehensive React web application demonstrating an advanced theming system w
 - **Rich Text Editor**: MDX Editor with full theme integration
 - **Data Visualization**: TreeView, Data tables, Progress indicators
 - **Responsive Design**: Mobile-first approach with breakpoint system
+- **API Integration**: Pre-configured Axios clients with authentication
+- **Context Providers**: Auth, Theme, and Notification contexts
+- **Route Protection**: Role-based route access control
 
 ## 🚀 Quick Start
 
@@ -32,18 +36,38 @@ A comprehensive React web application demonstrating an advanced theming system w
    npm install
    ```
 
-3. **Start the development server**:
-   ```bash
-   npm run dev
+3. **Configure Backend Connection** (Optional):
+   
+   By default, the app connects to `http://localhost:8080/api/v1`. To change this, edit:
+   
+   ```javascript
+   // src/client/app.client.js
+   export const API_BASE_URL = 'http://localhost:8080/api/v1';
    ```
 
-4. **Open your browser**:
-   Navigate to `http://localhost:8083` to view the component demo
+4. **Start the development server**:
+   ```bash
+   npm run dev
+   # App runs on http://localhost:8088
+   ```
+
+5. **Open your browser**:
+   Navigate to `http://localhost:8088`
 
 ### Available Scripts
-- `npm run dev` - Start development server (port 8083)
+- `npm run dev` - Start development server (port 8088)
 - `npm run build` - Build for production
 - `npm run preview` - Preview production build
+
+### First Run
+
+After starting the app:
+
+1. **Navigate to** `http://localhost:8088`
+2. **Sign up** for a new account (first-time users) or **login** if you already have an account
+3. **Explore** the component demo, file management, and other features
+
+**Note**: The application does not include pre-seeded test accounts. You must create your own account through the signup page.
 
 ## 🎨 Theme System Architecture
 
@@ -147,20 +171,36 @@ The main demo page (`/`) showcases all components with:
 7. **Rich Text Editor**: MDX editor with full feature set
 8. **Floating Elements**: FAB and Genie system demonstrations
 
+    { params: { token: authToken } }
+);
+```
+
 ## 🛠️ Development
 
 ### Project Structure
 ```
 src/
-├── components/           # All UI components
+├── client/              # API clients for backend integration
+│   ├── app.client.js    # Shared Axios instance
+│   ├── auth.client.js   # Authentication API
+│   ├── user.client.js   # User management API
+│   ├── file.client.js   # File operations API
+│   └── cache.client.js  # Cache management API
+├── components/          # All UI components
 │   ├── styles/          # Component-specific CSS
 │   ├── Button.jsx       # Button component
 │   ├── Card.jsx         # Card component
 │   └── ...              # Other components
-├── contexts/
-│   └── ThemeContext.jsx # Theme management
-├── pages/
-│   └── ComponentDemo.jsx # Main demo page
+├── contexts/            # React contexts
+│   ├── AuthContext.jsx  # Authentication state
+│   ├── ThemeContext.jsx # Theme management
+│   └── NotificationContext.jsx # Notifications
+├── pages/               # Application pages
+│   ├── ComponentDemo.jsx    # Component showcase
+│   ├── LoginPage.jsx        # Login page
+│   ├── SignupPage.jsx       # Registration page
+│   ├── FilesPage.jsx        # File management
+│   └── AdminPage.jsx        # Admin dashboard
 ├── styles/
 │   ├── global.css       # Global styles and reset
 │   └── themes/          # Theme CSS files
@@ -373,7 +413,55 @@ npm run preview
 - **Bundle Size**: Tree-shaking removes unused components
 - **Performance**: CSS custom properties provide efficient theme switching
 
+## 📦 Building for Production
+
+### Build Process
+
+```bash
+# Create production build
+npm run build
+
+# Preview production build locally
+npm run preview
+```
+
+The build output will be in `dist/` directory.
+
+### Deployment Options
+
+**Static Hosting** (Recommended):
+- **Vercel**: `vercel deploy`
+- **Netlify**: Drag & drop `dist/` folder or connect GitHub repo
+- **AWS S3 + CloudFront**: Upload `dist/` contents
+- **GitHub Pages**: Deploy `dist/` to gh-pages branch
+
+**Important**: Update the API base URL for production:
+
+```javascript
+// src/client/app.client.js
+export const API_BASE_URL = 'https://your-api-domain.com/api/v1';
+```
+
+### Environment-specific Configuration
+
+```javascript
+// src/client/app.client.js
+export const API_BASE_URL = import.meta.env.PROD 
+    ? 'https://your-api-domain.com/api/v1'
+    : 'http://localhost:8080/api/v1';
+```
+
 ## 🔧 Troubleshooting
+
+### Backend Connection Issues
+1. **Check server is running**: `http://localhost:8080/api/v1/health`
+2. **CORS errors**: Verify `ALLOWED_ORIGINS` in server `.env` includes frontend URL
+3. **Network errors**: Check API_BASE_URL in `src/client/app.client.js`
+
+### Authentication Issues
+1. **Clear cookies**: Delete browser cookies and try logging in again
+2. **Token expired**: Logout and login again to refresh tokens
+3. **CORS credentials**: Ensure `withCredentials: true` in Axios config
 
 ### Theme Not Loading
 1. Check browser console for CSS import errors
@@ -388,20 +476,22 @@ npm run preview
 ### Development Server Issues
 1. Clear `node_modules` and reinstall: `rm -rf node_modules && npm install`
 2. Clear browser cache and localStorage
-3. Check port 8083 is not in use by another application
+3. Check port 8088 is not in use by another application
+4. Verify Vite config in `vite.config.js`
 
 ## 🤝 Contributing
 
-This is a demonstration project showcasing advanced React theming patterns. The architecture can be adapted for production applications requiring:
+Contributions are welcome! The architecture can be adapted for production applications requiring:
 - Dynamic theme switching
 - Consistent design systems  
 - Component libraries with theme support
 - Responsive, mobile-first design
+- Backend integration with authentication
 
 ## 📄 License
 
-This project serves as a reference implementation for advanced React theming systems and component architecture patterns.
+See [LICENSE.md](./LICENSE.md) for license information.
 
 ---
 
-**Start exploring**: Run `npm run dev` and visit `http://localhost:8083` to see all components and themes in action!
+**Start exploring**: Run `npm run dev` and visit `http://localhost:8088` to see all components and themes in action!
