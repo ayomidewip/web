@@ -4,7 +4,8 @@
 
 import axios from 'axios';
 
-export const API_BASE_URL = 'http://localhost:8080/api/v1';
+// Use environment variable with fallback
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api/v1';
 
 // Create shared axios instance with token refresh capability
 const api = axios.create({

@@ -25,8 +25,9 @@ import { WebsocketProvider } from 'y-websocket';
 
 // Global collaborative document management
 const documentProviders = new Map(); // filePath -> { ydoc, provider, connectionState }
+
 const connectionConfig = {
-    wsUrl: 'ws://localhost:8080/yjs', // Standard Yjs WebSocket URL without trailing slash
+    wsUrl: `${import.meta.env.VITE_WS_BASE_URL}/yjs`,
     reconnectInterval: 3000,
     maxReconnectAttempts: 10
 };
@@ -66,7 +67,7 @@ class FileNotificationClient {
                 return;
             }
 
-            const wsUrl = `ws://localhost:8080/notifications?token=${encodeURIComponent(token)}`;
+            const wsUrl = `${import.meta.env.VITE_WS_BASE_URL}/notifications?token=${encodeURIComponent(token)}`;
             this.ws = new WebSocket(wsUrl);
 
             this.ws.onopen = () => {

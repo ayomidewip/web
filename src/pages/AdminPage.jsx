@@ -995,24 +995,6 @@ export const AdminPage = () => {
           // Return early to avoid unnecessary processing
           return;
 
-        case 'appstats':
-          // Application statistics - load the same data as overview
-          const [appStatsHealth, appStatsOverview] = await Promise.all([
-            appService.getHealth(),
-            appService.getOverviewStats()
-          ]);
-          data = {
-            health: appStatsHealth,
-            appStats: appStatsOverview?.statistics || appStatsOverview
-          };
-          if (data.appStats) {
-            setSystemSettings(prev => ({
-              ...prev,
-              settings: data.appStats
-            }));
-          }
-          break;
-
         default:
           console.warn(`Unknown section: ${section}`);
           return;
