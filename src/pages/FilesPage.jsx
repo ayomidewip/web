@@ -21,6 +21,7 @@ import { ShareForm } from '../components/Explorer';
 
 const useYjsDocument = (file) => {
   const [content, setContent] = useState('');
+  const [connectionStatus, setConnectionStatus] = useState('disconnected'); // 'connecting', 'connected', 'disconnected', 'error'
   const connectionRef = useRef(null);
   const { error: showError } = useNotification();
   const filePath = file?.filePath;
@@ -29,11 +30,13 @@ const useYjsDocument = (file) => {
   useEffect(() => {
     if (!filePath || !isTextFile) {
       setContent('');
+      setConnectionStatus('disconnected');
       return;
     }
 
     let mounted = true;
     const connectToDoc = async () => {
+      setConnectionStatus('connecting');
       try {
         const connection = await fileService.connectToDocument(filePath);
         
@@ -43,6 +46,21 @@ const useYjsDocument = (file) => {
         const initialContent = connection.ytext.toString();
         setContent(initialContent);
 
+        // Listen to provider status events
+        if (connection.provider) {
+          connection.provider.on('status', (event) => {
+            if (mounted) {
+              setConnectionStatus(event.status === 'connected' ? 'connected' : 'connecting');
+            }
+          });
+
+          connection.provider.on('sync', (synced) => {
+            if (mounted && synced) {
+              setConnectionStatus('connected');
+            }
+          });
+        }
+
         const observer = (event, transaction) => {
           if (transaction.origin !== 'editor-change') {
             const newContent = connection.ytext.toString();
@@ -51,8 +69,14 @@ const useYjsDocument = (file) => {
         };
         connection.ytext.observe(observer);
         connection.observer = observer;
+
+        // Set initial status as connected after setup
+        if (mounted) {
+          setConnectionStatus('connected');
+        }
       } catch (err) {
         if (mounted) {
+          setConnectionStatus('error');
           showError(`Failed to connect to document: ${err.message}`);
         }
       }
@@ -71,6 +95,7 @@ const useYjsDocument = (file) => {
         });
         connectionRef.current = null;
       }
+      setConnectionStatus('disconnected');
     };
   }, [filePath, isTextFile, showError]);
 
@@ -87,7 +112,7 @@ const useYjsDocument = (file) => {
     setContent(newContent);
   }, [showError]);
 
-  return { content, updateContent };
+  return { content, updateContent, connectionStatus };
 };
 
 /**
@@ -764,82 +789,6 @@ const FileSharing = ({ file, onSuccess }) => {
 };
 
 /**
- * File Actions component for active file operations
- */
-const FileActions = ({ file, onRefresh, onVersionLoaded }) => {
-  const [activeAction, setActiveAction] = useState(null);
-
-  const handleActionSuccess = () => {
-    setActiveAction(null);
-    onRefresh();
-  };
-
-  if (activeAction === 'versions') {
-    return (
-      <VersionManagement
-        file={file}
-        onSuccess={(versionData) => {
-          if (versionData?.content) {
-            // Loading a specific version for viewing
-            onVersionLoaded(versionData);
-          } else if (versionData?.refreshVersionData) {
-            // Refresh all version-dependent data after publish/delete
-            onVersionLoaded(versionData); // This will trigger refreshLatestVersionContent
-            onRefresh(); // This will refresh metadata and other components
-          } else {
-            handleActionSuccess();
-          }
-          setActiveAction(null);
-        }}
-      />
-    );
-  }
-
-  if (activeAction === 'sharing') {
-    return (
-      <FileSharing
-        file={file}
-        onSuccess={() => {
-          handleActionSuccess();
-          setActiveAction(null);
-        }}
-      />
-    );
-  }
-
-  return (
-    <Container layout="flex-column" gap="sm" padding="md" width="300px">
-      <Typography variant="h6" size="sm" weight="semibold">
-        ⚙️ File Actions
-      </Typography>
-      <Typography size="xs" color="muted">
-        File: {file?.name || 'Unknown'}
-      </Typography>
-
-      <Button
-        variant="secondary"
-        size="small"
-        onClick={() => setActiveAction('versions')}
-        width="100%"
-      >
-        <Icon name="FiGitBranch" size="sm" />
-        Version Management
-      </Button>
-
-      <Button
-        variant="secondary"
-        size="small"
-        onClick={() => setActiveAction('sharing')}
-        width="100%"
-      >
-        <Icon name="FiShare2" size="sm" />
-        File Sharing
-      </Button>
-    </Container>
-  );
-};
-
-/**
  * Quick Actions component for FAB genie
  */
 const QuickActions = ({ targetPath, fileTree, onActionComplete }) => {
@@ -951,7 +900,7 @@ const FileMetadata = ({ file, isReadOnly, onDownload, onVersionLoaded }) => {
     } catch (error) {
       showError(`Failed to load file metadata: ${error.message}`);
     }
-  }, [file?.filePath, isReadOnly, showError]);
+  }, [file?.filePath, showError]);
 
   useEffect(() => {
     if (file?.filePath) {
@@ -1151,7 +1100,7 @@ export const FilesPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [latestVersionContent, setLatestVersionContent] = useState('');
   
-  const { content: fileContent, status: collaborationStatus, updateContent } = useYjsDocument(activeFile.file);
+  const { content: fileContent, connectionStatus, updateContent } = useYjsDocument(activeFile.file);
   
   // Refs
   const editorRef = useRef(null);
@@ -1241,6 +1190,21 @@ export const FilesPage = () => {
         setLatestVersionContent('');
       } else if (file.type === 'text') {
         setActiveFile({ file: { ...file, isImage: false, type: 'text' }, content: '', isLoading: false, isReadOnly: isReadOnlyForUser });
+
+        if (isReadOnlyForUser) {
+          try {
+            const contentResponse = await fileService.getContent(filePath);
+            const textContent = contentResponse?.content ?? contentResponse?.data?.content ?? '';
+
+            setActiveFile((prev) => ({
+              ...prev,
+              content: typeof textContent === 'string' ? textContent : JSON.stringify(textContent, null, 2)
+            }));
+          } catch (contentError) {
+            console.warn('Failed to load read-only text content:', contentError);
+            showWarning('Unable to load file content in read-only mode.');
+          }
+        }
         
         // Load latest published version for diff comparison
         try {
@@ -1422,33 +1386,28 @@ export const FilesPage = () => {
     }
 
     const path = fileService.normalizePath(filePath);
-    let fileNode = node;
     
     // If node is provided (normal selection), use it directly
-    if (fileNode) {
-      // Check if it's a file or directory
-      if (fileNode.type === 'directory') {
+    if (node) {
+      // Check if it's a directory
+      if (node.type === 'directory') {
         setSelectedDirectory(path);
         return;
       }
 
-      if (fileNode.type === 'file' || fileNode.type === 'text' || fileNode.type === 'binary') {
-        const fileObject = {
-          filePath: path,
-          name: fileService.getDisplayName(fileNode) || path.split('/').pop(),
-          type: fileNode.type || 'file'
-        };
-        await loadFileContent(fileObject);
-        // Update the currentPath to show selection in Explorer
-        setSelectedDirectory(fileService.getParentPath(path) || '/');
-      }
+      // It's a file - load it
+      const fileObject = {
+        filePath: path,
+        name: fileService.getDisplayName(node) || path.split('/').pop(),
+        type: node.type || 'file'
+      };
+      await loadFileContent(fileObject);
+      setSelectedDirectory(fileService.getParentPath(path) || '/');
       return;
     }
 
     // If no node provided (after file operations), try to load file directly
-    // This bypasses tree searching and just attempts to load the file
     try {
-      // Use the service's built-in file type detection
       const detectedType = fileService.getFileType(path);
       const fileName = path.split('/').pop() || '';
 
@@ -1458,12 +1417,11 @@ export const FilesPage = () => {
         type: detectedType
       };
       await loadFileContent(fileObject);
-      // Update the currentPath to show selection in Explorer
       setSelectedDirectory(fileService.getParentPath(path) || '/');
     } catch (error) {
       showError(`Failed to load file after operation: ${error.message}`);
     }
-  }, [loadFileContent, clearFileSelection]);
+  }, [loadFileContent, clearFileSelection, showError]);
 
   // Handle file actions from Explorer (main TreeView) and FAB
   const handleFileAction = useCallback(async (action, resultPath, type, operationData) => {
@@ -1489,24 +1447,10 @@ export const FilesPage = () => {
     showInfo('Action completed successfully');
   }, [handleFileAction, showInfo]);
 
-  // Consolidated initialization - load file tree on mount
+  // Initialize file tree on mount
   useEffect(() => {
-    const initializeApp = async () => {
-      try {
-        setIsLoading(true);
-        const response = await fileService.getDirectoryTree('/', { format: 'object' });
-        const treeData = response?.tree || response?.data?.tree || {};
-        setFileTree(treeData);
-      } catch (error) {
-        showError(`Failed to load file tree: ${error.message || 'Unknown error'}`);
-        showWarning('Unable to load files. Please try refreshing the page.');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
-    initializeApp();
-  }, [showError, showWarning]);
+    loadFileTree(true);
+  }, [loadFileTree]);
 
   const handleVersionDownload = useCallback(async () => {
     if (!versionView) return;
@@ -1629,6 +1573,11 @@ export const FilesPage = () => {
       );
     }
 
+    const resolvedEditorContent =
+      activeFile.file.type === 'text' && activeFile.isReadOnly && (!fileContent || fileContent.length === 0)
+        ? activeFile.content
+        : fileContent;
+
     return (
       <Container layout="flex-column" align="center" minHeight="100vh" width="100%" gap="none">
         {/* File header */}
@@ -1641,6 +1590,35 @@ export const FilesPage = () => {
           backgroundColor="background"
         >
           <Container layout="flex" align="center" gap="sm">
+            {/* Collaboration status indicator for text files */}
+            {activeFile.file.type === 'text' && !activeFile.isReadOnly && (
+              <Container layout="flex" align="center" gap="xs">
+                {connectionStatus === 'connected' && (
+                  <>
+                    <Icon name="FiWifi" size="sm" variant="success" />
+                    <Typography size="xs" color="success">Live Editing</Typography>
+                  </>
+                )}
+                {connectionStatus === 'connecting' && (
+                  <>
+                    <CircularProgress size="xs" variant="warning" />
+                    <Typography size="xs" color="warning">Connecting...</Typography>
+                  </>
+                )}
+                {connectionStatus === 'disconnected' && (
+                  <>
+                    <Icon name="FiWifiOff" size="sm" variant="muted" />
+                    <Typography size="xs" color="muted">Disconnected</Typography>
+                  </>
+                )}
+                {connectionStatus === 'error' && (
+                  <>
+                    <Icon name="FiAlertCircle" size="sm" variant="danger" />
+                    <Typography size="xs" color="danger">Connection Error</Typography>
+                  </>
+                )}
+              </Container>
+            )}
 
             {activeFile.file.isImage && (
                 <Container layout="flex" align="center" gap="sm">
@@ -1687,7 +1665,7 @@ export const FilesPage = () => {
             <Editor
               key={`text-editor-${activeFile.file.filePath}`}
               ref={editorRef}
-              content={fileContent}
+              content={resolvedEditorContent}
               diffContent={latestVersionContent}
               onChange={handleContentChange}
               placeholder={activeFile.isReadOnly ? "This file is read-only for you" : "Start typing..."}
