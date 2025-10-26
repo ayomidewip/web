@@ -16,6 +16,12 @@ export const Typography = ({
     color = 'default', // 'default', 'primary', 'secondary', 'success', 'warning', 'error', 'muted', 'header', 'tertiary', 'contrast'
     font = 'primary', // 'primary', 'secondary', 'monospace' - different font families per theme
     theme = null, // Optional theme override for this typography element
+    width = null, // Width value (e.g., '100%', '200px', 'auto')
+    height = null, // Height value (e.g., '2rem', '32px', 'auto')
+    minWidth = null, // Minimum width (e.g., '100px', '5rem')
+    minHeight = null, // Minimum height (e.g., '2rem', '32px')
+    maxWidth = null, // Maximum width (e.g., '500px', '100%')
+    maxHeight = null, // Maximum height (e.g., '10rem', '200px')
     justifySelf = null, // CSS justify-self property: 'auto', 'start', 'end', 'center', 'stretch'
     marginTop = null, // Margin top spacing: 'xs', 'sm', 'md', 'lg', 'xl'
     marginBottom = null, // Margin bottom spacing: 'xs', 'sm', 'md', 'lg', 'xl'
@@ -144,6 +150,22 @@ export const Typography = ({
         return '';
     };
 
+    const getTypographyStyle = () => {
+        const style = { ...getColorStyle() };
+
+        // Sizing
+        if (width !== null) style.width = width;
+        if (height !== null) style.height = height;
+        if (minWidth !== null) style.minWidth = minWidth;
+        if (minHeight !== null) style.minHeight = minHeight;
+        if (maxWidth !== null) style.maxWidth = maxWidth;
+        if (maxHeight !== null) style.maxHeight = maxHeight;
+
+        if (justifySelf !== null) style.justifySelf = justifySelf;
+
+        return style;
+    };
+
     return (
         <Component
             className={`typography ${getElementClass()} ${getLevelClass()} ${getSizeClass()} ${getWeightClass()} ${getFontClass()} ${getColorClass()} ${getLinkClass()} ${getJustifySelfClass()} ${getMarginClasses()} ${getPaddingClasses()} theme-${typographyTheme} ${className}`.trim()}
@@ -153,7 +175,7 @@ export const Typography = ({
             data-typography-color={color}
             data-theme={typographyTheme}
             data-theme-source={theme ? 'local' : 'inherited'}
-            style={{ justifySelf, ...getColorStyle() }}
+            style={getTypographyStyle()}
             {...linkProps}
             {...props}
         >

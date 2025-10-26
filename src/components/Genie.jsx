@@ -78,37 +78,44 @@ let globalGenieZIndex = 999999;
  *   <div>Item 4</div>
  * </Genie>
  */
-export const Genie = forwardRef(({  children,
-  className = '',
-  visible = false, // Controls whether the floating card is shown or hidden
-  animation = 'scale', // Animation type: 'scale', 'slide-up', 'slide-down', 'fade'
-  variant = 'default', // Visual variant: 'tooltip', 'popover', 'menu', 'modal', 'notification', 'dropdown'
-  backdrop = false, // Whether to show a semi-transparent backdrop behind the card (modal-like behavior)
-  onClose, // Callback function called when the card should close
-  onBackdropClick, // Callback function called when the backdrop is clicked
-  triggerRef = null, // Reference to the element that triggers this Genie
-  offset = 8, // Legacy prop - no longer used but kept for compatibility
-  closeOnClickOutside = true, // Whether clicking outside the card should close it
-  closeOnEscape = true, // Whether pressing ESC key should close the card
-  autoClose = null, // Auto-close after specified milliseconds (null = no auto-close)
-  role = 'dialog', // ARIA role for accessibility
-  ariaLabel, // ARIA label for accessibility
-  ariaLabelledBy, // ARIA labelledby for accessibility
-  theme = null, // Optional theme override
-  justifySelf = null, // CSS justify-self property: 'auto', 'start', 'end', 'center', 'stretch'
-  
-  // Layout and styling props
-  layout = 'block', // Layout type: 'block', 'flex', 'flex-wrap', 'flex-column', 'grid', 'multicolumn', 'positioned'
-  columns = 1, // Grid columns: 1-6 for grid layouts, or 'auto', 'auto-sm', 'auto-lg'
-  gap = 'lg', // Spacing between child elements: 'none', 'xs', 'sm', 'md', 'lg', 'xl'
-  justify = 'start', // Content justification: 'start', 'center', 'end', 'between', 'around', 'evenly'
-  align = 'start', // Content alignment: 'start', 'center', 'end', 'stretch', 'baseline'
-  padding = 'medium', // Internal padding: 'none', 'xs', 'sm', 'md', 'lg', 'xl'
-  margin = 'none', // External margin: 'none', 'xs', 'sm', 'md', 'lg', 'xl' or custom CSS value
-  backgroundColor = null, // Background color: null (theme default), 'transparent', 'background', 'surface', etc.
-  width = null, // Custom width: string value like '100px', '50%', 'auto', '90vw', etc.
-  height = null, // Custom height: string value like '100px', '50%', 'auto', '90vh', etc.
-  ...props
+export const Genie = forwardRef(({
+    children,
+    className = '',
+    visible = false, // Controls whether the floating card is shown or hidden
+    animation = 'scale', // Animation type: 'scale', 'slide-up', 'slide-down', 'fade'
+    variant = 'default', // Visual variant: 'tooltip', 'popover', 'menu', 'modal', 'notification', 'dropdown'
+    backdrop = false, // Whether to show a semi-transparent backdrop behind the card (modal-like behavior)
+    onClose, // Callback function called when the card should close
+    onBackdropClick, // Callback function called when the backdrop is clicked
+    triggerRef = null, // Reference to the element that triggers this Genie
+    offset = 8, // Legacy prop - no longer used but kept for compatibility
+    closeOnClickOutside = true, // Whether clicking outside the card should close it
+    closeOnEscape = true, // Whether pressing ESC key should close the card
+    autoClose = null, // Auto-close after specified milliseconds (null = no auto-close)
+    role = 'dialog', // ARIA role for accessibility
+    ariaLabel, // ARIA label for accessibility
+    ariaLabelledBy, // ARIA labelledby for accessibility
+    theme = null, // Optional theme override
+    justifySelf = null, // CSS justify-self property: 'auto', 'start', 'end', 'center', 'stretch'
+
+    // Layout and styling props
+    layout = 'block', // Layout type: 'block', 'flex', 'flex-wrap', 'flex-column', 'grid', 'multicolumn', 'positioned'
+    columns = 1, // Grid columns: 1-6 for grid layouts, or 'auto', 'auto-sm', 'auto-lg'
+    gap = 'lg', // Spacing between child elements: 'none', 'xs', 'sm', 'md', 'lg', 'xl'
+    justify = 'start', // Content justification: 'start', 'center', 'end', 'between', 'around', 'evenly'
+    align = 'start', // Content alignment: 'start', 'center', 'end', 'stretch', 'baseline'
+    padding = 'medium', // Internal padding: 'none', 'xs', 'sm', 'md', 'lg', 'xl'
+    margin = 'none', // External margin: 'none', 'xs', 'sm', 'md', 'lg', 'xl' or custom CSS value
+    backgroundColor = null, // Background color: null (theme default), 'transparent', 'background', 'surface', etc.
+    width = null, // Custom width: string value like '100px', '50%', 'auto', '90vw', etc.
+    height = null, // Custom height: string value like '100px', '50%', 'auto', '90vh', etc.
+    minWidth = null, // Minimum width
+    minHeight = null, // Minimum height
+    maxWidth = null, // Maximum width
+    maxHeight = null, // Maximum height
+    marginTop = null, // Margin top: 'none', 'xs', 'sm', 'md', 'lg', 'xl' or custom value
+    marginBottom = null, // Margin bottom: 'none', 'xs', 'sm', 'md', 'lg', 'xl' or custom value
+    ...props
 }, ref) => {
   const { currentTheme: globalTheme } = useTheme();
   const effectiveTheme = useEffectiveTheme();
@@ -240,113 +247,240 @@ export const Genie = forwardRef(({  children,
     }
   }, [visible, role, variant]);
 
+  // Helper: Find nearest scrollable parent
+  const findScrollableParent = useCallback((element) => {
+    let parent = element?.parentElement;
+    while (parent && parent !== document.body) {
+      const style = window.getComputedStyle(parent);
+      if (['auto', 'scroll'].some(v => [style.overflow, style.overflowX, style.overflowY].includes(v))) {
+        return parent;
+      }
+      parent = parent.parentElement;
+    }
+    return null;
+  }, []);
+
+  // Helper: Get visible bounds considering scrollable containers
+  const getVisibleBounds = useCallback((scrollableParent) => {
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    if (!scrollableParent) return { left: 0, right: vw, top: 0, bottom: vh };
+    
+    const rect = scrollableParent.getBoundingClientRect();
+    return {
+      left: Math.max(0, rect.left),
+      right: Math.min(vw, rect.right),
+      top: Math.max(0, rect.top),
+      bottom: Math.min(vh, rect.bottom)
+    };
+  }, []);
+
+  // Helper: Clamp value between min and max
+  const clamp = (val, min, max) => Math.max(min, Math.min(max, val));
+
+  const convertToPixels = useCallback((value, axis = 'vertical') => {
+    if (value === null || value === undefined) return Number.POSITIVE_INFINITY;
+    if (typeof value === 'number') return value;
+
+    if (typeof window === 'undefined' || typeof document === 'undefined') {
+      return Number.POSITIVE_INFINITY;
+    }
+
+    const trimmed = String(value).trim();
+    if (!trimmed) return Number.POSITIVE_INFINITY;
+
+    const numeric = parseFloat(trimmed);
+    if (Number.isNaN(numeric)) {
+      return Number.POSITIVE_INFINITY;
+    }
+
+    if (trimmed.endsWith('px')) {
+      return numeric;
+    }
+
+    if (trimmed.endsWith('vh')) {
+      return (window.innerHeight * numeric) / 100;
+    }
+
+    if (trimmed.endsWith('vw')) {
+      return (window.innerWidth * numeric) / 100;
+    }
+
+    if (trimmed.endsWith('%')) {
+      const base = axis === 'horizontal' ? window.innerWidth : window.innerHeight;
+      return (base * numeric) / 100;
+    }
+
+    if (trimmed.endsWith('rem')) {
+      const rootFontSize = parseFloat(
+        window.getComputedStyle(document.documentElement).fontSize || '16'
+      );
+      return rootFontSize * numeric;
+    }
+
+    if (trimmed.endsWith('em')) {
+      const rootFontSize = parseFloat(
+        window.getComputedStyle(document.body).fontSize || '16'
+      );
+      return rootFontSize * numeric;
+    }
+
+    return numeric;
+  }, []);
+
+  const [positionData, setPositionData] = useState({
+    position: 'bottom-left',
+    styles: {},
+    availableHeight: Number.POSITIVE_INFINITY,
+    availableWidth: Number.POSITIVE_INFINITY
+  });
+
   // Simple and intuitive positioning logic - uses viewport quadrants for consistent behavior
   const calculatePosition = useCallback(() => {
-    if (!containerRef.current) return { position: 'bottom-left', styles: {} };
-    
-    // Use the provided triggerRef if available, otherwise fall back to parent
-    const triggerElement = triggerRef?.current || containerRef.current.parentElement;
-    if (!triggerElement) return { position: 'bottom-left', styles: {} };
-    
-    // Get trigger element's position in viewport
-    const triggerRect = triggerElement.getBoundingClientRect();
-    const genieRect = containerRef.current.getBoundingClientRect();
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
-    
-    // Simple guardrail: hide if trigger is not visible in viewport
-    if (triggerRect.bottom < 0 || triggerRect.top > viewportHeight || 
-        triggerRect.right < 0 || triggerRect.left > viewportWidth) {
-      return { position: 'hidden', styles: { display: 'none' } };
-    }
-    
-    // Calculate trigger center point
-    const triggerCenterX = triggerRect.left + (triggerRect.width / 2);
-    const triggerCenterY = triggerRect.top + (triggerRect.height / 2);
-    
-    // Determine position based on simple quadrant system
-    const isLeftSide = triggerCenterX < viewportWidth / 2;
-    const isTopSide = triggerCenterY < viewportHeight / 2;
-    
-    let position = '';
-    let styles = {};
-    
-    // Use fixed positioning with viewport coordinates for better escape behavior
-    const offset = 8; // 8px offset from trigger
-    
-    if (isTopSide && isLeftSide) {
-      // Top-left quadrant: position below and align with left edge
-      position = 'bottom-left';
-      styles = {
-        position: 'fixed',
-        top: triggerRect.bottom + offset,
-        left: Math.max(8, triggerRect.left), // Keep 8px from left edge
-        right: 'auto',
-        bottom: 'auto'
-      };
-    } else if (isTopSide && !isLeftSide) {
-      // Top-right quadrant: position below and align with right edge
-      position = 'bottom-right';
-      styles = {
-        position: 'fixed',
-        top: triggerRect.bottom + offset,
-        right: Math.max(8, window.innerWidth - triggerRect.right), // Keep 8px from right edge
-        left: 'auto',
-        bottom: 'auto'
-      };
-    } else if (!isTopSide && isLeftSide) {
-      // Bottom-left quadrant: position above and align with left edge
-      position = 'top-left';
-      styles = {
-        position: 'fixed',
-        bottom: Math.max(8, window.innerHeight - triggerRect.top + offset), // Keep 8px from bottom
-        left: Math.max(8, triggerRect.left), // Keep 8px from left edge
-        top: 'auto',
-        right: 'auto'
-      };
-    } else {
-      // Bottom-right quadrant: position above and align with right edge
-      position = 'top-right';
-      styles = {
-        position: 'fixed',
-        bottom: Math.max(8, window.innerHeight - triggerRect.top + offset), // Keep 8px from bottom
-        right: Math.max(8, window.innerWidth - triggerRect.right), // Keep 8px from right edge
-        top: 'auto',
-        left: 'auto'
+    if (!containerRef.current) {
+      return {
+        position: 'bottom-left',
+        styles: {},
+        availableHeight: Number.POSITIVE_INFINITY,
+        availableWidth: Number.POSITIVE_INFINITY
       };
     }
-    
-    return { position, styles };
-  }, [triggerRef]);
 
-  // Get current position and styles
-  const { position: currentPosition, styles: positionStyles } = useMemo(() => {
-    return calculatePosition();
-  }, [calculatePosition, visible, triggerRef]);
+    const triggerElement = triggerRef?.current || containerRef.current.parentElement;
+    if (!triggerElement) {
+      return {
+        position: 'bottom-left',
+        styles: {},
+        availableHeight: Number.POSITIVE_INFINITY,
+        availableWidth: Number.POSITIVE_INFINITY
+      };
+    }
+    
+    const triggerRect = triggerElement.getBoundingClientRect();
+    const scrollableParent = findScrollableParent(triggerElement);
+    const bounds = getVisibleBounds(scrollableParent);
+    const viewportPadding = 12;
+    const anchorOffset = 8;
+    
+    // Hide if trigger is not visible
+    if (triggerRect.bottom < bounds.top || triggerRect.top > bounds.bottom || 
+        triggerRect.right < bounds.left || triggerRect.left > bounds.right) {
+      return {
+        position: 'hidden',
+        styles: { display: 'none' },
+        availableHeight: Number.POSITIVE_INFINITY,
+        availableWidth: Number.POSITIVE_INFINITY
+      };
+    }
+    
+    // Clamp trigger rect to visible bounds - this ensures Genie stays at edge when content scrolls out
+    const visibleTriggerLeft = clamp(triggerRect.left, bounds.left, bounds.right);
+    const visibleTriggerRight = clamp(triggerRect.right, bounds.left, bounds.right);
+    const visibleTriggerTop = clamp(triggerRect.top, bounds.top, bounds.bottom);
+    const visibleTriggerBottom = clamp(triggerRect.bottom, bounds.top, bounds.bottom);
+    
+    // Calculate center from visible bounds
+    const triggerCenterX = (visibleTriggerLeft + visibleTriggerRight) / 2;
+    const triggerCenterY = (visibleTriggerTop + visibleTriggerBottom) / 2;
+    
+    // Determine quadrant
+    const isLeft = triggerCenterX < (bounds.left + bounds.right) / 2;
+    const isTop = triggerCenterY < (bounds.top + bounds.bottom) / 2;
+    
+    // Build position and styles based on quadrant using visible trigger bounds
+    const position = `${isTop ? 'bottom' : 'top'}-${isLeft ? 'left' : 'right'}`;
+    const styles = {
+      position: 'fixed',
+      [isTop ? 'bottom' : 'top']: 'auto',
+      [isLeft ? 'right' : 'left']: 'auto'
+    };
+
+    if (isTop) {
+      const anchorTop = visibleTriggerBottom + anchorOffset;
+      styles.top = Math.max(anchorTop, bounds.top + viewportPadding);
+      styles.bottom = 'auto';
+    } else {
+      const anchorBottom = window.innerHeight - visibleTriggerTop + anchorOffset;
+      const maxBottom = Math.max(viewportPadding, window.innerHeight - bounds.top - viewportPadding);
+      styles.bottom = clamp(anchorBottom, viewportPadding, maxBottom);
+      styles.top = 'auto';
+    }
+
+    if (isLeft) {
+      const anchorLeft = visibleTriggerLeft;
+      styles.left = Math.max(anchorLeft, bounds.left + viewportPadding);
+      styles.right = 'auto';
+    } else {
+      const anchorRight = window.innerWidth - visibleTriggerRight;
+      const maxRight = Math.max(viewportPadding, window.innerWidth - bounds.left - viewportPadding);
+      styles.right = clamp(anchorRight, viewportPadding, maxRight);
+      styles.left = 'auto';
+    }
+
+    const availableHeight = isTop
+      ? Math.max(0, bounds.bottom - viewportPadding - (visibleTriggerBottom + anchorOffset))
+      : Math.max(0, (visibleTriggerTop - anchorOffset) - (bounds.top + viewportPadding));
+
+    const availableWidth = isLeft
+      ? Math.max(0, bounds.right - viewportPadding - visibleTriggerLeft)
+      : Math.max(0, visibleTriggerRight - (bounds.left + viewportPadding));
+
+    return { position, styles, availableHeight, availableWidth };
+  }, [triggerRef, findScrollableParent, getVisibleBounds]);
+
+  const areStylesEqual = useCallback((nextStyles, prevStyles) => {
+    const keys = new Set([...Object.keys(nextStyles || {}), ...Object.keys(prevStyles || {})]);
+    for (const key of keys) {
+      if (nextStyles?.[key] !== prevStyles?.[key]) {
+        return false;
+      }
+    }
+    return true;
+  }, []);
+
+  const updatePosition = useCallback(() => {
+    const nextPosition = calculatePosition();
+    setPositionData(prev => {
+      if (
+        prev.position === nextPosition.position &&
+        prev.availableHeight === nextPosition.availableHeight &&
+        prev.availableWidth === nextPosition.availableWidth &&
+        areStylesEqual(prev.styles, nextPosition.styles)
+      ) {
+        return prev;
+      }
+      return nextPosition;
+    });
+  }, [calculatePosition, areStylesEqual]);
+
+  useEffect(() => {
+    if (visible) {
+      updatePosition();
+    }
+  }, [visible, updatePosition]);
 
   // Handle scroll repositioning - keep Genie attached to trigger
   useEffect(() => {
     if (!visible) return;
 
     const handleScroll = () => {
-      // Reposition Genie to stay attached to trigger instead of hiding
-      if (containerRef.current && triggerRef?.current) {
-        const { styles } = calculatePosition();
-        Object.assign(containerRef.current.style, styles);
-      }
+      updatePosition();
     };
 
     const handlePageChange = () => {
-      // Hide Genie on page navigation
       if (onClose) onClose();
     };
 
-    // Listen for scroll events on window and common scroll containers
-    const scrollContainers = [
-      window,
-      document.querySelector('.page'),
-      document.querySelector('.container')
-    ].filter(Boolean);
+    // Collect all scroll containers
+    const scrollContainers = [window, '.page', '.container', '.data-item-container']
+      .map(s => typeof s === 'string' ? document.querySelector(s) : s)
+      .filter(Boolean);
+    
+    // Add scrollable parent of trigger if exists
+    const scrollableParent = findScrollableParent(triggerRef?.current);
+    if (scrollableParent && !scrollContainers.includes(scrollableParent)) {
+      scrollContainers.push(scrollableParent);
+    }
 
     // Listen for pagination events
     const paginationButtons = document.querySelectorAll(
@@ -363,6 +497,8 @@ export const Genie = forwardRef(({  children,
       button.addEventListener('click', handlePageChange);
     });
 
+    window.addEventListener('resize', handleScroll);
+
     // Listen for React Router navigation or hash changes
     window.addEventListener('popstate', handlePageChange);
     window.addEventListener('hashchange', handlePageChange);
@@ -377,10 +513,40 @@ export const Genie = forwardRef(({  children,
         button.removeEventListener('click', handlePageChange);
       });
       
+      window.removeEventListener('resize', handleScroll);
       window.removeEventListener('popstate', handlePageChange);
       window.removeEventListener('hashchange', handlePageChange);
     };
-  }, [visible, onClose, calculatePosition, triggerRef]);
+  }, [visible, onClose, triggerRef, updatePosition]);
+
+  const resolveMaxDimension = useCallback((propValue, available, axis) => {
+    const viewportLimit = Number.isFinite(available) ? Math.max(available, 0) : null;
+    const propLimit = convertToPixels(propValue, axis);
+    const hasViewportLimit = viewportLimit !== null;
+    const hasPropLimit = Number.isFinite(propLimit);
+
+    if (!hasViewportLimit && !hasPropLimit) {
+      return propValue ?? undefined;
+    }
+
+    if (!hasViewportLimit) {
+      return `${Math.max(propLimit, 0)}px`;
+    }
+
+    if (!hasPropLimit) {
+      return `${viewportLimit}px`;
+    }
+
+    return `${Math.max(Math.min(propLimit, viewportLimit), 0)}px`;
+  }, [convertToPixels]);
+
+  const resolvedMaxHeight = useMemo(() => (
+    resolveMaxDimension(maxHeight, positionData.availableHeight, 'vertical')
+  ), [resolveMaxDimension, maxHeight, positionData.availableHeight]);
+
+  const resolvedMaxWidth = useMemo(() => (
+    resolveMaxDimension(maxWidth, positionData.availableWidth, 'horizontal')
+  ), [resolveMaxDimension, maxWidth, positionData.availableWidth]);
   
   // No need to adjust justify anymore since we're using container alignment
 
@@ -418,12 +584,18 @@ export const Genie = forwardRef(({  children,
     return styles;
   };
 
+  const positionClass = positionData.position && positionData.position !== 'hidden'
+    ? `position-${positionData.position}`
+    : '';
+
+  const shouldShow = visible && positionData.position !== 'hidden';
+
   const containerClasses = [
     'genie-container',
-    `position-${currentPosition}`,
+    positionClass,
     `animation-${animation}`,
     `variant-${variant}`,
-    visible ? 'visible' : '',
+    shouldShow ? 'visible' : '',
     getJustifySelfClass(),
     className
   ].filter(Boolean).join(' ');
@@ -438,7 +610,7 @@ export const Genie = forwardRef(({  children,
       {/* Backdrop */}
       {backdrop && (
         <div
-          className={`genie-backdrop ${visible ? 'visible' : ''}`}
+          className={`genie-backdrop ${shouldShow ? 'visible' : ''}`}
           onClick={handleBackdropClick}
           aria-hidden="true"
         />
@@ -447,14 +619,14 @@ export const Genie = forwardRef(({  children,
       {/* Genie Container */}        <div
           ref={containerRef}
           className={containerClasses}
-          role={visible ? role : undefined}
-          aria-label={visible ? ariaLabel : undefined}
-          aria-labelledby={visible ? ariaLabelledBy : undefined}
+          role={shouldShow ? role : undefined}
+          aria-label={shouldShow ? ariaLabel : undefined}
+          aria-labelledby={shouldShow ? ariaLabelledBy : undefined}
           data-genie-portal="true"
           tabIndex={-1}
           style={{ 
             ...style, 
-            ...positionStyles, 
+            ...positionData.styles, 
             ...getCustomStyles(),
             ...(assignedZIndex && { zIndex: assignedZIndex })
           }}
@@ -472,6 +644,10 @@ export const Genie = forwardRef(({  children,
           backgroundColor={backgroundColor}
           width={width || "fit-content"}
           height={height}
+          minWidth={minWidth}
+          minHeight={minHeight}
+          maxWidth={resolvedMaxWidth ?? maxWidth}
+          maxHeight={resolvedMaxHeight ?? maxHeight}
           theme={genieTheme}
         >
           {children}
@@ -700,73 +876,73 @@ export const withGenie = (WrappedComponent, defaultOptions = {}) => {
  * @returns {React.Component} Genie trigger component
  */
 export const GenieTrigger = forwardRef(({
-  children,
-  genie,
-  trigger = 'click',
-  variant = 'popover',
-  as: Component = 'div',
-  className = '',
-  onShow,
-  onHide,
-  closeOnClickOutside = true,
-  closeOnEscape = true,
-  autoClose = null,
-  // Layout and styling props for the Genie
-  layout = 'block',
-  columns = 1,
-  gap = 'lg',
-  justify = 'start',
-  align = 'start',
-  padding = 'medium',
-  margin = 'none',
-  backgroundColor = null,
-  width = null,
-  height = null,
-  ...props
-}, ref) => {
-  const {
-    triggerProps,
-    genieProps
-  } = useGenie({
-    trigger,
-    variant,
+    children,
+    genie,
+    trigger = 'click',
+    variant = 'popover',
+    as: Component = 'div',
+    className = '',
     onShow,
     onHide,
-    closeOnClickOutside,
-    closeOnEscape,
-    autoClose
-  });
+    closeOnClickOutside = true,
+    closeOnEscape = true,
+    autoClose = null,
+    // Layout and styling props for the Genie
+    layout = 'block',
+    columns = 1,
+    gap = 'lg',
+    justify = 'start',
+    align = 'start',
+    padding = 'medium',
+    margin = 'none',
+    backgroundColor = null,
+    width = null,
+    height = null,
+    ...props
+}, ref) => {
+    const {
+        triggerProps,
+        genieProps
+    } = useGenie({
+        trigger,
+        variant,
+        onShow,
+        onHide,
+        closeOnClickOutside,
+        closeOnEscape,
+        autoClose
+    });
 
-  return (
-    <>
-      <Component
-        ref={ref}
-        className={`genie-trigger ${className}`}
-        {...props}
-        {...triggerProps}
-      >
-        {children}
-      </Component>
-      
-      {genie && (
-        <Genie
-          {...genieProps}
-          layout={layout}
-          columns={columns}
-          gap={gap}
-          justify={justify}
-          align={align}
-          padding={padding}
-          margin={margin}
-          backgroundColor={backgroundColor}
-          width={width}
-          height={height}
-        >
-          {genie}
-        </Genie>
-      )}
-    </>
-  );
+    return (
+        <>
+            <Component
+                ref={ref}
+                className={`genie-trigger ${className}`}
+                {...props}
+                {...triggerProps}
+            >
+                {children}
+            </Component>
+
+            {genie && (
+                <Genie
+                    {...genieProps}
+                    layout={layout}
+                    columns={columns}
+                    gap={gap}
+                    justify={justify}
+                    align={align}
+                    padding={padding}
+                    margin={margin}
+                    backgroundColor={backgroundColor}
+                    width={width}
+                    height={height}
+                >
+                    {genie}
+                </Genie>
+            )}
+        </>
+    );
 });
 
 GenieTrigger.displayName = 'GenieTrigger';
@@ -859,6 +1035,10 @@ export const useGeniePortal = (genieConfig, triggerRef, onShow = null, onHide = 
         backdrop={genieConfig.backdrop}
         width={genieConfig.width}
         height={genieConfig.height}
+        minWidth={genieConfig.minWidth}
+        minHeight={genieConfig.minHeight}
+        maxWidth={genieConfig.maxWidth}
+        maxHeight={genieConfig.maxHeight}
         layout={genieConfig.layout}
         padding={genieConfig.padding}
         theme={genieConfig.theme}

@@ -22,7 +22,10 @@ export const Container = forwardRef(({
     padding = 'md', // 'none', 'xs', 'sm', 'md', 'lg', 'xl'
     width = null, // Custom width: string value like '100px', '50%', 'auto', etc.
     height = null, // Custom height: string value like '100px', '50%', 'auto', '90vh', etc.
+    minWidth = null, // Custom minimum width
     minHeight = null, // Custom minimum height: string value like '100px', '50%', 'auto', '90vh', etc.
+    maxWidth = null, // Custom maximum width
+    maxHeight = null, // Custom maximum height
     overflow = null, // Overflow behavior: 'auto', 'hidden', 'scroll', 'visible'
     align = 'start', // 'start', 'center', 'end', 'stretch', 'baseline'
     justify = 'start', // 'start', 'center', 'end', 'between', 'around', 'evenly', 'wrap'
@@ -60,9 +63,24 @@ export const Container = forwardRef(({
             style.height = height;
         }
 
+        // Handle minWidth
+        if (minWidth !== null) {
+            style.minWidth = minWidth;
+        }
+
         // Handle minHeight
         if (minHeight !== null) {
             style.minHeight = minHeight;
+        }
+
+        // Handle maxWidth
+        if (maxWidth !== null) {
+            style.maxWidth = maxWidth;
+        }
+
+        // Handle maxHeight
+        if (maxHeight !== null) {
+            style.maxHeight = maxHeight;
         }
 
         // Handle overflow
@@ -130,8 +148,6 @@ export const Container = forwardRef(({
                 return 'layout-grid';
             case 'flex':
                 return 'layout-flex';
-            case 'flex-wrap':
-                return 'layout-flex-wrap';
             case 'flex-column':
                 return 'layout-flex-column';
             case 'multicolumn':

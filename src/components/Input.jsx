@@ -1,7 +1,11 @@
-import React, { useEffect, useId, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useId, useRef, useState } from 'react';
 import { useEffectiveTheme, useTheme } from '@contexts/ThemeContext';
 import Icon from './Icon';
-import { useGeniePortal } from './Genie';
+
+const INPUT_VALIDATION_STATES = new Set(['default', 'success', 'warning', 'error']);
+const INPUT_COLOR_OPTIONS = ['primary', 'secondary', 'tertiary'];
+
+const sanitizeValidationState = (state) => (INPUT_VALIDATION_STATES.has(state) ? state : 'default');
 
 /**
  * Input - Themed input component with modern layouts
@@ -13,7 +17,8 @@ export const Input = ({
     className = '',
     type = 'text', // 'text', 'password', 'email', 'checkbox', 'search'.
     variant = 'default', // 'default', 'outline', 'filled', 'underline', 'floating'
-    size = 'default', // 'small', 'default', 'large'
+    color = 'primary', // 'primary', 'secondary', 'tertiary'
+    size = 'md', // 'xs', 'sm', 'md', 'lg', 'xl'
     placeholder = '',
     label = '',
     value,
@@ -21,7 +26,7 @@ export const Input = ({
     disabled = false,
     required = false,
     helpText = '',
-    state = 'default', // 'default', 'success', 'warning', 'tertiary', 'error'
+    validationState = 'default', // 'default', 'success', 'warning', 'error'
     icon = '',
     iconPosition = 'left', // 'left', 'right'
     width = null, // Width value (e.g., '100%', '200px', '10rem')
@@ -43,16 +48,18 @@ export const Input = ({
     // Positioning props
     position = null, // 'top', 'bottom', 'left', 'right', 'top-left', 'top-right', 'bottom-left', 'bottom-right'
     positionOffset = 'default', // 'inset', 'default', 'extended' - distance from edges
-    // Genie integration props
-    genie = null, // Genie content to show
-    genieTrigger = 'click', // hover, click, contextmenu
-                          ...props
-                      }) => {
+    ...props
+}) => {
     const {currentTheme: globalTheme} = useTheme();
     const effectiveTheme = useEffectiveTheme();
 
     // Use theme prop if provided, otherwise use effective theme from context
     const inputTheme = theme || effectiveTheme.currentTheme;
+    const inputVariant = variant || 'default';
+    const effectiveColor = INPUT_COLOR_OPTIONS.includes(color) ? color : 'primary';
+    const colorClass = `input-color-${effectiveColor}`;
+    const sanitizedValidationState = sanitizeValidationState(validationState);
+    const shouldValidateByProps = required || validate || type === 'email';
 
     // Generate a stable unique ID for the input element using React's useId hook
     const reactId = useId();
@@ -62,7 +69,7 @@ export const Input = ({
     const [isFocused, setIsFocused] = useState(false);
     const [hasValue, setHasValue] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
-    const [validationState, setValidationState] = useState({isValid: true, message: ''});
+    const [internalValidation, setInternalValidation] = useState({isValid: true, message: ''});
     const [isTouched, setIsTouched] = useState(false);
 
     // Simple validation function
@@ -105,10 +112,8 @@ export const Input = ({
 
     // Main validation function
     const performValidation = (inputValue) => {
-        // Auto-enable validation if required is true, or if validate is explicitly true
-        const shouldValidate = required || validate;
-
-        if (!shouldValidate || disabled) return {isValid: true, message: ''};
+        // Auto-enable validation if required, validate enabled, or email type
+        if (!shouldValidateByProps || disabled) return {isValid: true, message: ''};
 
         // Use simple field validation for all cases
         return validateField(inputValue);
@@ -116,60 +121,35 @@ export const Input = ({
 
     // Effect to validate on value change
     useEffect(() => {
-        const shouldValidate = required || validate;
-        if (isTouched && shouldValidate) {
+        if (isTouched && shouldValidateByProps) {
             const validation = performValidation(value);
-            setValidationState(validation);
+            setInternalValidation(validation);
 
             // Call validation callback if provided
             if (onValidation) {
                 onValidation(validation, inputName);
             }
         }
-    }, [value, isTouched, required, validate, confirmField]);
+    }, [value, isTouched, shouldValidateByProps, confirmField]);
 
     // Determine if this is a password type input
     const isPasswordType = type === 'password';
+
+    // Determine if this is a search input
+    const isSearchType = type === 'search';
 
     // Determine if this is a date-type input
     const isDateType = ['date', 'datetime-local', 'time', 'month', 'week'].includes(type);
 
     // Auto-provide calendar icon for date inputs if no icon is specified
-    const effectiveIcon = icon || (isDateType ? 'FiCalendar' : '');
+    const effectiveIcon = icon || (isSearchType ? 'FiSearch' : (isDateType ? 'FiCalendar' : ''));
     const effectiveIconPosition = isDateType && !icon ? 'right' : iconPosition;
 
     // Calculate actual input type based on password type and showPassword state
     const actualType = isPasswordType ? (showPassword ? 'text' : 'password') : type;
 
-    // Parse genie prop - support both old API and new object API
-    const genieConfig = useMemo(() => {
-        if (!genie) return null;
-
-        if (typeof genie === 'object' && genie.content) {
-            // New API: genie is an object with trigger, content, position
-            return {
-                content: genie.content,
-                trigger: genie.trigger || genieTrigger,
-                position: genie.position || 'auto'
-            };
-        }
-
-        // Old API: genie is just the content, other props are separate
-        return {
-            content: genie,
-            trigger: genieTrigger,
-            position: 'auto'
-        };
-    }, [genie, genieTrigger]);
-
-    // Genie integration using simplified portal hook
+    // Reference for the input element
     const inputRef = useRef(null);
-    const {triggerProps: genieTriggerProps, GeniePortal, handleShow, handleHide} = useGeniePortal(
-        genieConfig,
-        inputRef,
-        null, // onShow handled in focus/blur
-        null  // onHide handled in focus/blur
-    );
 
     // Sync hasValue state with value prop
     useEffect(() => {
@@ -188,7 +168,6 @@ export const Input = ({
         }
     }, [value, type]);
 
-    // Handle Genie integration
     const handleChange = (e) => {
         if (type === 'checkbox') {
             // For checkbox inputs, pass the event directly
@@ -216,23 +195,24 @@ export const Input = ({
     const handleBlur = (e) => {
         setIsFocused(false);
         setIsTouched(true); // Mark as touched for validation
+
+        if (shouldValidateByProps) {
+            const currentValue = value !== undefined
+                ? value
+                : inputRef.current
+                    ? inputRef.current.value
+                    : '';
+            const validation = performValidation(currentValue);
+            setInternalValidation(validation);
+
+            if (onValidation) {
+                onValidation(validation, inputName);
+            }
+        }
+
         if (props.onBlur) {
             props.onBlur(e);
         }
-    };
-
-    // Combine Genie trigger props with focus/blur handlers
-    const getAllTriggerProps = () => {
-        const focusBlurProps = {
-            onFocus: handleFocus,
-            onBlur: handleBlur
-        };
-
-        // Combine with genie trigger props
-        return {
-            ...focusBlurProps,
-            ...genieTriggerProps
-        };
     };
 
     const togglePasswordVisibility = () => {
@@ -252,17 +232,24 @@ export const Input = ({
     };
 
     const getVariantClass = () => {
-        return `themed-input-${variant}`;
+        return `themed-input-${inputVariant}`;
     };
+
+    const getColorClass = () => colorClass;
 
     const getSizeClass = () => {
         switch (size) {
-            case 'small':
-                return 'input-small';
-            case 'large':
-                return 'input-large';
+            case 'xs':
+                return 'input-xs';
+            case 'sm':
+                return 'input-sm';
+            case 'lg':
+                return 'input-lg';
+            case 'xl':
+                return 'input-xl';
+            case 'md':
             default:
-                return '';
+                return 'input-md';
         }
     };
 
@@ -283,16 +270,14 @@ export const Input = ({
         // For hasValue, check both the hasValue state and the actual value prop properly
         if (hasValue || (value !== undefined && value !== '')) classes.push('input-has-value');
 
-        // Use validation state if touched and validation is enabled, otherwise use prop state
-        const shouldValidate = required || validate;
-        if (shouldValidate && isTouched) {
-            if (!validationState.isValid) classes.push('input-error');
-            else if (validationState.isValid && value) classes.push('input-success');
+        // Use internal validation state if touched and validation is enabled, otherwise use validationState prop
+        if (shouldValidateByProps && isTouched) {
+            if (!internalValidation.isValid) classes.push('input-error');
+            else if (internalValidation.isValid && value) classes.push('input-success');
         } else {
-            if (state === 'error') classes.push('input-error');
-            if (state === 'success') classes.push('input-success');
-            if (state === 'warning') classes.push('input-warning');
-            if (state === 'tertiary') classes.push('input-tertiary');
+            if (sanitizedValidationState === 'error') classes.push('input-error');
+            if (sanitizedValidationState === 'success') classes.push('input-success');
+            if (sanitizedValidationState === 'warning') classes.push('input-warning');
         }
 
         if (disabled) classes.push('input-disabled');
@@ -321,11 +306,6 @@ export const Input = ({
                     ? `${baseClass} checkbox-help-text-warning ${sizeClass}`
                     : `${baseClass} input-help-text-warning ${sizeClass}`;
                 break;
-            case 'tertiary':
-                resultClass = type === 'checkbox'
-                    ? `${baseClass} checkbox-help-text-tertiary ${sizeClass}`
-                    : `${baseClass} input-help-text-tertiary ${sizeClass}`;
-                break;
             case 'error':
                 resultClass = type === 'checkbox'
                     ? `${baseClass} checkbox-help-text-error ${sizeClass}`
@@ -334,25 +314,23 @@ export const Input = ({
             default:
                 resultClass = `${baseClass} ${sizeClass}`;
         }
-        return resultClass.trim();
+        return `${resultClass} ${getColorClass()}`.trim();
     };
 
     // Get effective help text - validation message or default helpText
     const getEffectiveHelpText = () => {
-        const shouldValidate = required || validate;
-        if (shouldValidate && isTouched && validationState.message) {
-            return validationState.message;
+        if (shouldValidateByProps && isTouched && internalValidation.message) {
+            return internalValidation.message;
         }
         return helpText;
     };
 
     // Get effective state for styling - validation state or prop state
     const getEffectiveState = () => {
-        const shouldValidate = required || validate;
-        if (shouldValidate && isTouched) {
-            return validationState.isValid ? (value ? 'success' : 'default') : 'error';
+        if (shouldValidateByProps && isTouched) {
+            return internalValidation.isValid ? (value ? 'success' : 'default') : 'error';
         }
-        return state;
+        return sanitizedValidationState;
     };
 
     // Helper function to get margin styles
@@ -390,10 +368,12 @@ export const Input = ({
         }
         return '';
     };
+
     const renderInput = () => {
         // Filter out custom props that shouldn't be passed to the DOM element
         const {
             variant: _variant,
+            color: _color,
             size: _size,
             label: _label,
             helpText: _helpText,
@@ -406,8 +386,6 @@ export const Input = ({
             name: _name,
             position: _position,
             positionOffset: _positionOffset,
-            genie: _genie,
-            genieTrigger: _genieTrigger,
             theme: _theme,
             justifySelf: _justifySelf,
             width: _width,
@@ -424,9 +402,9 @@ export const Input = ({
         const domProps = multiline ? validInputProps : {type: actualType, ...validInputProps};
 
         // Generate ARIA attributes for accessibility
-        const shouldValidate = required || validate;
+    const isAriaInvalid = (shouldValidateByProps && isTouched && !internalValidation.isValid) || sanitizedValidationState === 'error';
         const ariaAttributes = {
-            'aria-invalid': (shouldValidate && isTouched && !validationState.isValid) || state === 'error' ? 'true' : 'false',
+            'aria-invalid': isAriaInvalid ? 'true' : 'false',
             'aria-required': required ? 'true' : 'false',
             'aria-describedby': (getEffectiveHelpText() || helpText) ? `${inputId}-help` : undefined
         };
@@ -447,7 +425,7 @@ export const Input = ({
                     id={inputId}
                     name={inputName}
                     type="checkbox"
-                    className={`themed-checkbox ${getPositionClass()} ${genie ? 'genie-trigger' : ''} theme-${inputTheme} ${className}`}
+                    className={`themed-checkbox ${getPositionClass()} ${getColorClass()} theme-${inputTheme} ${className}`}
                     checked={checked}
                     onChange={handleChange}
                     disabled={disabled}
@@ -457,7 +435,8 @@ export const Input = ({
                     style={{width}}
                     {...ariaAttributes}
                     {...domProps}
-                    {...getAllTriggerProps()}
+                    onFocus={handleFocus}
+                    onBlur={handleBlur}
                 />
             );
         }
@@ -492,8 +471,8 @@ export const Input = ({
                         ref={inputRef}
                         id={inputId}
                         name={inputName}
-                        className={`input themed-input textarea ${getVariantClass()} ${getSizeClass()} ${getStateClasses()} ${getPositionClass()} ${genie ? 'genie-trigger' : ''} theme-${inputTheme} ${className}`}
-                        placeholder={variant === 'floating' && label ? '' : placeholder}
+                        className={`input themed-input textarea ${getVariantClass()} ${getSizeClass()} ${getStateClasses()} ${getPositionClass()} ${getColorClass()} theme-${inputTheme} ${className}`}
+                        placeholder={inputVariant === 'floating' && label ? '' : placeholder}
                         {...(value !== undefined ? {value} : {})}
                         onChange={handleChange}
                         disabled={disabled}
@@ -502,7 +481,8 @@ export const Input = ({
                         data-theme-source={theme ? 'local' : 'inherited'}
                         {...ariaAttributes}
                         {...domProps}
-                        {...getAllTriggerProps()}
+                        onFocus={handleFocus}
+                        onBlur={handleBlur}
                         rows={rows}
                     />
                 ) : (
@@ -510,8 +490,8 @@ export const Input = ({
                         ref={inputRef}
                         id={inputId}
                         name={inputName}
-                        className={`input themed-input ${getVariantClass()} ${getSizeClass()} ${getStateClasses()} ${getPositionClass()} ${genie ? 'genie-trigger' : ''} theme-${inputTheme} ${className}`}
-                        placeholder={variant === 'floating' && label ? '' : (isDateInput ? '' : placeholder)}
+                        className={`input themed-input ${getVariantClass()} ${getSizeClass()} ${getStateClasses()} ${getPositionClass()} ${getColorClass()} theme-${inputTheme} ${className}`}
+                        placeholder={inputVariant === 'floating' && label ? '' : (isDateInput ? '' : placeholder)}
                         {...(value !== undefined ? {value} : {})}
                         onChange={handleChange}
                         disabled={disabled}
@@ -520,23 +500,24 @@ export const Input = ({
                         data-theme-source={theme ? 'local' : 'inherited'}
                         {...ariaAttributes}
                         {...domProps}
-                        {...getAllTriggerProps()}
+                        onFocus={handleFocus}
+                        onBlur={handleBlur}
                     />
                 )}
             </>
         );
     };
-    if (variant === 'floating' && label) {
+    if (inputVariant === 'floating' && label) {
         return (
             <div
-                className={`input-container input-floating-container variant-${variant} ${getJustifySelfClass()} theme-${inputTheme}`}
+                className={`input-container input-floating-container variant-${inputVariant} ${getColorClass()} ${getJustifySelfClass()} theme-${inputTheme}`}
                 style={{justifySelf, width, ...getMarginStyle()}} data-theme={inputTheme}
                 data-theme-source={theme ? 'local' : 'inherited'}>
                 <div
-                    className={`input-field-wrapper ${effectiveIcon ? `has-icon has-icon-${effectiveIconPosition}` : ''} ${getStateClasses()}`}>
+                    className={`input-field-wrapper ${effectiveIcon ? `has-icon has-icon-${effectiveIconPosition}` : ''} ${getStateClasses()} ${getColorClass()}`}>
                     {effectiveIcon && effectiveIconPosition === 'left' && (
                         <span className="input-icon input-icon-left">
-              <Icon name={effectiveIcon} variant="muted" size="sm"/>
+              <Icon name={effectiveIcon} color="muted" size="sm"/>
             </span>
                     )}
                     {renderInput()}
@@ -550,7 +531,7 @@ export const Input = ({
                     </label>
                     {effectiveIcon && effectiveIconPosition === 'right' && (
                         <span className="input-icon input-icon-right">
-              <Icon name={effectiveIcon} variant="muted" size="sm"/>
+              <Icon name={effectiveIcon} color="muted" size="sm"/>
             </span>
                     )}
                     {isPasswordType && (
@@ -563,7 +544,7 @@ export const Input = ({
                             title={`${showPassword ? 'Hide' : 'Show'} password (Ctrl+Shift+P)`}
                             tabIndex={0}
                         >
-                            <Icon name={showPassword ? 'FiEyeOff' : 'FiEye'} variant="muted" size="sm"/>
+                            <Icon name={showPassword ? 'FiEyeOff' : 'FiEye'} color="muted" size="sm"/>
                         </button>
                     )}
                 </div>
@@ -576,30 +557,13 @@ export const Input = ({
             {getEffectiveHelpText()}
           </span>
                 )}
-
-                {/* Genie Integration */}
-                {genie && (
-                    <Genie
-                        visible={isFloatingActive}
-                        position={detectBestPosition()}
-                        variant={'popover'}
-                        size={'medium'}
-                        role="tooltip"
-                        closeOnClickOutside={true}
-                        closeOnEscape={true}
-                        onClose={handleFloatingHide}
-                        triggerRef={inputRef}
-                    >
-                        {typeof genie === 'object' && genie.content ? genie.content : genie}
-                    </Genie>
-                )}
             </div>
         );
     }
     // Special handling for checkbox type
     if (type === 'checkbox') {
         return (
-            <div className={`checkbox-wrapper input-container ${getJustifySelfClass()} theme-${inputTheme}`}
+            <div className={`checkbox-wrapper input-container ${getColorClass()} ${getJustifySelfClass()} theme-${inputTheme}`}
                  style={{justifySelf, width, ...getMarginStyle()}} data-theme={inputTheme}
                  data-theme-source={theme ? 'local' : 'inherited'}>
                 <div className="checkbox-input-wrapper">
@@ -624,14 +588,11 @@ export const Input = ({
             {getEffectiveHelpText()}
           </span>
                 )}
-
-                {/* Genie Integration */}
-                {GeniePortal}
             </div>
         );
     }
     return (
-        <div className={`input-container ${getJustifySelfClass()} theme-${inputTheme}`}
+        <div className={`input-container ${getColorClass()} ${getJustifySelfClass()} theme-${inputTheme}`}
              style={{justifySelf, width, ...getMarginStyle()}} data-theme={inputTheme}
              data-theme-source={theme ? 'local' : 'inherited'}>
             {label && (
@@ -645,17 +606,19 @@ export const Input = ({
                 </label>
             )}
             <div
-                className={`input-field-wrapper ${effectiveIcon ? `has-icon has-icon-${effectiveIconPosition}` : ''} ${getStateClasses()}`}>
+                className={`input-field-wrapper ${effectiveIcon ? `has-icon has-icon-${effectiveIconPosition}` : ''} ${getStateClasses()} ${getColorClass()}`}>
                 {effectiveIcon && effectiveIconPosition === 'left' && (
                     <span className="input-icon input-icon-left">
-            <Icon name={effectiveIcon} variant="muted" size="sm"/>
+            <Icon name={effectiveIcon} color="muted" size="sm"/>
           </span>
                 )}
                 {renderInput()}
-                {effectiveIcon && effectiveIconPosition === 'right' && (
-                    <span className="input-icon input-icon-right">
-            <Icon name={effectiveIcon} variant="muted" size="sm"/>
-          </span>)}{isPasswordType && (
+                                {effectiveIcon && effectiveIconPosition === 'right' && (
+                                        <span className="input-icon input-icon-right">
+                        <Icon name={effectiveIcon} color="muted" size="sm"/>
+                    </span>
+                                )}
+                                {isPasswordType && (
                 <button
                     type="button"
                     className="input-password-toggle"
@@ -665,7 +628,7 @@ export const Input = ({
                     title={`${showPassword ? 'Hide' : 'Show'} password (Ctrl+Shift+P)`}
                     tabIndex={0}
                 >
-                    <Icon name={showPassword ? 'FiEyeOff' : 'FiEye'} variant="muted" size="sm"/>
+                    <Icon name={showPassword ? 'FiEyeOff' : 'FiEye'} color="muted" size="sm"/>
                 </button>)}
             </div>
             {(getEffectiveHelpText() || helpText) && (
@@ -676,9 +639,6 @@ export const Input = ({
                 >
           {getEffectiveHelpText()}
         </span>)}
-
-            {/* Genie Integration */}
-            {GeniePortal}
         </div>
     );
 };

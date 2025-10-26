@@ -57,7 +57,7 @@ export const ForgotPasswordPage = () => {
                 <Container layout="flex" align="center" justify="center" style={{ minHeight: '100vh' }}>
                     <Card style={{ maxWidth: '400px', width: '100%' }}>
                         <Container layout="flex-column" gap="lg" justify="center">
-                            <Icon name="FaCheckCircle" size="lg" variant="success"/>
+                            <Icon name="FaCheckCircle" size="lg" color="success"/>
                             <Typography as="h1" size="2xl" weight="bold" color="primary">
                                 Check Your Email
                             </Typography>
@@ -68,7 +68,7 @@ export const ForgotPasswordPage = () => {
                                 Please check your email and click the reset link to continue.
                             </Typography>
                             <Button
-                                variant="primary"
+                                color="primary"
                                 onClick={() => navigate('/login')}
                                 width="100%"
                             >
@@ -89,7 +89,7 @@ export const ForgotPasswordPage = () => {
                     <Container layout="flex-column" gap="lg" align="center">
                         {/* Header */}
                         <Container layout="flex-column" gap="sm" align="center" justify="center" padding="none">
-                            <Icon name="FaKey" size="lg" variant="primary"/>
+                            <Icon name="FaKey" size="lg" color="primary"/>
                             <Typography as="h1" size="2xl" weight="bold" color="primary">
                                 Forgot Password?
                             </Typography>
@@ -114,8 +114,8 @@ export const ForgotPasswordPage = () => {
 
                             <Button
                                 type="submit"
-                                variant="primary"
-                                size="large"
+                                color="primary"
+                                size="lg"
                                 disabled={!email || isLoading}
                                 onClick={handleSubmit}
                                 width="100%"
@@ -135,8 +135,8 @@ export const ForgotPasswordPage = () => {
                         </Container>
                         {/* Back to Login */}
                         <Button
-                            variant="secondary"
-                            size="small"
+                            color="secondary"
+                            size="sm"
                             onClick={() => navigate('/login')}
                         >
                             <Icon name="FaArrowLeft"/>

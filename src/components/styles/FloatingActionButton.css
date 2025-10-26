@@ -168,28 +168,43 @@
 }
 
 /* ===== Size Variants ===== */
-.floating-action-button.small {
+.floating-action-button.xs {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+    margin: 0 !important;
+}
+
+.floating-action-button.sm {
     width: 40px;
     height: 40px;
     min-width: 40px;
     min-height: 40px;
-
     margin: 0 !important;
 }
 
-.floating-action-button.default {
+.floating-action-button.md {
     width: 56px;
     height: 56px;
     min-width: 56px;
     min-height: 56px;
 }
 
-.floating-action-button.large {
+.floating-action-button.lg {
     width: 72px;
     height: 72px;
     min-width: 72px;
     min-height: 72px;
     margin: var(--spacing-sm) !important;
+}
+
+.floating-action-button.xl {
+    width: 88px;
+    height: 88px;
+    min-width: 88px;
+    min-height: 88px;
+    margin: var(--spacing-md) !important;
 }
 
 /* ===== Position Variants ===== */
@@ -277,168 +292,11 @@
 }
 
 /* ===== Scroll Behavior ===== */
-/* Control whether FAB scrolls with content or stays fixed */
+/* Control whether FAB scrolls with content - always scroll with parent by default */
 
 .fab-container.fab-scroll-with-parent.fab-parent-card,
 .fab-container.fab-scroll-with-parent.fab-parent-container {
     position: absolute;
-}
-
-.fab-container.fab-fixed-position {
-    /* Always stay fixed regardless of parent */
-    position: fixed;
-}
-
-/* ===== Offset Variants ===== */
-/* Custom spacing from container edges */
-
-.floating-action-button.fab-offset-none.fab-position-top-left,
-.floating-action-button.fab-offset-none.fab-position-top,
-.floating-action-button.fab-offset-none.fab-position-top-right {
-    top: 0;
-}
-
-.floating-action-button.fab-offset-none.fab-position-bottom-left,
-.floating-action-button.fab-offset-none.fab-position-bottom,
-.floating-action-button.fab-offset-none.fab-position-bottom-right {
-    bottom: 0;
-}
-
-.floating-action-button.fab-offset-none.fab-position-left,
-.floating-action-button.fab-offset-none.fab-position-top-left,
-.floating-action-button.fab-offset-none.fab-position-bottom-left {
-    left: 0;
-}
-
-.floating-action-button.fab-offset-none.fab-position-right,
-.floating-action-button.fab-offset-none.fab-position-top-right,
-.floating-action-button.fab-offset-none.fab-position-bottom-right {
-    right: 0;
-}
-
-/* Extra small offset */
-.floating-action-button.fab-offset-xs.fab-position-top-left,
-.floating-action-button.fab-offset-xs.fab-position-top,
-.floating-action-button.fab-offset-xs.fab-position-top-right {
-    top: var(--spacing-xs);
-}
-
-.floating-action-button.fab-offset-xs.fab-position-bottom-left,
-.floating-action-button.fab-offset-xs.fab-position-bottom,
-.floating-action-button.fab-offset-xs.fab-position-bottom-right {
-    bottom: var(--spacing-xs);
-}
-
-.floating-action-button.fab-offset-xs.fab-position-left,
-.floating-action-button.fab-offset-xs.fab-position-top-left,
-.floating-action-button.fab-offset-xs.fab-position-bottom-left {
-    left: var(--spacing-xs);
-}
-
-.floating-action-button.fab-offset-xs.fab-position-right,
-.floating-action-button.fab-offset-xs.fab-position-top-right,
-.floating-action-button.fab-offset-xs.fab-position-bottom-right {
-    right: var(--spacing-xs);
-}
-
-/* Small offset */
-.floating-action-button.fab-offset-sm.fab-position-top-left,
-.floating-action-button.fab-offset-sm.fab-position-top,
-.floating-action-button.fab-offset-sm.fab-position-top-right {
-    top: var(--spacing-sm);
-}
-
-.floating-action-button.fab-offset-sm.fab-position-bottom-left,
-.floating-action-button.fab-offset-sm.fab-position-bottom,
-.floating-action-button.fab-offset-sm.fab-position-bottom-right {
-    bottom: var(--spacing-sm);
-}
-
-.floating-action-button.fab-offset-sm.fab-position-left,
-.floating-action-button.fab-offset-sm.fab-position-top-left,
-.floating-action-button.fab-offset-sm.fab-position-bottom-left {
-    left: var(--spacing-sm);
-}
-
-.floating-action-button.fab-offset-sm.fab-position-right,
-.floating-action-button.fab-offset-sm.fab-position-top-right,
-.floating-action-button.fab-offset-sm.fab-position-bottom-right {
-    right: var(--spacing-sm);
-}
-
-/* Medium offset */
-.floating-action-button.fab-offset-md.fab-position-top-left,
-.floating-action-button.fab-offset-md.fab-position-top,
-.floating-action-button.fab-offset-md.fab-position-top-right {
-    top: var(--spacing-md);
-}
-
-.floating-action-button.fab-offset-md.fab-position-bottom-left,
-.floating-action-button.fab-offset-md.fab-position-bottom,
-.floating-action-button.fab-offset-md.fab-position-bottom-right {
-    bottom: var(--spacing-md);
-}
-
-.floating-action-button.fab-offset-md.fab-position-left,
-.floating-action-button.fab-offset-md.fab-position-top-left,
-.floating-action-button.fab-offset-md.fab-position-bottom-left {
-    left: var(--spacing-md);
-}
-
-.floating-action-button.fab-offset-md.fab-position-right,
-.floating-action-button.fab-offset-md.fab-position-top-right,
-.floating-action-button.fab-offset-md.fab-position-bottom-right {
-    right: var(--spacing-md);
-}
-
-/* Large offset */
-.floating-action-button.fab-offset-lg.fab-position-top-left,
-.floating-action-button.fab-offset-lg.fab-position-top,
-.floating-action-button.fab-offset-lg.fab-position-top-right {
-    top: var(--spacing-lg);
-}
-
-.floating-action-button.fab-offset-lg.fab-position-bottom-left,
-.floating-action-button.fab-offset-lg.fab-position-bottom,
-.floating-action-button.fab-offset-lg.fab-position-bottom-right {
-    bottom: var(--spacing-lg);
-}
-
-.floating-action-button.fab-offset-lg.fab-position-left,
-.floating-action-button.fab-offset-lg.fab-position-top-left,
-.floating-action-button.fab-offset-lg.fab-position-bottom-left {
-    left: var(--spacing-lg);
-}
-
-.floating-action-button.fab-offset-lg.fab-position-right,
-.floating-action-button.fab-offset-lg.fab-position-top-right,
-.floating-action-button.fab-offset-lg.fab-position-bottom-right {
-    right: var(--spacing-lg);
-}
-
-/* Extra large offset */
-.floating-action-button.fab-offset-xl.fab-position-top-left,
-.floating-action-button.fab-offset-xl.fab-position-top,
-.floating-action-button.fab-offset-xl.fab-position-top-right {
-    top: var(--spacing-xl);
-}
-
-.floating-action-button.fab-offset-xl.fab-position-bottom-left,
-.floating-action-button.fab-offset-xl.fab-position-bottom,
-.floating-action-button.fab-offset-xl.fab-position-bottom-right {
-    bottom: var(--spacing-xl);
-}
-
-.floating-action-button.fab-offset-xl.fab-position-left,
-.floating-action-button.fab-offset-xl.fab-position-top-left,
-.floating-action-button.fab-offset-xl.fab-position-bottom-left {
-    left: var(--spacing-xl);
-}
-
-.floating-action-button.fab-offset-xl.fab-position-right,
-.floating-action-button.fab-offset-xl.fab-position-top-right,
-.floating-action-button.fab-offset-xl.fab-position-bottom-right {
-    right: var(--spacing-xl);
 }
 
 /* ===== Responsive Design ===== */
@@ -453,14 +311,14 @@
         min-height: 48px;
     }
 
-    .floating-action-button.small {
+    .floating-action-button.sm {
         width: 36px;
         height: 36px;
         min-width: 36px;
         min-height: 36px;
     }
 
-    .floating-action-button.large {
+    .floating-action-button.lg {
         width: 60px;
         height: 60px;
         min-width: 60px;

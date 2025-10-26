@@ -41,7 +41,7 @@
 
   /* Text Colors */
   --text-color: #96A2B0;
-  --text-contrast-color: #333333; /* Contrast text color matches surface color */
+  --text-contrast-color: #141414; /* Contrast text color matches surface color */
     
   /* Overlay and Backdrop Colors */
   --backdrop-color: rgba(73, 80, 87, 0.6); /* Semi-transparent professional gray */

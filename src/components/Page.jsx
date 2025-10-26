@@ -26,6 +26,12 @@ export const Page = forwardRef(({
     padding = 'lg', // 'none', 'xs', 'sm', 'md', 'lg', 'xl'
     align = 'start', // 'start', 'center', 'end', 'stretch', 'baseline'
     justify = 'start', // 'start', 'center', 'end', 'between', 'around', 'evenly', 'wrap'
+    width = null, // Custom width
+    height = null, // Custom height
+    minWidth = null, // Minimum width
+    minHeight = null, // Minimum height
+    maxWidth = null, // Maximum width
+    maxHeight = null, // Maximum height
     theme = null, // Optional theme override for this page and its children
     // Genie integration props
     genie = null, // Genie content to show OR object with {trigger, content, position}

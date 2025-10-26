@@ -1,16 +1,12 @@
-/* Button Group Container */
-.button-group-container {
-    position: relative;
-    display: inline-block;
-}
-
 .button-group {
     display: inline-flex;
+    flex-wrap: wrap;
     align-items: center;
     margin: var(--spacing-xs);
     border-radius: var(--button-radius, var(--border-radius-md));
     overflow: hidden;
     box-shadow: var(--shadow-sm);
+    gap: var(--spacing-xs) 0; /* Vertical gap when wrapping, no horizontal gap */
 }
 
 /* Remove margins from buttons inside group and adjust borders */
@@ -34,10 +30,6 @@
 }
 
 /* Remove double borders between buttons */
-.button-group .button.themed-button:not(:first-child) {
-    border-left: none !important;
-}
-
 /* Hover states for grouped buttons */
 .button-group .button.themed-button:hover,
 .button-group .button.themed-button.selected {
@@ -56,27 +48,24 @@
     overflow: visible;
     box-shadow: none;
     background: transparent;
+    gap: var(--spacing-xs); /* Add gap for both horizontal and vertical spacing */
 }
 
 .button-group.spaced .button.themed-button {
     border-radius: var(--button-radius, var(--border-radius-md)) !important;
-    margin: 0 var(--spacing-xs) !important;
+    margin: 0 !important; /* Remove margin, using gap instead */
 }
 
-.button-group.spaced.small {
+.button-group.spaced.xs,
+.button-group.spaced.sm {
     margin: var(--spacing-xs);
+    gap: var(--spacing-xs);
 }
 
-.button-group.spaced.large {
+.button-group.spaced.lg,
+.button-group.spaced.xl {
     margin: var(--spacing-md);
-}
-
-.button-group.spaced.small .button.themed-button {
-    margin: 0 var(--spacing-xs) !important;
-}
-
-.button-group.spaced.large .button.themed-button {
-    margin: 0 var(--spacing-sm) !important;
+    gap: var(--spacing-sm);
 }
 
 .button-group.spaced .button.themed-button.themed-button-secondary {
@@ -97,11 +86,6 @@
     box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.25) !important;
     background-color: var(--primary-color) !important;
     color: var(--text-contrast-color) !important;
-}
-
-/* Variant-specific border handling for secondary buttons */
-.button-group .button.themed-button.themed-button-secondary:not(:first-child) {
-    border-left: none !important;
 }
 
 /* Border-shadow variant group handling */
@@ -137,30 +121,6 @@
     }
 }
 
-/* Final overrides to ensure all buttons in spaced groups display properly */
-/* Apply these rules with highest specificity to override any conflicting styles */
-html body .button-group.spaced .button.themed-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-
-html body .button-group.spaced .button.themed-button.themed-button-primary {
-    border-width: 1px !important;
-    border-style: solid !important;
-    border-color: var(--primary-color) !important;
-}
-
-html body .button-group.spaced .button.themed-button.themed-button-secondary {
-    border-color: var(--secondary-color) !important;
-    border-width: 1px !important;
-    border-style: solid !important;
-}
-
-html body .button-group.spaced .button.themed-button.themed-button-border-shadow {
-    border: none !important;
-}
-
 /* ===== Genie Integration Support ===== */
 /* Ensure button groups can properly host floating cards */
 .button-group {
@@ -194,31 +154,4 @@ html body .button-group.spaced .button.themed-button.themed-button-border-shadow
     margin: 0;
     padding: 0;
     /* DO NOT set isolation or z-index to avoid stacking context issues */
-}
-
-.button-group-container.has-genie {
-    /* DO NOT set z-index - let Genie handle its own stacking */
-    /* Ensure Genie positions correctly relative to button group */
-    position: relative;
-}
-
-/* JustifySelf utility classes for ButtonGroup components */
-.button-group.justify-self-auto {
-    justify-self: auto;
-}
-
-.button-group.justify-self-start {
-    justify-self: start;
-}
-
-.button-group.justify-self-end {
-    justify-self: end;
-}
-
-.button-group.justify-self-center {
-    justify-self: center;
-}
-
-.button-group.justify-self-stretch {
-    justify-self: stretch;
 }

@@ -30,34 +30,41 @@ import './styles/Data.css';
  *   - Callbacks available for show/hide events with item context
  *   - Table variant: Genie attaches to the entire row, positioned based on row location
  */
-export const Data = forwardRef(
-    ({
-         data = [],
-         fieldConfig = {},
-         variant = 'table', // 'table', 'cards', 'list'
-         className = '',
-         sortable = true, // Default to true for new sorting functionality
-         maxColumns = 6, // Maximum columns to show before condensing (table variant)
-         exclude = [], // Array of field names to exclude from display and filters
-         // Remove Data-specific props that shouldn't be passed to DOM
-         searchable,
-         filterable,
-         paginated,
-         pageSize: propPageSize,
-         cardColumns,
-         cardGap,
-         cardPadding,
-         selector = false, // Enable row selection with checkboxes
-         onSelectionChange = null, // Optional callback when selection changes: (selectedItems, selectedIds) => {}
-         selectedItems = null, // Optional controlled selection - array of selected item IDs or items
-         theme = null, // Optional theme override
-         justifySelf = null, // CSS justify-self property: 'auto', 'start', 'end', 'center', 'stretch'
-         // Generic Genie integration props
-         genie = null, // Genie configuration object: { content, variant, trigger, position, etc. }
-         onGenieShow = null, // Callback when Genie is shown
-         onGenieHide = null, // Callback when Genie is hidden
-         ...props
-     }, ref) => {
+export const Data = forwardRef(({
+    data = [],
+    fieldConfig = {},
+    variant = 'table', // 'table', 'cards', 'list'
+    className = '',
+    sortable = true, // Default to true for new sorting functionality
+    maxColumns = 6, // Maximum columns to show before condensing (table variant)
+    exclude = [], // Array of field names to exclude from display and filters
+    // Remove Data-specific props that shouldn't be passed to DOM
+    searchable,
+    filterable,
+    paginated,
+    pageSize: propPageSize,
+    cardColumns,
+    cardGap,
+    cardPadding,
+    selector = false, // Enable row selection with checkboxes
+    onSelectionChange = null, // Optional callback when selection changes: (selectedItems, selectedIds) => {}
+    selectedItems = null, // Optional controlled selection - array of selected item IDs or items
+    theme = null, // Optional theme override
+    width = null, // Width value (e.g., '100%', '200px', 'auto')
+    height = null, // Height value (e.g., '2rem', '32px', 'auto')
+    minWidth = null, // Minimum width (e.g., '100px', '5rem')
+    minHeight = null, // Minimum height (e.g., '2rem', '32px')
+    maxWidth = null, // Maximum width (e.g., '500px', '100%')
+    maxHeight = null, // Maximum height (e.g., '10rem', '200px')
+    marginTop = null, // Margin top: 'none', 'xs', 'sm', 'md', 'lg', 'xl' or custom value
+    marginBottom = null, // Margin bottom: 'none', 'xs', 'sm', 'md', 'lg', 'xl' or custom value
+    justifySelf = null, // CSS justify-self property: 'auto', 'start', 'end', 'center', 'stretch'
+    // Generic Genie integration props
+    genie = null, // Genie configuration object: { content, variant, trigger, position, etc. }
+    onGenieShow = null, // Callback when Genie is shown
+    onGenieHide = null, // Callback when Genie is hidden
+    ...props
+}, ref) => {
         const {currentTheme: globalTheme} = useTheme();
         const effectiveTheme = useEffectiveTheme();
 
@@ -883,6 +890,43 @@ export const Data = forwardRef(
             );
         }
 
+        const getDataStyle = () => {
+            const style = {};
+
+            // Sizing
+            if (width !== null) style.width = width;
+            if (height !== null) style.height = height;
+            if (minWidth !== null) style.minWidth = minWidth;
+            if (minHeight !== null) style.minHeight = minHeight;
+            if (maxWidth !== null) style.maxWidth = maxWidth;
+            if (maxHeight !== null) style.maxHeight = maxHeight;
+
+            // Margins
+            if (marginTop !== null) {
+                if (marginTop === 'none') {
+                    style.marginTop = '0';
+                } else if (['xs', 'sm', 'md', 'lg', 'xl'].includes(marginTop)) {
+                    style.marginTop = `var(--spacing-${marginTop})`;
+                } else {
+                    style.marginTop = marginTop;
+                }
+            }
+
+            if (marginBottom !== null) {
+                if (marginBottom === 'none') {
+                    style.marginBottom = '0';
+                } else if (['xs', 'sm', 'md', 'lg', 'xl'].includes(marginBottom)) {
+                    style.marginBottom = `var(--spacing-${marginBottom})`;
+                } else {
+                    style.marginBottom = marginBottom;
+                }
+            }
+
+            if (justifySelf !== null) style.justifySelf = justifySelf;
+
+            return style;
+        };
+
         const dataElement = (
             <Card
                 ref={ref}
@@ -891,7 +935,7 @@ export const Data = forwardRef(
                 data-theme-source={theme ? 'local' : 'inherited'}
                 backgroundColor="background"
                 layout="block"
-                style={{justifySelf}}
+                style={getDataStyle()}
                 {...props}
             >
                 {/* Data Header with Search, Filters, and Controls */}
@@ -1138,7 +1182,7 @@ export const Data = forwardRef(
 
                     {/* Right Side: Pagination Controls */}
                     <Container layout="flex" padding="none" justify="end" flexFill>
-                        <ButtonGroup size="small" spaced justifySelf="end">
+                        <ButtonGroup size="small" spaced>
                             <Button size="small" selected={false} onClick={() => setPage(1)} disabled={page === 1}><Icon
                                 name="FiChevronsLeft" size='xs'/></Button>
                             <Button size="small" selected={false} onClick={() => setPage(page - 1)}

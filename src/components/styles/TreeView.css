@@ -63,12 +63,22 @@
 }
 
 /* Size variants */
-.tree-view-small {
+.tree-view-xs {
+    font-size: var(--font-size-xs);
+}
+
+.tree-view-small,
+.tree-view-sm {
     font-size: var(--font-size-sm);
 }
 
-.tree-view-large {
+.tree-view-large,
+.tree-view-lg {
     font-size: var(--font-size-lg);
+}
+
+.tree-view-xl {
+    font-size: var(--font-size-xl);
 }
 
 /* Empty state */
@@ -77,6 +87,22 @@
     text-align: center;
     color: var(--text-muted);
     font-style: italic;
+}
+
+/* Search input container */
+.tree-view-search {
+    padding: var(--spacing-sm) var(--spacing-md) var(--spacing-xs);
+    border-bottom: 1px solid var(--border-color);
+    background-color: inherit;
+}
+
+.tree-view-search .input-container {
+    margin: 0;
+    width: 100%;
+}
+
+.tree-view-search .input-field-wrapper {
+    background-color: inherit;
 }
 
 /* ===== Tree Nodes ===== */
@@ -179,7 +205,9 @@
 }
 
 /* ===== Tree Hierarchy (Simple Indentation) ===== */
-.tree-node-level-0 .tree-node-content {
+.tree-view-large .tree-node-content,
+.tree-view-lg .tree-node-content,
+.tree-view-xl .tree-node-content {
     margin-left: 0;
 }
 
@@ -203,7 +231,6 @@
     margin-left: 120px;
 }
 
-/* Connecting lines (optional - shown when showConnectors=true) */
 .tree-view-connectors .tree-node::before {
     content: '';
     position: absolute;
@@ -262,7 +289,11 @@
 
 /* Disable connectors on small size to avoid icon interference */
 .tree-view-small.tree-view-connectors .tree-node::before,
-.tree-view-small.tree-view-connectors .tree-node::after {
+.tree-view-small.tree-view-connectors .tree-node::after,
+.tree-view-sm.tree-view-connectors .tree-node::before,
+.tree-view-sm.tree-view-connectors .tree-node::after,
+.tree-view-xs.tree-view-connectors .tree-node::before,
+.tree-view-xs.tree-view-connectors .tree-node::after {
     display: none;
 }
 
@@ -352,7 +383,9 @@
 }
 
 /* ===== Size Variants ===== */
-.tree-view-small .tree-node-content {
+.tree-view-small .tree-node-content,
+.tree-view-sm .tree-node-content,
+.tree-view-xs .tree-node-content {
     min-height: 1.75rem; /* Significantly smaller than default 2.5rem */
     padding: calc(var(--spacing-xs) * 0.5) var(--spacing-xs); /* Much tighter padding */
     gap: calc(var(--spacing-xs) * 0.75); /* Smaller gap between elements */
@@ -360,33 +393,47 @@
 }
 
 /* Much smaller icons and toggle for small variant */
-.tree-view-small .tree-node-toggle {
+.tree-view-small .tree-node-toggle,
+.tree-view-sm .tree-node-toggle,
+.tree-view-xs .tree-node-toggle {
     min-width: 1rem;
     min-height: 1rem;
 }
 
 /* Reduce indentation for small variant */
-.tree-view-small .tree-node-level-1 .tree-node-content {
+.tree-view-small .tree-node-level-1 .tree-node-content,
+.tree-view-sm .tree-node-level-1 .tree-node-content,
+.tree-view-xs .tree-node-level-1 .tree-node-content {
     margin-left: 16px;
 }
 
-.tree-view-small .tree-node-level-2 .tree-node-content {
+.tree-view-small .tree-node-level-2 .tree-node-content,
+.tree-view-sm .tree-node-level-2 .tree-node-content,
+.tree-view-xs .tree-node-level-2 .tree-node-content {
     margin-left: 32px;
 }
 
-.tree-view-small .tree-node-level-3 .tree-node-content {
+.tree-view-small .tree-node-level-3 .tree-node-content,
+.tree-view-sm .tree-node-level-3 .tree-node-content,
+.tree-view-xs .tree-node-level-3 .tree-node-content {
     margin-left: 48px;
 }
 
-.tree-view-small .tree-node-level-4 .tree-node-content {
+.tree-view-small .tree-node-level-4 .tree-node-content,
+.tree-view-sm .tree-node-level-4 .tree-node-content,
+.tree-view-xs .tree-node-level-4 .tree-node-content {
     margin-left: 64px;
 }
 
-.tree-view-small .tree-node-level-5 .tree-node-content {
+.tree-view-small .tree-node-level-5 .tree-node-content,
+.tree-view-sm .tree-node-level-5 .tree-node-content,
+.tree-view-xs .tree-node-level-5 .tree-node-content {
     margin-left: 80px;
 }
 
-.tree-view-large .tree-node-content {
+.tree-view-large .tree-node-content,
+.tree-view-lg .tree-node-content,
+.tree-view-xl .tree-node-content {
     min-height: 3.5rem; /* Significantly larger than default 2.5rem */
     padding: var(--spacing-md) var(--spacing-lg); /* Much more generous padding */
     gap: var(--spacing-sm); /* Larger gap between elements */
@@ -394,29 +441,41 @@
 }
 
 /* Larger toggle for large variant */
-.tree-view-large .tree-node-toggle {
+.tree-view-large .tree-node-toggle,
+.tree-view-lg .tree-node-toggle,
+.tree-view-xl .tree-node-toggle {
     min-width: 2rem;
     min-height: 2rem;
 }
 
 /* Increase indentation for large variant */
-.tree-view-large .tree-node-level-1 .tree-node-content {
+.tree-view-large .tree-node-level-1 .tree-node-content,
+.tree-view-lg .tree-node-level-1 .tree-node-content,
+.tree-view-xl .tree-node-level-1 .tree-node-content {
     margin-left: 32px;
 }
 
-.tree-view-large .tree-node-level-2 .tree-node-content {
+.tree-view-large .tree-node-level-2 .tree-node-content,
+.tree-view-lg .tree-node-level-2 .tree-node-content,
+.tree-view-xl .tree-node-level-2 .tree-node-content {
     margin-left: 64px;
 }
 
-.tree-view-large .tree-node-level-3 .tree-node-content {
+.tree-view-large .tree-node-level-3 .tree-node-content,
+.tree-view-lg .tree-node-level-3 .tree-node-content,
+.tree-view-xl .tree-node-level-3 .tree-node-content {
     margin-left: 96px;
 }
 
-.tree-view-large .tree-node-level-4 .tree-node-content {
+.tree-view-large .tree-node-level-4 .tree-node-content,
+.tree-view-lg .tree-node-level-4 .tree-node-content,
+.tree-view-xl .tree-node-level-4 .tree-node-content {
     margin-left: 128px;
 }
 
-.tree-view-large .tree-node-level-5 .tree-node-content {
+.tree-view-large .tree-node-level-5 .tree-node-content,
+.tree-view-lg .tree-node-level-5 .tree-node-content,
+.tree-view-xl .tree-node-level-5 .tree-node-content {
     margin-left: 160px;
 }
 
@@ -497,33 +556,33 @@
 /* ===== Responsive Design ===== */
 @media (max-width: 768px) {
     /* Only apply mobile styles to default size, not explicit size variants */
-    .tree-view:not(.tree-view-small):not(.tree-view-large) {
+    .tree-view:not(.tree-view-small):not(.tree-view-sm):not(.tree-view-xs):not(.tree-view-large):not(.tree-view-lg):not(.tree-view-xl) {
         font-size: var(--font-size-sm);
     }
 
-    .tree-view:not(.tree-view-small):not(.tree-view-large) .tree-node-content {
+    .tree-view:not(.tree-view-small):not(.tree-view-sm):not(.tree-view-xs):not(.tree-view-large):not(.tree-view-lg):not(.tree-view-xl) .tree-node-content {
         min-height: 2.25rem;
         padding: var(--spacing-xs);
     }
 
     /* Reduce indentation on mobile for default size only */
-    .tree-view:not(.tree-view-small):not(.tree-view-large) .tree-node-level-1 .tree-node-content {
+    .tree-view:not(.tree-view-small):not(.tree-view-sm):not(.tree-view-xs):not(.tree-view-large):not(.tree-view-lg):not(.tree-view-xl) .tree-node-level-1 .tree-node-content {
         margin-left: 16px;
     }
 
-    .tree-view:not(.tree-view-small):not(.tree-view-large) .tree-node-level-2 .tree-node-content {
+    .tree-view:not(.tree-view-small):not(.tree-view-sm):not(.tree-view-xs):not(.tree-view-large):not(.tree-view-lg):not(.tree-view-xl) .tree-node-level-2 .tree-node-content {
         margin-left: 32px;
     }
 
-    .tree-view:not(.tree-view-small):not(.tree-view-large) .tree-node-level-3 .tree-node-content {
+    .tree-view:not(.tree-view-small):not(.tree-view-sm):not(.tree-view-xs):not(.tree-view-large):not(.tree-view-lg):not(.tree-view-xl) .tree-node-level-3 .tree-node-content {
         margin-left: 48px;
     }
 
-    .tree-view:not(.tree-view-small):not(.tree-view-large) .tree-node-level-4 .tree-node-content {
+    .tree-view:not(.tree-view-small):not(.tree-view-sm):not(.tree-view-xs):not(.tree-view-large):not(.tree-view-lg):not(.tree-view-xl) .tree-node-level-4 .tree-node-content {
         margin-left: 64px;
     }
 
-    .tree-view:not(.tree-view-small):not(.tree-view-large) .tree-node-level-5 .tree-node-content {
+    .tree-view:not(.tree-view-small):not(.tree-view-sm):not(.tree-view-xs):not(.tree-view-large):not(.tree-view-lg):not(.tree-view-xl) .tree-node-level-5 .tree-node-content {
         margin-left: 80px;
     }
 }

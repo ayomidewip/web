@@ -33,13 +33,34 @@
 
 .themed-select:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--select-accent-color), transparent 80%);
+    border-color: var(--select-accent-color);
 }
 
 .themed-select:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+}
+
+/* Accent color configuration */
+.select-container,
+.select-input-container,
+.themed-select,
+.select-help-text,
+.select-label {
+    --select-accent-color: var(--primary-color);
+}
+
+.select-color-primary {
+    --select-accent-color: var(--primary-color);
+}
+
+.select-color-secondary {
+    --select-accent-color: var(--secondary-color);
+}
+
+.select-color-tertiary {
+    --select-accent-color: var(--tertiary-color);
 }
 
 .select-container {
@@ -59,7 +80,7 @@
     position: absolute;
     right: 0.5rem;
     pointer-events: none;
-    color: var(--text-muted);
+    color: var(--select-accent-color);
     transition: transform var(--transition-fast);
     display: flex;
     align-items: center;
@@ -99,8 +120,8 @@
 
 .select-option:hover,
 .select-option-focused {
-    background-color: var(--surface-accent-color, rgba(59, 130, 246, 0.1));
-    color: var(--primary-color);
+    background-color: color-mix(in srgb, var(--select-accent-color), transparent 85%);
+    color: var(--select-accent-color);
 }
 
 .select-option-disabled {
@@ -144,29 +165,65 @@
 }
 
 /* Size variants */
-.themed-select.select-small {
-    height: 2rem; /* 32px - small size */
-    margin: var(--spacing-xs) 0; /* Match Input component margins */
+.themed-select.select-xs {
+    height: 1.75rem; /* 28px - xs size */
+    margin: var(--spacing-xs) 0;
+    padding: 0 var(--spacing-xs);
+    padding-right: 1.75rem;
+    font-size: var(--font-size-xs);
+}
+
+.themed-select.select-sm {
+    height: 2rem; /* 32px - sm size */
+    margin: var(--spacing-xs) 0;
     padding: 0 var(--spacing-sm);
     padding-right: 2rem;
     font-size: var(--font-size-xs);
 }
 
-.themed-select.select-large {
-    height: 3rem; /* 48px - large size */
-    margin: var(--spacing-md) 0; /* Match Input component margins */
+.themed-select.select-md {
+    height: 2.5rem; /* 40px - md size */
+    margin: var(--spacing-sm) 0;
+    padding: 0 var(--spacing-md);
+    padding-right: 2.5rem;
+    font-size: var(--font-size-sm);
+}
+
+.themed-select.select-lg {
+    height: 3rem; /* 48px - lg size */
+    margin: var(--spacing-md) 0;
     padding: 0 var(--spacing-lg);
     padding-right: 3rem;
     font-size: var(--font-size-base);
 }
 
+.themed-select.select-xl {
+    height: 3.5rem; /* 56px - xl size */
+    margin: var(--spacing-md) 0;
+    padding: 0 var(--spacing-lg);
+    padding-right: 3.5rem;
+    font-size: var(--font-size-lg);
+}
+
 /* Size variants for multi-select */
-.themed-select.select-small.searchable-select {
+.themed-select.select-xs.searchable-select {
+    height: 1.75rem;
+}
+
+.themed-select.select-sm.searchable-select {
     height: 2rem;
 }
 
-.themed-select.select-large.searchable-select {
+.themed-select.select-md.searchable-select {
+    height: 2.5rem;
+}
+
+.themed-select.select-lg.searchable-select {
     height: 3rem;
+}
+
+.themed-select.select-xl.searchable-select {
+    height: 3.5rem;
 }
 
 /* Flex fill styles */
@@ -181,36 +238,42 @@
 /* Variant styles */
 .themed-select.themed-select-default {
     background-color: var(--surface-color, var(--background-color));
-    border: 1px solid var(--border-color);
+    border: 1px solid color-mix(in srgb, var(--select-accent-color), transparent 40%);
 }
 
 .themed-select.themed-select-outline {
     background-color: transparent;
-    border: 2px solid var(--border-color);
+    border: 2px solid var(--select-accent-color);
 }
 
 .themed-select.themed-select-filled {
-    background-color: var(--surface-accent-color, rgba(0, 0, 0, 0.04));
+    background-color: color-mix(in srgb, var(--select-accent-color), transparent 85%);
     border: 2px solid transparent;
 }
 
 .themed-select.themed-select-underline {
     background-color: transparent;
     border: none;
-    border-bottom: 2px solid var(--border-color);
+    border-bottom: 2px solid color-mix(in srgb, var(--select-accent-color), transparent 35%);
     border-radius: 0;
     padding-left: var(--spacing-sm);
     padding-right: 2rem;
+    background-image: linear-gradient(var(--select-accent-color), var(--select-accent-color));
+    background-repeat: no-repeat;
+    background-position: left bottom;
+    background-size: 0% 2px;
+    transition: background-size var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
 }
 
-.themed-select.themed-select-floating {
-    background-color: var(--surface-color, var(--background-color));
-    border: 1px solid var(--border-color);
+.themed-select.themed-select-underline.select-focused {
+    border-bottom-color: var(--select-accent-color);
+    background-size: 100% 2px;
+    box-shadow: none;
 }
 
 /* State styles */
 .themed-select.select-focused {
-    border-color: var(--primary-color);
+    border-color: var(--select-accent-color);
 }
 
 .themed-select.select-error {
@@ -243,16 +306,6 @@
     border-color: var(--warning-color) !important;
 }
 
-.themed-select.select-tertiary {
-    border-color: var(--tertiary-color) !important;
-    background-color: var(--tertiary-background, rgba(139, 92, 246, 0.05)) !important;
-}
-
-.themed-select.select-tertiary:focus {
-    box-shadow: 0 0 0 3px var(--tertiary-focus-shadow, rgba(139, 92, 246, 0.15)) !important;
-    border-color: var(--tertiary-color) !important;
-}
-
 .themed-select.select-disabled {
     opacity: 0.6;
     cursor: not-allowed;
@@ -270,12 +323,11 @@
 /* Help text styles */
 .select-help-text {
     display: block;
-    margin-top: var(--spacing-xs);
+    margin: 0;
     font-size: var(--font-size-xs);
     font-family: var(--font-family, var(--font-family-normal));
     line-height: var(--line-height-normal);
-    padding: var(--spacing-xs) var(--spacing-sm);
-    border-radius: var(--input-radius, var(--radius));
+    padding: 0;
     background-color: transparent;
     color: var(--text-muted);
 }
@@ -295,20 +347,30 @@
     font-weight: var(--font-weight-medium);
 }
 
-.select-help-text.select-help-text-tertiary {
-    color: var(--tertiary-color) !important;
-    font-weight: var(--font-weight-medium);
-}
-
 /* Select help text size variants */
-.select-help-text.help-text-small {
+.select-help-text.help-text-xs {
     font-size: 0.625rem;
-    padding: var(--spacing-xs) var(--spacing-sm);
+    padding: 0;
 }
 
-.select-help-text.help-text-large {
+.select-help-text.help-text-sm {
+    font-size: 0.625rem;
+    padding: 0;
+}
+
+.select-help-text.help-text-md {
+    font-size: var(--font-size-xs);
+    padding: 0;
+}
+
+.select-help-text.help-text-lg {
     font-size: var(--font-size-sm);
-    padding: var(--spacing-sm) var(--spacing-md);
+    padding: 0;
+}
+
+.select-help-text.help-text-xl {
+    font-size: var(--font-size-sm);
+    padding: 0;
 }
 
 .select-required {
@@ -332,7 +394,8 @@
     }
 
     /* Small size mobile adjustments */
-    .select-input-container .themed-select.select-small ~ .select-badges-container {
+    .select-input-container .themed-select.select-xs ~ .select-badges-container,
+    .select-input-container .themed-select.select-sm ~ .select-badges-container {
         padding: 2px 0;
         left: var(--spacing-xs);
         right: calc(2rem + var(--spacing-xs));
@@ -340,7 +403,8 @@
     }
 
     /* Large size mobile adjustments */
-    .select-input-container .themed-select.select-large ~ .select-badges-container {
+    .select-input-container .themed-select.select-lg ~ .select-badges-container,
+    .select-input-container .themed-select.select-xl ~ .select-badges-container {
         padding: var(--spacing-xs) 0;
         left: var(--spacing-md);
         right: calc(3rem + var(--spacing-md));
@@ -396,9 +460,20 @@
     z-index: 1; /* Above input field but below dropdown */
 }
 
-/* Small size badge container positioning */
-.select-input-container .themed-select.select-small ~ .select-badges-container,
-.select-input-container.has-badges .themed-select.select-small ~ .select-badges-container {
+/* XS size badge container positioning */
+.select-input-container .themed-select.select-xs ~ .select-badges-container,
+.select-input-container.has-badges .themed-select.select-xs ~ .select-badges-container {
+    padding: calc(var(--spacing-xs) / 2) 0;
+    margin: var(--spacing-xs) 0;
+    top: calc(var(--spacing-xs) / 2);
+    left: var(--spacing-xs);
+    right: calc(1.75rem + var(--spacing-xs));
+    min-height: 1.125rem;
+}
+
+/* SM size badge container positioning */
+.select-input-container .themed-select.select-sm ~ .select-badges-container,
+.select-input-container.has-badges .themed-select.select-sm ~ .select-badges-container {
     padding: calc(var(--spacing-xs) / 2) 0;
     margin: var(--spacing-xs) 0;
     top: calc(var(--spacing-xs) / 2);
@@ -407,14 +482,36 @@
     min-height: 1.25rem;
 }
 
-/* Large size badge container positioning */
-.select-input-container .themed-select.select-large ~ .select-badges-container,
-.select-input-container.has-badges .themed-select.select-large ~ .select-badges-container {
+/* MD size badge container positioning */
+.select-input-container .themed-select.select-md ~ .select-badges-container,
+.select-input-container.has-badges .themed-select.select-md ~ .select-badges-container {
+    padding: var(--spacing-xs) 0;
+    margin: var(--spacing-sm) 0;
+    top: var(--spacing-xs);
+    left: var(--spacing-md);
+    right: calc(2.5rem + var(--spacing-md));
+    min-height: 1.5rem;
+}
+
+/* LG size badge container positioning */
+.select-input-container .themed-select.select-lg ~ .select-badges-container,
+.select-input-container.has-badges .themed-select.select-lg ~ .select-badges-container {
     padding: var(--spacing-sm) 0;
     top: var(--spacing-sm);
     left: var(--spacing-lg);
     right: calc(3rem + var(--spacing-lg));
     min-height: 1.75rem;
+    gap: var(--spacing-sm);
+}
+
+/* XL size badge container positioning */
+.select-input-container .themed-select.select-xl ~ .select-badges-container,
+.select-input-container.has-badges .themed-select.select-xl ~ .select-badges-container {
+    padding: var(--spacing-sm) 0;
+    top: var(--spacing-sm);
+    left: var(--spacing-lg);
+    right: calc(3.5rem + var(--spacing-lg));
+    min-height: 2rem;
     gap: var(--spacing-sm);
 }
 
@@ -426,12 +523,14 @@
 }
 
 /* Badge size variants based on select size */
-.select-input-container .themed-select.select-small ~ .select-badges-container .select-badge {
-    font-size: 0.625rem; /* Extra small for small select */
+.select-input-container .themed-select.select-xs ~ .select-badges-container .select-badge,
+.select-input-container .themed-select.select-sm ~ .select-badges-container .select-badge {
+    font-size: 0.625rem; /* Extra small for xs/sm select */
 }
 
-.select-input-container .themed-select.select-large ~ .select-badges-container .select-badge {
-    font-size: var(--font-size-sm); /* Larger for large select */
+.select-input-container .themed-select.select-lg ~ .select-badges-container .select-badge,
+.select-input-container .themed-select.select-xl ~ .select-badges-container .select-badge {
+    font-size: var(--font-size-sm); /* Larger for lg/xl select */
     gap: var(--spacing-sm);
 }
 

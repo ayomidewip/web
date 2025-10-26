@@ -8,12 +8,14 @@ import { useEffectiveTheme, useTheme } from '../contexts/ThemeContext';
  */
 export const CircularProgress = ({
     className = '',
-    size = 'default', // 'small', 'sm', 'default', 'large', 'lg', 'xl'
-    variant = 'primary', // 'primary', 'secondary', 'tertiary', 'success', 'warning', 'error'
+    size = 'md', // 'xs', 'sm', 'md', 'lg', 'xl'
+    color = 'primary', // 'primary', 'secondary', 'tertiary', 'success', 'warning', 'error'
     strokeWidth = null, // Override default stroke width
     speed = 'default', // 'slow', 'default', 'fast'
     theme = null, // Optional theme override
     justifySelf = null, // CSS justify-self property
+    marginTop = null, // Margin top: 'none', 'xs', 'sm', 'md', 'lg', 'xl' or custom value
+    marginBottom = null, // Margin bottom: 'none', 'xs', 'sm', 'md', 'lg', 'xl' or custom value
     ...props
 }) => {
     const {currentTheme: globalTheme} = useTheme();
@@ -25,16 +27,17 @@ export const CircularProgress = ({
     // Helper functions for classes
     const getSizeClass = () => {
         switch (size) {
-            case 'small':
+            case 'xs':
+                return 'circular-progress-xs';
             case 'sm':
-                return 'circular-progress-small';
-            case 'large':
+                return 'circular-progress-sm';
             case 'lg':
-                return 'circular-progress-large';
+                return 'circular-progress-lg';
             case 'xl':
                 return 'circular-progress-xl';
+            case 'md':
             default:
-                return 'circular-progress-default';
+                return 'circular-progress-md';
         }
     };
 
@@ -49,20 +52,50 @@ export const CircularProgress = ({
         }
     };
 
-    const getVariantClass = () => `circular-progress-${variant}`;
+    const getColorClass = () => `circular-progress-${color}`;
 
     const getJustifySelfClass = () => {
         if (!justifySelf) return '';
         return `justify-self-${justifySelf}`;
     };
 
+    // Helper function for margin styles
+    const getMarginStyle = () => {
+        const style = {};
+
+        if (marginTop !== null) {
+            if (marginTop === 'none') {
+                style.marginTop = '0';
+            } else if (['xs', 'sm', 'md', 'lg', 'xl'].includes(marginTop)) {
+                style.marginTop = `var(--spacing-${marginTop})`;
+            } else {
+                style.marginTop = marginTop;
+            }
+        }
+
+        if (marginBottom !== null) {
+            if (marginBottom === 'none') {
+                style.marginBottom = '0';
+            } else if (['xs', 'sm', 'md', 'lg', 'xl'].includes(marginBottom)) {
+                style.marginBottom = `var(--spacing-${marginBottom})`;
+            } else {
+                style.marginBottom = marginBottom;
+            }
+        }
+
+        if (justifySelf !== null) style.justifySelf = justifySelf;
+
+        return style;
+    };
+
     // Combine all classes
     const circularProgressClasses = [
         'circular-progress',
         'themed-circular-progress',
+        `theme-${progressTheme}`,
         getSizeClass(),
         getSpeedClass(),
-        getVariantClass(),
+        getColorClass(),
         getJustifySelfClass(),
         className
     ].filter(Boolean).join(' ');
@@ -70,16 +103,17 @@ export const CircularProgress = ({
     // Size-based dimensions, stroke widths, and dash lengths
     const getSizeDimensions = () => {
         switch (size) {
-            case 'small':
+            case 'xs':
+                return {size: 20, defaultStroke: 2, dashRatio: 0.15};
             case 'sm':
-                return {size: 24, defaultStroke: 3, dashRatio: 0.15}; // Shorter dash for small
-            case 'large':
+                return {size: 24, defaultStroke: 3, dashRatio: 0.15};
             case 'lg':
-                return {size: 64, defaultStroke: 6, dashRatio: 0.35}; // Longer dash for large
+                return {size: 64, defaultStroke: 6, dashRatio: 0.35};
             case 'xl':
-                return {size: 80, defaultStroke: 8, dashRatio: 0.4}; // Longest dash for xl
+                return {size: 80, defaultStroke: 8, dashRatio: 0.4};
+            case 'md':
             default:
-                return {size: 40, defaultStroke: 4, dashRatio: 0.25}; // Default dash length
+                return {size: 40, defaultStroke: 4, dashRatio: 0.25};
         }
     };
 
@@ -96,6 +130,8 @@ export const CircularProgress = ({
         <div
             className={circularProgressClasses}
             data-theme={progressTheme}
+            data-theme-source={theme ? 'local' : 'inherited'}
+            style={getMarginStyle()}
             {...props}
         >
             <svg

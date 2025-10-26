@@ -1,9 +1,9 @@
 /* Button component structural styles */
 .button.themed-button {
     display: flex;
-    height: 2.5rem; /* 40px - default size */
+    height: 2.5rem; /* 40px - default md size */
     margin: var(--spacing-sm) 0;
-    padding: 0 var(--spacing-md); /* Reduced from lg to md for more compact buttons */
+    padding: 0 var(--spacing-md);
     border: 1px solid var(--primary-color);
     border-radius: var(--button-radius, var(--border-radius-md));
     font-size: var(--font-size-sm);
@@ -15,8 +15,8 @@
     user-select: none;
     white-space: nowrap;
     /* Normal state: surface color background, primary color text, primary color border */
-    background-color: var(--surface-color) !important;
-    color: var(--primary-color) !important;
+    background-color: var(--surface-color);
+    color: var(--primary-color);
     /* Required for absolute positioning of floating cards */
     position: relative;
     /* Prevent stacking context issues */
@@ -116,36 +116,273 @@
 
 /* Button variant: border-shadow */
 .button.themed-button.themed-button-border-shadow {
-    /* Normal state: surface color background, primary color text, no border, bottom and left shadow */
+    /* Normal state: surface color background, color from color prop, no border, bottom and left shadow */
     background-color: var(--surface-color) !important;
-    color: var(--primary-color) !important;
+    color: var(--button-variant-color, var(--primary-color)) !important;
     border: none !important;
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.15);
 }
 
 .button.themed-button.themed-button-border-shadow:hover,
 .button.themed-button.themed-button-border-shadow.selected {
-    /* Hover + Selected states: primary color background, contrast text, stronger shadow */
-    background-color: var(--primary-color) !important;
+    /* Hover + Selected states: color background, contrast text, stronger shadow */
+    background-color: var(--button-variant-color, var(--primary-color)) !important;
     color: var(--text-contrast-color) !important;
     border: none !important;
     box-shadow: 0 6px 8px var(--shadow-color-hover);
     transform: translateY(-1px);
 }
 
-/* Size variations */
-.button.themed-button.small {
-    height: 2rem; /* 32px - small size */
+/* Button variant: ghost */
+.button.themed-button.themed-button-variant-ghost {
+    background-color: transparent !important;
+    border-color: transparent !important;
+    color: var(--button-variant-color, var(--primary-color)) !important;
+    box-shadow: none !important;
+}
+
+.button.themed-button.themed-button-variant-ghost:hover,
+.button.themed-button.themed-button-variant-ghost.selected {
+    background-color: color-mix(in srgb, var(--button-variant-color, var(--primary-color)) 14%, transparent) !important;
+    border-color: var(--button-variant-color, var(--primary-color)) !important;
+    color: var(--button-variant-color, var(--primary-color)) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px var(--shadow-color-hover);
+}
+
+/* Button variant: solid */
+.button.themed-button.themed-button-variant-solid {
+    background-color: var(--button-variant-color, var(--primary-color)) !important;
+    border-color: var(--button-variant-color, var(--primary-color)) !important;
+    color: var(--text-contrast-color) !important;
+    box-shadow: 0 4px 6px var(--shadow-color-hover);
+}
+
+.button.themed-button.themed-button-variant-solid:hover,
+.button.themed-button.themed-button-variant-solid.selected {
+    background-color: color-mix(in srgb, var(--button-variant-color, var(--primary-color)) 88%, black 12%) !important;
+    border-color: color-mix(in srgb, var(--button-variant-color, var(--primary-color)) 88%, black 12%) !important;
+    color: var(--text-contrast-color) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 8px var(--shadow-color-hover);
+}
+
+/* Size variations - xs/sm/md/lg/xl scale */
+.button.themed-button.xs {
+    height: 1.75rem; /* 28px - extra small */
+    margin: calc(var(--spacing-xs) * 0.5) 0;
+    padding: 0 var(--spacing-xs);
+    font-size: 0.75rem;
+}
+
+.button.themed-button.sm {
+    height: 2rem; /* 32px - small */
     margin: var(--spacing-xs) 0;
-    padding: 0 var(--spacing-sm); /* Reduced from md to sm for small buttons */
+    padding: 0 var(--spacing-sm);
     font-size: var(--font-size-xs);
 }
 
-.button.themed-button.large {
-    height: 3rem; /* 48px - large size */
-    margin: var(--spacing-md) 0; /* Reduced from xl to lg for large buttons */
-    padding: 0 var(--spacing-lg); /* Reduced from xl to lg for large buttons */
+.button.themed-button.md {
+    height: 2.5rem; /* 40px - medium (default) */
+    margin: var(--spacing-sm) 0;
+    padding: 0 var(--spacing-md);
+    font-size: var(--font-size-sm);
+}
+
+.button.themed-button.lg {
+    height: 3rem; /* 48px - large */
+    margin: var(--spacing-md) 0;
+    padding: 0 var(--spacing-lg);
     font-size: var(--font-size-base);
+}
+
+.button.themed-button.xl {
+    height: 3.5rem; /* 56px - extra large */
+    margin: var(--spacing-md) 0;
+    padding: 0 var(--spacing-xl);
+    font-size: var(--font-size-lg);
+}
+
+/* Success variant */
+.button.themed-button.themed-button-success {
+    background-color: var(--surface-color) !important;
+    color: var(--success-color) !important;
+    border-color: var(--success-color) !important;
+}
+
+.button.themed-button.themed-button-success:hover,
+.button.themed-button.themed-button-success.selected {
+    background-color: var(--success-color) !important;
+    color: var(--text-contrast-color) !important;
+    border-color: var(--success-color) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px var(--shadow-color-hover);
+}
+
+/* Success with ghost variant */
+.button.themed-button.themed-button-success.themed-button-variant-ghost {
+    background-color: transparent !important;
+    border-color: transparent !important;
+    color: var(--success-color) !important;
+    box-shadow: none !important;
+}
+
+.button.themed-button.themed-button-success.themed-button-variant-ghost:hover,
+.button.themed-button.themed-button-success.themed-button-variant-ghost.selected {
+    background-color: color-mix(in srgb, var(--success-color) 14%, transparent) !important;
+    border-color: var(--success-color) !important;
+    color: var(--success-color) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px var(--shadow-color-hover);
+}
+
+/* Success with solid variant */
+.button.themed-button.themed-button-success.themed-button-variant-solid {
+    background-color: var(--success-color) !important;
+    border-color: var(--success-color) !important;
+    color: var(--text-contrast-color) !important;
+    box-shadow: 0 4px 6px var(--shadow-color-hover);
+}
+
+.button.themed-button.themed-button-success.themed-button-variant-solid:hover,
+.button.themed-button.themed-button-success.themed-button-variant-solid.selected {
+    background-color: color-mix(in srgb, var(--success-color) 88%, black 12%) !important;
+    border-color: color-mix(in srgb, var(--success-color) 88%, black 12%) !important;
+    color: var(--text-contrast-color) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 8px var(--shadow-color-hover);
+}
+
+/* Warning variant */
+.button.themed-button.themed-button-warning {
+    background-color: var(--surface-color) !important;
+    color: var(--warning-color) !important;
+    border-color: var(--warning-color) !important;
+}
+
+.button.themed-button.themed-button-warning:hover,
+.button.themed-button.themed-button-warning.selected {
+    background-color: var(--warning-color) !important;
+    color: var(--text-contrast-color) !important;
+    border-color: var(--warning-color) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px var(--shadow-color-hover);
+}
+
+/* Warning with ghost variant */
+.button.themed-button.themed-button-warning.themed-button-variant-ghost {
+    background-color: transparent !important;
+    border-color: transparent !important;
+    color: var(--warning-color) !important;
+    box-shadow: none !important;
+}
+
+.button.themed-button.themed-button-warning.themed-button-variant-ghost:hover,
+.button.themed-button.themed-button-warning.themed-button-variant-ghost.selected {
+    background-color: color-mix(in srgb, var(--warning-color) 14%, transparent) !important;
+    border-color: var(--warning-color) !important;
+    color: var(--warning-color) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px var(--shadow-color-hover);
+}
+
+/* Warning with solid variant */
+.button.themed-button.themed-button-warning.themed-button-variant-solid {
+    background-color: var(--warning-color) !important;
+    border-color: var(--warning-color) !important;
+    color: var(--text-contrast-color) !important;
+    box-shadow: 0 4px 6px var(--shadow-color-hover);
+}
+
+.button.themed-button.themed-button-warning.themed-button-variant-solid:hover,
+.button.themed-button.themed-button-warning.themed-button-variant-solid.selected {
+    background-color: color-mix(in srgb, var(--warning-color) 88%, black 12%) !important;
+    border-color: color-mix(in srgb, var(--warning-color) 88%, black 12%) !important;
+    color: var(--text-contrast-color) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 8px var(--shadow-color-hover);
+}
+
+/* Error variant */
+.button.themed-button.themed-button-error {
+    background-color: var(--surface-color) !important;
+    color: var(--error-color) !important;
+    border-color: var(--error-color) !important;
+}
+
+.button.themed-button.themed-button-error:hover,
+.button.themed-button.themed-button-error.selected {
+    background-color: var(--error-color) !important;
+    color: var(--text-contrast-color) !important;
+    border-color: var(--error-color) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px var(--shadow-color-hover);
+}
+
+/* Error with ghost variant */
+.button.themed-button.themed-button-error.themed-button-variant-ghost {
+    background-color: transparent !important;
+    border-color: transparent !important;
+    color: var(--error-color) !important;
+    box-shadow: none !important;
+}
+
+.button.themed-button.themed-button-error.themed-button-variant-ghost:hover,
+.button.themed-button.themed-button-error.themed-button-variant-ghost.selected {
+    background-color: color-mix(in srgb, var(--error-color) 14%, transparent) !important;
+    border-color: var(--error-color) !important;
+    color: var(--error-color) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px var(--shadow-color-hover);
+}
+
+/* Error with solid variant */
+.button.themed-button.themed-button-error.themed-button-variant-solid {
+    background-color: var(--error-color) !important;
+    border-color: var(--error-color) !important;
+    color: var(--text-contrast-color) !important;
+    box-shadow: 0 4px 6px var(--shadow-color-hover);
+}
+
+.button.themed-button.themed-button-error.themed-button-variant-solid:hover,
+.button.themed-button.themed-button-error.themed-button-variant-solid.selected {
+    background-color: color-mix(in srgb, var(--error-color) 88%, black 12%) !important;
+    border-color: color-mix(in srgb, var(--error-color) 88%, black 12%) !important;
+    color: var(--text-contrast-color) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 8px var(--shadow-color-hover);
+}
+
+/* Warning variant */
+.button.themed-button.themed-button-warning {
+    background-color: var(--surface-color) !important;
+    color: var(--warning-color) !important;
+    border-color: var(--warning-color) !important;
+}
+
+.button.themed-button.themed-button-warning:hover,
+.button.themed-button.themed-button-warning.selected {
+    background-color: var(--warning-color) !important;
+    color: var(--text-contrast-color) !important;
+    border-color: var(--warning-color) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px var(--shadow-color-hover);
+}
+
+/* Error variant */
+.button.themed-button.themed-button-error {
+    background-color: var(--surface-color) !important;
+    color: var(--error-color) !important;
+    border-color: var(--error-color) !important;
+}
+
+.button.themed-button.themed-button-error:hover,
+.button.themed-button.themed-button-error.selected {
+    background-color: var(--error-color) !important;
+    color: var(--text-contrast-color) !important;
+    border-color: var(--error-color) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px var(--shadow-color-hover);
 }
 
 /* JustifySelf utility classes for Button components */

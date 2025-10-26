@@ -4,6 +4,11 @@ import Icon from './Icon';
 import Badge from './Badge';
 import './styles/Select.css';
 
+const SELECT_VALIDATION_STATES = new Set(['default', 'success', 'warning', 'error']);
+const SELECT_COLOR_OPTIONS = ['primary', 'secondary', 'tertiary'];
+
+const sanitizeValidationState = (state) => (SELECT_VALIDATION_STATES.has(state) ? state : 'default');
+
 /**
  * Select - Enhanced select dropdown component with search functionality
  * Searchable dropdown with filtering capabilities
@@ -13,8 +18,9 @@ import './styles/Select.css';
  */
 export const Select = ({
     className = '',
-    variant = 'default', // 'default', 'outline', 'filled', 'underline', 'floating'
-    size = 'default', // 'small', 'default', 'large'
+    variant = 'default', // 'default', 'outline', 'filled', 'underline'
+    color = 'primary', // 'primary', 'secondary', 'tertiary'
+    size = 'md', // 'xs', 'sm', 'md', 'lg', 'xl'
     multiSelect = false, // Enable multi-select mode with badges
     options = [],
     value,
@@ -24,8 +30,13 @@ export const Select = ({
     disabled = false,
     required = false,
     helpText = '',
-    state = 'default', // 'default', 'success', 'warning', 'tertiary', 'error'
+    validationState = 'default', // 'default', 'success', 'warning', 'error'
     width = null, // Width value (e.g., '100%', '200px', '10rem')
+    height = null, // Height value
+    minWidth = null, // Minimum width value
+    minHeight = null, // Minimum height value
+    maxWidth = null, // Maximum width value
+    maxHeight = null, // Maximum height value
     theme = null, // Optional theme override for this select
     justifySelf = null, // CSS justify-self property: 'auto', 'start', 'end', 'center', 'stretch'
     marginTop = null, // 'none', 'xs', 'sm', 'md', 'lg', 'xl' or custom value
@@ -43,6 +54,10 @@ export const Select = ({
 
     // Badge color variants for multi-select - only available variants
     const badgeVariants = ['primary', 'secondary', 'tertiary', 'success', 'warning', 'error', 'default'];
+
+    const effectiveColor = SELECT_COLOR_OPTIONS.includes(color) ? color : 'primary';
+    const colorClass = `select-color-${effectiveColor}`;
+    const sanitizedValidationState = sanitizeValidationState(validationState);
 
     // Function to get badge color based on position in selected values array
     const getBadgeVariant = (optionValue, position = null) => {
@@ -84,7 +99,7 @@ export const Select = ({
     const [isOpen, setIsOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [focusedIndex, setFocusedIndex] = useState(-1);
-    const [validationState, setValidationState] = useState({isValid: true, message: ''});
+    const [internalValidation, setInternalValidation] = useState({isValid: true, message: ''});
     const [isTouched, setIsTouched] = useState(false);
     const [badgeContainerHeight, setBadgeContainerHeight] = useState(0);
 
@@ -285,7 +300,7 @@ export const Select = ({
         const shouldValidate = required || validate;
         if (isTouched && shouldValidate) {
             const validation = performValidation(multiSelect ? normalizedValue : value);
-            setValidationState(validation);
+            setInternalValidation(validation);
 
             // Call validation callback if provided
             if (onValidation) {
@@ -297,17 +312,17 @@ export const Select = ({
     // Get effective help text - validation message or default helpText
     const getEffectiveHelpText = () => {
         const shouldValidate = required || validate;
-        if (shouldValidate && isTouched && validationState.message) {
-            return validationState.message;
+        if (shouldValidate && isTouched && internalValidation.message) {
+            return internalValidation.message;
         }
         return helpText;
     };
 
     // Get effective state for styling - validation state or prop state
-    const getEffectiveState = () => {
+    const getEffectiveValidationState = () => {
         const shouldValidate = required || validate;
         if (shouldValidate && isTouched) {
-            if (!validationState.isValid) return 'error';
+            if (!internalValidation.isValid) return 'error';
 
             // Check if we have a valid selection
             if (multiSelect) {
@@ -316,7 +331,7 @@ export const Select = ({
                 return value ? 'success' : 'default';
             }
         }
-        return state;
+        return sanitizedValidationState;
     };
 
     const handleFocus = (e) => {
@@ -338,20 +353,27 @@ export const Select = ({
         return `themed-select-${variant}`;
     };
 
+    const getColorClass = () => colorClass;
+
     const getSizeClass = () => {
         switch (size) {
-            case 'small':
-                return 'select-small';
-            case 'large':
-                return 'select-large';
+            case 'xs':
+                return 'select-xs';
+            case 'sm':
+                return 'select-sm';
+            case 'lg':
+                return 'select-lg';
+            case 'xl':
+                return 'select-xl';
+            case 'md':
             default:
-                return '';
+                return 'select-md';
         }
     };
 
-    const getStateClass = () => {
-        if (state === 'default') return '';
-        return `select-${state}`;
+    const getValidationStateClass = () => {
+    if (sanitizedValidationState === 'default') return '';
+    return `select-${sanitizedValidationState}`;
     };
 
     const getFocusClass = () => {
@@ -368,11 +390,11 @@ export const Select = ({
         // Add size class for help text
         const sizeClass = getSizeClass().replace('select-', 'help-text-');
 
-        const effectiveState = getEffectiveState();
-        if (effectiveState === 'default') {
-            return `${baseClass} ${sizeClass}`.trim();
+        const effectiveValidationState = getEffectiveValidationState();
+        if (effectiveValidationState === 'default') {
+            return `${baseClass} ${sizeClass} ${getColorClass()}`.trim();
         }
-        return `${baseClass} select-help-text-${effectiveState} ${sizeClass}`.trim();
+        return `${baseClass} select-help-text-${effectiveValidationState} ${sizeClass} ${getColorClass()}`.trim();
     };
 
     const getJustifySelfClass = () => {
@@ -385,22 +407,32 @@ export const Select = ({
     // Helper function to get badge size based on select size
     const getBadgeSize = () => {
         switch (size) {
-            case 'small':
-                return 'small';
-            case 'large':
-                return 'default'; // Use default badge size for large select
+            case 'xs':
+                return 'xs';
+            case 'sm':
+                return 'sm';
+            case 'lg':
+                return 'md';
+            case 'xl':
+                return 'lg';
+            case 'md':
             default:
-                return 'small'; // Use small badge size for default select
+                return 'sm';
         }
     };
 
     // Helper function to get icon size for badges based on select size
     const getBadgeIconSize = () => {
         switch (size) {
-            case 'small':
+            case 'xs':
                 return 'xs';
-            case 'large':
+            case 'sm':
+                return 'xs';
+            case 'lg':
                 return 'sm';
+            case 'xl':
+                return 'md';
+            case 'md':
             default:
                 return 'xs';
         }
@@ -409,10 +441,15 @@ export const Select = ({
     // Helper function to get check icon size based on select size
     const getCheckIconSize = () => {
         switch (size) {
-            case 'small':
+            case 'xs':
                 return 'xs';
-            case 'large':
+            case 'sm':
+                return 'xs';
+            case 'lg':
                 return 'md';
+            case 'xl':
+                return 'lg';
+            case 'md':
             default:
                 return 'sm';
         }
@@ -421,18 +458,53 @@ export const Select = ({
     // Helper function to get dropdown arrow icon size based on select size
     const getDropdownArrowSize = () => {
         switch (size) {
-            case 'small':
+            case 'xs':
+                return 'xs';
+            case 'sm':
                 return 'sm';
-            case 'large':
+            case 'lg':
                 return 'lg';
+            case 'xl':
+                return 'xl';
+            case 'md':
             default:
                 return 'md';
         }
     };
 
-    // Helper function to get margin styles
-    const getMarginStyle = () => {
+    // Helper function to get margin and sizing styles
+    const getSelectStyle = () => {
         const style = {};
+
+        // Handle width
+        if (width !== null) {
+            style.width = width;
+        }
+
+        // Handle height
+        if (height !== null) {
+            style.height = height;
+        }
+
+        // Handle minWidth
+        if (minWidth !== null) {
+            style.minWidth = minWidth;
+        }
+
+        // Handle minHeight
+        if (minHeight !== null) {
+            style.minHeight = minHeight;
+        }
+
+        // Handle maxWidth
+        if (maxWidth !== null) {
+            style.maxWidth = maxWidth;
+        }
+
+        // Handle maxHeight
+        if (maxHeight !== null) {
+            style.maxHeight = maxHeight;
+        }
 
         // Only apply margins if explicitly provided
         if (marginTop !== null) {
@@ -465,7 +537,7 @@ export const Select = ({
 
         // Only add the minimum padding needed to account for the badge container height
         // Let CSS handle all the standard spacing - we just adjust for the dynamic badges
-        const baseHeight = size === 'small' ? 32 : size === 'large' ? 48 : 40;
+        const baseHeight = size === 'xs' ? 28 : size === 'sm' ? 32 : size === 'lg' ? 48 : size === 'xl' ? 56 : 40;
 
         return {
             paddingTop: `${badgeContainerHeight}px`,
@@ -479,16 +551,17 @@ export const Select = ({
         `theme-${selectTheme}`,
         getVariantClass(),
         getSizeClass(),
-        getStateClass(),
+        getValidationStateClass(),
         getFocusClass(),
         getDisabledClass(),
+        getColorClass(),
         'searchable-select',
         className
     ].filter(Boolean).join(' ');
 
     // Generate ARIA attributes for accessibility
     const ariaAttributes = {
-        'aria-invalid': (validate && isTouched && !validationState.isValid) || getEffectiveState() === 'error' ? 'true' : 'false',
+        'aria-invalid': (validate && isTouched && !internalValidation.isValid) || getEffectiveValidationState() === 'error' ? 'true' : 'false',
         'aria-required': required ? 'true' : 'false',
         'aria-describedby': (getEffectiveHelpText() || helpText) ? `${selectId}-help` : undefined,
         'aria-expanded': isOpen,
@@ -499,13 +572,13 @@ export const Select = ({
     return (
         <div
             ref={containerRef}
-            className={`select-container ${getJustifySelfClass()} ${isOpen ? 'select-open' : ''}`}
-            style={{justifySelf, width, ...getMarginStyle()}}
+            className={`select-container ${getColorClass()} ${getJustifySelfClass()} ${isOpen ? 'select-open' : ''}`}
+            style={{justifySelf, ...getSelectStyle()}}
         >
             {label && (
                 <label
                     htmlFor={selectId}
-                    className={`select-label themed-label theme-${selectTheme}`}
+                    className={`select-label themed-label theme-${selectTheme} ${getColorClass()}`}
                     data-theme={selectTheme}
                 >
                     {label}
@@ -525,7 +598,7 @@ export const Select = ({
                             return (
                                 <Badge
                                     key={selectedValue}
-                                    variant={badgeVariant}
+                                    color={badgeVariant}
                                     size={getBadgeSize()}
                                     className="select-badge"
                                     theme={selectTheme}
@@ -534,6 +607,7 @@ export const Select = ({
                                     <Icon
                                         name="FiX"
                                         size={getBadgeIconSize()}
+                                        color="error"
                                         className="select-badge-remove"
                                         onClick={(e) => handleBadgeRemove(selectedValue, e)}
                                     />
@@ -566,7 +640,7 @@ export const Select = ({
                 />
 
                 <div className={`select-dropdown-arrow ${isOpen ? 'select-dropdown-arrow-open' : ''}`}>
-                    <Icon name="FiChevronDown" size={getDropdownArrowSize()}/>
+                    <Icon name="FiChevronDown" size={getDropdownArrowSize()} color={effectiveColor}/>
                 </div>
 
                 {isOpen && (
@@ -600,7 +674,7 @@ export const Select = ({
                                         {multiSelect ? (
                                             <div className="select-option-content">
                                                 <Badge
-                                                    variant={badgeVariant}
+                                                    color={badgeVariant}
                                                     size={getBadgeSize()}
                                                     className="select-option-badge"
                                                     theme={selectTheme}

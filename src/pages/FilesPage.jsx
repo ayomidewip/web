@@ -212,14 +212,14 @@ const CreateFileForm = ({ filePath: initialPath, fileTree, onSuccess, onCancel }
       
       <Container layout="flex" gap="sm" justify="end" width="100%">
         <Button 
-          variant="secondary" 
+          color="secondary" 
           onClick={onCancel}
           width="80px"
         >
           Cancel
         </Button>
         <Button 
-          variant="primary" 
+          color="primary" 
           onClick={handleSubmit}
           disabled={!fileName.trim()}
           width="120px"
@@ -319,14 +319,14 @@ const CreateDirectoryForm = ({ filePath: initialPath, fileTree, onSuccess, onCan
       
       <Container layout="flex" gap="sm" justify="end" width="100%">
         <Button 
-          variant="secondary" 
+          color="secondary" 
           onClick={onCancel}
           width="80px"
         >
           Cancel
         </Button>
         <Button 
-          variant="primary" 
+          color="primary" 
           onClick={handleSubmit}
           disabled={!dirName.trim()}
           width="140px"
@@ -414,7 +414,7 @@ const UploadForm = ({ targetPath, onSuccess, onCancel }) => {
           <ProgressBar
             value={uploadProgress}
             max={100}
-            variant="primary"
+            color="primary"
             showPercentage={false}
             animated={true}
           />
@@ -423,7 +423,7 @@ const UploadForm = ({ targetPath, onSuccess, onCancel }) => {
       
       <Container layout="flex" gap="sm" justify="end" width="100%">
         <Button 
-          variant="secondary" 
+          color="secondary" 
           onClick={onCancel}
           disabled={isUploading}
           width="80px"
@@ -431,12 +431,12 @@ const UploadForm = ({ targetPath, onSuccess, onCancel }) => {
           Cancel
         </Button>
         <Button
-          variant="primary"
+          color="primary"
           onClick={handleSubmit}
           disabled={files.length === 0 || isUploading}
           width="120px"
         >
-          {isUploading ? <CircularProgress size="small" /> : `Upload ${files.length} Files`}
+          {isUploading ? <CircularProgress size="sm" /> : `Upload ${files.length} Files`}
         </Button>
       </Container>
     </Container>
@@ -543,8 +543,8 @@ const VersionManagement = ({ file, onSuccess }) => {
       </Typography>
 
       <Button
-        variant="primary"
-        size="small"
+        color="primary"
+        size="sm"
         onClick={() => setActiveAction('publish')}
         width="100%"
         disabled={file?.type !== 'text'}
@@ -582,16 +582,16 @@ const VersionManagement = ({ file, onSuccess }) => {
                   </Container>
                   <Container layout="flex" gap="xs">
                     <Button
-                      variant="secondary"
-                      size="small"
+                      color="secondary"
+                      size="sm"
                       onClick={() => handleLoadVersion(version.version)}
                       title="View this version (read-only)"
                     >
                       <Icon name="FiEye" size="xs" />
                     </Button>
                     <Button
-                      variant="danger"
-                      size="small"
+                      color="error"
+                      size="sm"
                       onClick={() => handleDeleteVersion(version.version)}
                     >
                       <Icon name="FiTrash2" size="xs" />
@@ -634,10 +634,10 @@ const PublishVersionForm = ({ onPublish, onCancel }) => {
       />
 
       <Container layout="flex" gap="sm" justify="end" width="100%">
-        <Button variant="secondary" onClick={onCancel} width="80px">
+        <Button color="secondary" onClick={onCancel} width="80px">
           Cancel
         </Button>
-        <Button variant="primary" onClick={handleSubmit} width="120px">
+        <Button color="primary" onClick={handleSubmit} width="120px">
           Publish
         </Button>
       </Container>
@@ -737,8 +737,8 @@ const FileSharing = ({ file, onSuccess }) => {
       </Typography>
 
       <Button
-        variant="primary"
-        size="small"
+        color="primary"
+        size="sm"
         onClick={() => setActiveAction('share')}
         width="100%"
       >
@@ -771,8 +771,8 @@ const FileSharing = ({ file, onSuccess }) => {
                     </Typography>
                   </Container>
                   <Button
-                    variant="danger"
-                    size="small"
+                    color="error"
+                    size="sm"
                     onClick={() => handleUnshareFile(collaborator._id)}
                   >
                     <Icon name="FiUserMinus" size="xs" />
@@ -813,7 +813,7 @@ const QuickActions = ({ targetPath, fileTree, onActionComplete }) => {
         </Typography>
         
         <Button 
-          variant="primary"
+          color="primary"
           onClick={() => setActiveAction('create-file')}
           width="100%"
         >
@@ -973,8 +973,8 @@ const FileMetadata = ({ file, isReadOnly, onDownload, onVersionLoaded }) => {
 
         <Container layout="flex" align="center" gap="xs">
           <Button
-            variant="secondary"
-            size="small"
+            color="secondary"
+            size="sm"
             onClick={onDownload}
           >
             <Icon name="FiDownload" size="xs" />
@@ -983,8 +983,8 @@ const FileMetadata = ({ file, isReadOnly, onDownload, onVersionLoaded }) => {
 
           {file.type === 'text' && canManageVersions && (
             <Button
-              variant="secondary"
-              size="small"
+              color="secondary"
+              size="sm"
               genie={{
                 content: () => (
                   <VersionManagement
@@ -1012,8 +1012,8 @@ const FileMetadata = ({ file, isReadOnly, onDownload, onVersionLoaded }) => {
           )}
 
           <Button
-            variant="secondary"
-            size="small"
+            color="secondary"
+            size="sm"
             genie={{
               content: () => (
                 <FileSharing
@@ -1499,8 +1499,8 @@ export const FilesPage = () => {
             
             <Container layout="flex" align="center" gap="sm">
               <Button 
-                variant="primary" 
-                size="small"
+                color="primary" 
+                size="sm"
                 onClick={() => setVersionView(null)}
               >
                 <Icon name="FiArrowLeft" size="sm" />
@@ -1535,8 +1535,8 @@ export const FilesPage = () => {
               </Container>
               
               <Button
-                variant="secondary"
-                size="small"
+                color="secondary"
+                size="sm"
                 onClick={handleVersionDownload}
               >
                 <Icon name="FiDownload" size="xs" />
@@ -1595,26 +1595,26 @@ export const FilesPage = () => {
               <Container layout="flex" align="center" gap="xs">
                 {connectionStatus === 'connected' && (
                   <>
-                    <Icon name="FiWifi" size="sm" variant="success" />
+                    <Icon name="FiWifi" size="sm" color="success" />
                     <Typography size="xs" color="success">Live Editing</Typography>
                   </>
                 )}
                 {connectionStatus === 'connecting' && (
                   <>
-                    <CircularProgress size="xs" variant="warning" />
+                    <CircularProgress size="xs" color="warning" />
                     <Typography size="xs" color="warning">Connecting...</Typography>
                   </>
                 )}
                 {connectionStatus === 'disconnected' && (
                   <>
-                    <Icon name="FiWifiOff" size="sm" variant="muted" />
+                    <Icon name="FiWifiOff" size="sm" color="muted" />
                     <Typography size="xs" color="muted">Disconnected</Typography>
                   </>
                 )}
                 {connectionStatus === 'error' && (
                   <>
-                    <Icon name="FiAlertCircle" size="sm" variant="danger" />
-                    <Typography size="xs" color="danger">Connection Error</Typography>
+                    <Icon name="FiAlertCircle" size="sm" color="error" />
+                    <Typography size="xs" color="error">Connection Error</Typography>
                   </>
                 )}
               </Container>
@@ -1623,7 +1623,7 @@ export const FilesPage = () => {
             {activeFile.file.isImage && (
                 <Container layout="flex" align="center" gap="sm">
                     <Icon name="TbImageInPicture" size="sm" />
-                    <Typography size="xs" variant="secondary" color="primary">IMAGE</Typography>
+                    <Typography size="xs" color="primary">IMAGE</Typography>
                 </Container>
             )}
             {activeFile.file.isBinary && (
@@ -1720,21 +1720,6 @@ export const FilesPage = () => {
 
   return (
     <Page layout="flex" padding="none">
-        <Explorer
-          width="300px"
-          minHeight="100vh"
-          fileTree={fileTree}
-          currentPath={activeFile.file?.filePath || selectedDirectory}
-          includeFiles={true}
-          hideTitle={true}
-          showSelector={true}
-          buttonLabel={null}
-          onFileAction={handleFileAction}
-          onPathSelect={handleFileSelect}
-          showIcons={true}
-          showContextActions={true}
-        />
-
       <Container 
         layout="flex-column" 
         padding="none"
@@ -1744,12 +1729,42 @@ export const FilesPage = () => {
         {renderRightContent()}
       </Container>
 
-      {/* Floating Action Button */}
+      {/* Explorer FAB */}
+      <FloatingActionButton
+        icon="FiFolder"
+        position="bottom-left"
+        size="md"
+        color="secondary"
+        draggable={true}
+        genie={{
+          trigger: 'click',
+          content: () => (
+            <Explorer
+              width="320px"
+              fileTree={fileTree}
+              currentPath={activeFile.file?.filePath || selectedDirectory}
+              includeFiles={true}
+              hideTitle={true}
+              showSelector={true}
+              buttonLabel={null}
+              onFileAction={handleFileAction}
+              onPathSelect={handleFileSelect}
+              showIcons={true}
+              showContextActions={true}
+              contentPadding="none"
+            />
+          )
+        }}
+        title="Browse files"
+        aria-label="Open file explorer"
+      />
+
+      {/* Quick Actions Floating Action Button */}
       <FloatingActionButton
         icon="FiPlus"
         position="bottom-right"
-        size="large"
-        variant="primary"
+        size="lg"
+        color="primary"
         draggable={true}
         genie={{
           content: () => (

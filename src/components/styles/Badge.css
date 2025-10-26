@@ -8,7 +8,7 @@
     border-radius: var(--border-radius-md);
     white-space: nowrap;
     background-color: var(--surface-accent-color);
-    color: var(--text-color);
+    color: var(--text-contrast-color);
 }
 
 /* Badge Variants using proper theme colors */
@@ -37,14 +37,30 @@
     background-color: var(--tertiary-color);
 }
 
-.badge.badge-small {
-    padding: var(--spacing-xs) var(--spacing-sm);
+/* Size variations - xs/sm/md/lg/xl scale */
+.badge.badge-xs {
+    padding: calc(var(--spacing-xs) * 0.5) var(--spacing-xs);
     font-size: 0.625rem;
 }
 
-.badge.badge-large {
+.badge.badge-sm {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: 0.75rem;
+}
+
+.badge.badge-md {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: var(--font-size-xs);
+}
+
+.badge.badge-lg {
     padding: var(--spacing-sm) var(--spacing-md);
     font-size: var(--font-size-sm);
+}
+
+.badge.badge-xl {
+    padding: var(--spacing-sm) var(--spacing-lg);
+    font-size: var(--font-size-base);
 }
 
 /* JustifySelf utility classes for Badge components */

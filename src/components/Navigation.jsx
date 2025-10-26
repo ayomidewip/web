@@ -22,6 +22,8 @@ const getRouteConfig = () => {
     };
 };
 
+const PUBLIC_PAGES = ['/', '/components'];
+
 /**
  * Navigation - App navigation component with draggable FAB and Genie integration
  *
@@ -37,7 +39,7 @@ export const Navigation = ({
                                className = '',
                                position = 'top-right',
                                variant = 'primary',
-                               size = 'default',
+                               size = 'md',
                                draggable = true,
                                theme = null,
                                ...props
@@ -84,6 +86,14 @@ export const Navigation = ({
                 requireAuth: true
             });
         } else {
+            items.push({
+                id: 'components-demo',
+                label: 'Explore Components',
+                icon: 'FiGrid',
+                path: '/',
+                publicOnly: true
+            });
+
             // Guest navigation
             items.push({
                 id: 'login',
@@ -140,7 +150,7 @@ export const Navigation = ({
                     Navigation
                 </Typography>
                 {user && (
-                    <Badge variant="primary" size="small">
+                    <Badge color="primary" size="sm">
                         {user.username || user.email}
                     </Badge>
                 )}
@@ -157,7 +167,7 @@ export const Navigation = ({
                     backgroundColor="background"
                     width="100%"
                 >
-                    <Icon name="FiUser" size="md" variant="primary"/>
+                    <Icon name="FiUser" size="md"/>
                     <Container layout="flex-column" gap="xs">
                         <Typography as="p" size="sm" weight="medium">
                             {user.firstName} {user.lastName}
@@ -166,12 +176,12 @@ export const Navigation = ({
                             {user.roles?.map(role => (
                                 <Badge
                                     key={role}
-                                    variant={role === 'OWNER' ? 'primary' : 'secondary'}
-                                    size="small"
+                                    color={role === 'OWNER' ? 'primary' : 'secondary'}
+                                    size="sm"
                                 >
                                     {role}
                                 </Badge>
-                            )) || <Badge variant="secondary" size="small">USER</Badge>}
+                            )) || <Badge color="secondary" size="sm">USER</Badge>}
                         </Container>
                     </Container>
                 </Container>
@@ -185,8 +195,7 @@ export const Navigation = ({
                 {navigationItems.map(item => (
                     <Button
                         key={item.id}
-                        variant="ghost"
-                        size="small"
+                        size="sm"
                         align="left"
                         width="100%"
                         onClick={() => handleNavigation(item.path)}
@@ -195,7 +204,7 @@ export const Navigation = ({
                         <Icon name={item.icon} size="sm"/>
                         {item.label}
                         {item.badge && (
-                            <Badge variant="tertiary" size="small" style={{marginLeft: 'auto'}}>
+                            <Badge color="tertiary" size="sm">
                                 {item.badge}
                             </Badge>
                         )}
@@ -208,12 +217,12 @@ export const Navigation = ({
                 <Typography as="p" size="xs" weight="medium" color="muted">
                     THEME
                 </Typography>
-                <Container layout="flex" gap="xs" wrap="wrap">
+                <Container layout="flex" gap="xs" wrap>
                     {availableThemes.map(themeName => (
                         <Button
                             key={themeName}
-                            variant={currentTheme === themeName ? 'primary' : 'ghost'}
-                            size="small"
+                            variant='ghost'
+                            size="sm"
                             onClick={() => handleThemeChange(themeName)}
                         >
                             {themeName.charAt(0).toUpperCase() + themeName.slice(1)}
@@ -229,8 +238,8 @@ export const Navigation = ({
                         ACCOUNT
                     </Typography>
                     <Button
-                        variant="ghost"
-                        size="small"
+                        variant="solid"
+                        size="sm"
                         align="left"
                         width="100%"
                         onClick={handleLogout}
@@ -244,8 +253,8 @@ export const Navigation = ({
             ) : (
                 <Container layout="flex" gap="sm">
                     <Button
-                        variant="primary"
-                        size="small"
+                        color="primary"
+                        size="sm"
                         onClick={() => handleNavigation('/login')}
                         disabled={isNavigating}
                         flexFill
@@ -254,8 +263,8 @@ export const Navigation = ({
                         Sign In
                     </Button>
                     <Button
-                        variant="secondary"
-                        size="small"
+                        color="secondary"
+                        size="sm"
                         onClick={() => handleNavigation('/signup')}
                         disabled={isNavigating}
                         flexFill
@@ -271,18 +280,19 @@ export const Navigation = ({
     return (
         <FloatingActionButton
             className={`navigation-fab ${className}`}
-            variant={variant}
+            color={variant}
             size={size}
             position={position}
             draggable={draggable}
             icon={isNavigating ? 'FiLoader' : 'FiMenu'}
-            iconSize={size === 'small' ? 'sm' : size === 'large' ? 'lg' : 'md'}
+            iconSize={size === 'sm' ? 'sm' : size === 'lg' ? 'lg' : 'md'}
             theme={theme}
             disabled={isNavigating}
             genie={{
                 trigger: 'click',
                 content: genieContent,
-                variant: 'menu'
+                variant: 'menu',
+                maxHeight: '48vh'
             }}
             title="Navigation Menu"
             aria-label="Open navigation menu"
@@ -305,7 +315,8 @@ export const RouteAccessControl = ({children, path}) => {
     const isAuthPage = authPages.includes(path);
 
     // Redirect logic
-    if (!isAuthPage && !user) {
+    const isPublicPage = PUBLIC_PAGES.includes(path);
+    if (!isAuthPage && !isPublicPage && !user) {
         // Protected page, no user - go to login
         window.location.href = '/login';
         return null;

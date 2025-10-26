@@ -9,9 +9,15 @@ import { useEffectiveTheme, useTheme } from '@contexts/ThemeContext';
 export const Badge = ({
     children,
     className = '',
-    variant = 'default', // 'default', 'primary', 'secondary', 'tertiary', 'success', 'warning', 'error'
-    size = 'default', // 'small', 'default', 'large'
+    color = 'default', // 'default', 'primary', 'secondary', 'tertiary', 'success', 'warning', 'error'
+    size = 'md', // 'xs', 'sm', 'md', 'lg', 'xl'
     theme = null, // Optional theme override for this badge
+    width = null, // Width value (e.g., '100%', '200px', 'auto')
+    height = null, // Height value (e.g., '2rem', '32px', 'auto')
+    minWidth = null, // Minimum width (e.g., '100px', '5rem')
+    minHeight = null, // Minimum height (e.g., '2rem', '32px')
+    maxWidth = null, // Maximum width (e.g., '500px', '100%')
+    maxHeight = null, // Maximum height (e.g., '10rem', '200px')
     marginTop = null, // Margin top: 'none', 'xs', 'sm', 'md', 'lg', 'xl' or custom value
     marginBottom = null, // Margin bottom: 'none', 'xs', 'sm', 'md', 'lg', 'xl' or custom value
     justifySelf = null, // CSS justify-self property: 'auto', 'start', 'end', 'center', 'stretch'
@@ -26,6 +32,14 @@ export const Badge = ({
     // Helper function to convert margin prop to CSS style
     const getMarginStyle = () => {
         const style = {};
+
+        // Width and height
+        if (width !== null) style.width = width;
+        if (height !== null) style.height = height;
+        if (minWidth !== null) style.minWidth = minWidth;
+        if (minHeight !== null) style.minHeight = minHeight;
+        if (maxWidth !== null) style.maxWidth = maxWidth;
+        if (maxHeight !== null) style.maxHeight = maxHeight;
 
         // Only apply margins if explicitly provided
         if (marginTop !== null) {
@@ -52,18 +66,23 @@ export const Badge = ({
         return style;
     };
 
-    const getVariantClass = () => {
-        return `themed-badge-${variant}`;
+    const getColorClass = () => {
+        return `themed-badge-${color}`;
     };
 
     const getSizeClass = () => {
         switch (size) {
-            case 'small':
-                return 'badge-small';
-            case 'large':
-                return 'badge-large';
+            case 'xs':
+                return 'badge-xs';
+            case 'sm':
+                return 'badge-sm';
+            case 'lg':
+                return 'badge-lg';
+            case 'xl':
+                return 'badge-xl';
+            case 'md':
             default:
-                return '';
+                return 'badge-md';
         }
     };
 
@@ -76,7 +95,7 @@ export const Badge = ({
 
     return (
         <span
-            className={`badge themed-badge ${getVariantClass()} ${getSizeClass()} ${getJustifySelfClass()} theme-${badgeTheme} ${className}`}
+            className={`badge themed-badge ${getColorClass()} ${getSizeClass()} ${getJustifySelfClass()} theme-${badgeTheme} ${className}`}
             data-theme={badgeTheme}
             data-theme-source={theme ? 'local' : 'inherited'}
             style={{ justifySelf, ...getMarginStyle() }}

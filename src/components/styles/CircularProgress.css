@@ -28,8 +28,8 @@
     transform-origin: center;
 }
 
-/* Default size uses the base animation */
-.circular-progress-default .circular-progress-bar {
+/* Default md size uses the base animation */
+.circular-progress-md .circular-progress-bar {
     animation: circular-progress-rotate 1.4s ease-in-out infinite;
 }
 
@@ -52,11 +52,32 @@
 }
 
 /* ===== Size-specific animations for varying dash lengths ===== */
-.circular-progress-small .circular-progress-bar {
-    animation: circular-progress-rotate-small 1.4s ease-in-out infinite;
+.circular-progress-xs .circular-progress-bar {
+    animation: circular-progress-rotate-xs 1.4s ease-in-out infinite;
 }
 
-@keyframes circular-progress-rotate-small {
+@keyframes circular-progress-rotate-xs {
+    0% {
+        transform: rotate(-90deg);
+        stroke-dasharray: 1, 150;
+        stroke-dashoffset: 0;
+    }
+    50% {
+        stroke-dasharray: 35, 150;
+        stroke-dashoffset: -20;
+    }
+    100% {
+        transform: rotate(-90deg);
+        stroke-dasharray: 35, 150;
+        stroke-dashoffset: -70;
+    }
+}
+
+.circular-progress-sm .circular-progress-bar {
+    animation: circular-progress-rotate-sm 1.4s ease-in-out infinite;
+}
+
+@keyframes circular-progress-rotate-sm {
     0% {
         transform: rotate(-90deg);
         stroke-dasharray: 1, 200;
@@ -73,11 +94,11 @@
     }
 }
 
-.circular-progress-large .circular-progress-bar {
-    animation: circular-progress-rotate-large 1.4s ease-in-out infinite;
+.circular-progress-lg .circular-progress-bar {
+    animation: circular-progress-rotate-lg 1.4s ease-in-out infinite;
 }
 
-@keyframes circular-progress-rotate-large {
+@keyframes circular-progress-rotate-lg {
     0% {
         transform: rotate(-90deg);
         stroke-dasharray: 1, 300;

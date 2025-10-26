@@ -102,7 +102,7 @@ export const SignupPage = () => {
                 <Card layout="flex-column" gap="none" align="center">
                         {/* Header */}
                         <Container layout="flex-column" gap="sm" align="center">
-                            <Icon name="FaUserPlus" size="lg" variant="primary"/>
+                            <Icon name="FaUserPlus" size="lg" color="primary"/>
                             <Typography as="h1" size="2xl" weight="bold" color="primary">
                                 Create Account
                             </Typography>
@@ -209,7 +209,7 @@ export const SignupPage = () => {
 
                             <Button
                                 type="submit"
-                                variant="primary"
+                                color="primary"
                                 disabled={!isFormValid || isLoading}
                                 onClick={handleSubmit}
                                 width="75%"
@@ -234,8 +234,8 @@ export const SignupPage = () => {
                                 Already have an account?
                             </Typography>
                             <Button
-                                variant="tertiary"
-                                size="small"
+                                color="tertiary"
+                                size="sm"
                                 onClick={() => navigate('/login')}
                             >
                                 <Icon name="FaSignInAlt"/>

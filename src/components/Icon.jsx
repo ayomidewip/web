@@ -31,17 +31,25 @@ const getIcon = (iconName) => {
  */
 export const Icon = ({
     name = 'FiHelpCircle',
-    variant = 'primary', // 'primary', 'secondary', 'tertiary', 'success', 'warning', 'error', 'text'
+    color = 'primary', // 'primary', 'secondary', 'tertiary', 'success', 'warning', 'error', 'text'
     size = 'md', // 'xs', 'sm', 'md', 'lg', 'xl', '2xl'
-                         className = '',
-                         hover = false,
-                         clickable = false,
-                         onClick,
-                         style = {},
-                         theme = null, // Optional theme override
-                         justifySelf = null, // CSS justify-self property: 'auto', 'start', 'end', 'center', 'stretch'
-                         ...props
-                     }) => {
+    className = '',
+    hover = false,
+    clickable = false,
+    onClick,
+    style = {},
+    width = null, // Width value (e.g., '1.5rem', '24px')
+    height = null, // Height value (e.g., '1.5rem', '24px')
+    minWidth = null, // Minimum width
+    minHeight = null, // Minimum height
+    maxWidth = null, // Maximum width
+    maxHeight = null, // Maximum height
+    marginTop = null, // Margin top: 'none', 'xs', 'sm', 'md', 'lg', 'xl' or custom value
+    marginBottom = null, // Margin bottom: 'none', 'xs', 'sm', 'md', 'lg', 'xl' or custom value
+    theme = null, // Optional theme override
+    justifySelf = null, // CSS justify-self property: 'auto', 'start', 'end', 'center', 'stretch'
+    ...props
+}) => {
     const {currentTheme: globalTheme} = useTheme();
     const effectiveTheme = useEffectiveTheme();
 
@@ -51,6 +59,44 @@ export const Icon = ({
     // Get the icon component directly
     const IconComponent = getIcon(name);
 
+    // Helper function to build style object
+    const getIconStyle = () => {
+        const iconStyle = { ...style };
+
+        // Sizing
+        if (width !== null) iconStyle.width = width;
+        if (height !== null) iconStyle.height = height;
+        if (minWidth !== null) iconStyle.minWidth = minWidth;
+        if (minHeight !== null) iconStyle.minHeight = minHeight;
+        if (maxWidth !== null) iconStyle.maxWidth = maxWidth;
+        if (maxHeight !== null) iconStyle.maxHeight = maxHeight;
+
+        // Margins
+        if (marginTop !== null) {
+            if (marginTop === 'none') {
+                iconStyle.marginTop = '0';
+            } else if (['xs', 'sm', 'md', 'lg', 'xl'].includes(marginTop)) {
+                iconStyle.marginTop = `var(--spacing-${marginTop})`;
+            } else {
+                iconStyle.marginTop = marginTop;
+            }
+        }
+
+        if (marginBottom !== null) {
+            if (marginBottom === 'none') {
+                iconStyle.marginBottom = '0';
+            } else if (['xs', 'sm', 'md', 'lg', 'xl'].includes(marginBottom)) {
+                iconStyle.marginBottom = `var(--spacing-${marginBottom})`;
+            } else {
+                iconStyle.marginBottom = marginBottom;
+            }
+        }
+
+        if (justifySelf !== null) iconStyle.justifySelf = justifySelf;
+
+        return iconStyle;
+    };
+
     const getJustifySelfClass = () => {
         if (justifySelf) {
             return `justify-self-${justifySelf}`;
@@ -59,13 +105,13 @@ export const Icon = ({
     };
 
     // Build class names
-    const classes = ['themed-icon', `icon-${variant}`, `icon-${size}`, hover && 'icon-hover', clickable && 'icon-clickable', getJustifySelfClass(), className].filter(Boolean).join(' ');
+    const classes = ['themed-icon', `icon-${color}`, `icon-${size}`, hover && 'icon-hover', clickable && 'icon-clickable', getJustifySelfClass(), className].filter(Boolean).join(' ');
 
     return (
         <IconComponent
             className={classes}
             onClick={onClick}
-            style={{...style, justifySelf}}
+            style={getIconStyle()}
             {...props}
         />
     );

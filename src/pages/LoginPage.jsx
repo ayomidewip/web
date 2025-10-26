@@ -67,7 +67,7 @@ export const LoginPage = () => {
         <Card layout="flex-column" padding="xl" align="center" gap="lg" >
             {/* Header */}
             <Container layout="flex-column" gap="sm" align="center" padding="none">
-              <Icon name="FaLock" size="lg" variant="primary" />
+              <Icon name="FaLock" size="lg" color="primary" />
               <Typography as="h1" size="2xl" weight="bold" color="primary">
                 Sign In
               </Typography>
@@ -112,7 +112,7 @@ export const LoginPage = () => {
 
                 <Button
                   type="submit"
-                  variant="primary"
+                  color="primary"
                   disabled={!isFormValid || isLoading}
                   onClick={handleSubmit}
                   width="100%"
@@ -134,8 +134,8 @@ export const LoginPage = () => {
             {/* Actions */}
             <Container layout="flex-column" gap="sm" align="center" padding="none">
               <Button
-                variant="secondary"
-                size="small"
+                color="secondary"
+                size="sm"
                 onClick={() => navigate('/forgot-password')}
               >
                 Forgot your password?
@@ -146,8 +146,8 @@ export const LoginPage = () => {
                   Don't have an account?
                 </Typography>
                 <Button
-                  variant="tertiary"
-                  size="small"
+                  color="tertiary"
+                  size="sm"
                   onClick={() => navigate('/signup')}
                 >
                   Sign Up

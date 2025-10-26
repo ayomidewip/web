@@ -104,7 +104,7 @@ const BulkDeleteForm = ({ onSubmit, onCancel, onClose }) => {
         <Switch
           checked={forceDelete}
           onChange={setForceDelete}
-          size="small"
+          size="sm"
         />
         <Typography size="sm">
           Force delete (bypass normal restrictions)
@@ -131,7 +131,7 @@ const BulkDeleteForm = ({ onSubmit, onCancel, onClose }) => {
               selectedNodes={selectedFiles}
               onNodeSelect={handleFileSelect}
               showIcons={true}
-              variant="compact"
+             
             />
           </Card>
         )}
@@ -155,11 +155,11 @@ const BulkDeleteForm = ({ onSubmit, onCancel, onClose }) => {
 
       {/* Action buttons */}
       <Container layout="flex" gap="sm" justify="end">
-        <Button variant="secondary" onClick={handleCancel} disabled={isLoading}>
+        <Button color="secondary" onClick={handleCancel} disabled={isLoading}>
           Cancel
         </Button>
         <Button 
-          variant="error" 
+          color="error" 
           onClick={handleSubmit} 
           disabled={isLoading || selectedFiles.length === 0}
         >
@@ -304,7 +304,7 @@ const BulkTagForm = ({ onSubmit, onCancel, onClose }) => {
             onKeyPress={(e) => e.key === 'Enter' && handleAddTag()}
           />
           <Button 
-            variant="tertiary" 
+            color="tertiary" 
             size="sm" 
             onClick={handleAddTag}
             disabled={!newTag.trim() || tags.includes(newTag.trim())}
@@ -320,8 +320,8 @@ const BulkTagForm = ({ onSubmit, onCancel, onClose }) => {
             {tags.map((tag, index) => (
               <Badge 
                 key={index} 
-                variant="tertiary" 
-                size="small"
+                color="tertiary" 
+                size="sm"
                 style={{ cursor: 'pointer' }}
                 onClick={() => handleRemoveTag(tag)}
               >
@@ -352,7 +352,7 @@ const BulkTagForm = ({ onSubmit, onCancel, onClose }) => {
               selectedNodes={selectedFiles}
               onNodeSelect={handleFileSelect}
               showIcons={true}
-              variant="compact"
+             
             />
           </Card>
         )}
@@ -360,11 +360,11 @@ const BulkTagForm = ({ onSubmit, onCancel, onClose }) => {
 
       {/* Action buttons */}
       <Container layout="flex" gap="sm" justify="end">
-        <Button variant="secondary" onClick={handleCancel} disabled={isLoading}>
+        <Button color="secondary" onClick={handleCancel} disabled={isLoading}>
           Cancel
         </Button>
         <Button 
-          variant="tertiary" 
+          color="tertiary" 
           onClick={handleSubmit} 
           disabled={isLoading || selectedFiles.length === 0 || tags.length === 0}
         >
@@ -524,7 +524,7 @@ const BulkPermissionsForm = ({ onSubmit, onCancel, onClose }) => {
               selectedNodes={selectedFiles}
               onNodeSelect={handleFileSelect}
               showIcons={true}
-              variant="compact"
+             
             />
           </Card>
         )}
@@ -532,11 +532,11 @@ const BulkPermissionsForm = ({ onSubmit, onCancel, onClose }) => {
 
       {/* Action buttons */}
       <Container layout="flex" gap="sm" justify="end">
-        <Button variant="secondary" onClick={handleCancel} disabled={isLoading}>
+        <Button color="secondary" onClick={handleCancel} disabled={isLoading}>
           Cancel
         </Button>
         <Button 
-          variant="warning" 
+          color="warning" 
           onClick={handleSubmit} 
           disabled={isLoading || selectedFiles.length === 0 || (readUsers.length === 0 && writeUsers.length === 0)}
         >
@@ -717,7 +717,7 @@ const EditUserForm = ({ user, onSave, onCancel }) => {
       
       <Container layout="flex" gap="md" justify="end">
         <Button
-          variant="secondary"
+          color="secondary"
           onClick={onCancel}
           disabled={isSaving}
         >
@@ -725,13 +725,13 @@ const EditUserForm = ({ user, onSave, onCancel }) => {
         </Button>
         
         <Button
-          variant="primary"
+          color="primary"
           onClick={handleSave}
           disabled={isSaving}
         >
           {isSaving ? (
             <>
-              <CircularProgress size="small" />
+              <CircularProgress size="sm" />
               <span>Saving...</span>
             </>
           ) : (
@@ -1287,8 +1287,8 @@ export const AdminPage = () => {
         {/* System Health Indicator */}
         <Container layout="flex-column" align="end" gap="xs">
           <Badge 
-            variant={adminData.health?.status === 'ok' ? 'success' : 'error'}
-            size="large"
+           
+            size="lg"
           >
             {adminData.health?.status === 'ok' ? '🟢 System Healthy' : '🔴 System Issues'}
           </Badge>
@@ -1301,7 +1301,7 @@ export const AdminPage = () => {
       {/* Action Buttons */}
       <Container layout="flex" gap="sm" justify="center">
         <Button 
-          variant="secondary" 
+          color="secondary" 
           onClick={() => loadSectionData(activeSection, true)}
           disabled={refreshing}
         >
@@ -1317,8 +1317,8 @@ export const AdminPage = () => {
           {sections.map(section => (
             <Button
               key={section.id}
-              variant={activeSection === section.id ? 'primary' : 'secondary'}
-              size="small"
+             
+              size="sm"
               onClick={() => setActiveSection(section.id)}
             >
               {section.label}
@@ -1329,7 +1329,7 @@ export const AdminPage = () => {
 
       {/* Error Display */}
       {adminData.errors.length > 0 && (
-        <Card variant="error" padding="md">
+        <Card color="error" padding="md">
           <Typography weight="semibold" marginBottom="sm">
             Data Loading Errors:
           </Typography>
@@ -1352,8 +1352,8 @@ export const AdminPage = () => {
           <Container layout="flex" justify="space-between" align="center">
             <Container layout="flex" align="center" gap="md">
               <Badge 
-                variant={adminData.health?.status === 'ok' ? 'success' : 'error'}
-                size="large"
+               
+                size="lg"
               >
                 {adminData.health?.status === 'ok' ? '🟢 System Healthy' : '🔴 System Issues'}
               </Badge>
@@ -1369,7 +1369,7 @@ export const AdminPage = () => {
           {/* Key Metrics Grid */}
           <Container layout="grid" columns="4" gap="md">
             {/* Environment & Platform */}
-            <Card padding="md" variant="tertiary">
+            <Card padding="md" color="tertiary">
               <Typography size="sm" color="secondary">Environment</Typography>
               <Typography size="xl" weight="bold">
                 {adminData.health?.env?.toUpperCase() || 'Unknown'}
@@ -1380,7 +1380,7 @@ export const AdminPage = () => {
             </Card>
             
             {/* Uptime */}
-            <Card padding="md" variant="success">
+            <Card padding="md" color="success">
               <Typography size="sm" color="secondary">System Uptime</Typography>
               <Typography size="xl" weight="bold">
                 {adminData.health?.system?.uptime ? 
@@ -1393,7 +1393,7 @@ export const AdminPage = () => {
             </Card>
             
             {/* Database Status */}
-            <Card padding="md" variant={adminData.health?.database?.status === 'connected' ? 'success' : 'error'}>
+            <Card padding="md">
               <Typography size="sm" color="secondary">Database</Typography>
               <Typography size="xl" weight="bold">
                 {adminData.health?.database?.status?.toUpperCase() || 'Unknown'}
@@ -1404,7 +1404,7 @@ export const AdminPage = () => {
             </Card>
             
             {/* Memory Usage Summary */}
-            <Card padding="md" variant="warning">
+            <Card padding="md" color="warning">
               <Typography size="sm" color="secondary">Heap Memory</Typography>
               <Typography size="xl" weight="bold">
                 {adminData.health?.system?.memoryUsage ? (() => {
@@ -1455,7 +1455,7 @@ export const AdminPage = () => {
                         heapPercent > 0.6 ? 'warning' : 'success'
                       }
                       showPercentage={true}
-                      size="small"
+                      size="sm"
                     />
                   </Container>
 
@@ -1546,8 +1546,8 @@ export const AdminPage = () => {
                   <Container layout="flex" justify="space-between" align="center">
                     <Typography size="sm">Connection Status:</Typography>
                     <Badge 
-                      variant={adminData.health.database.status === 'connected' ? 'success' : 'error'}
-                      size="small"
+                     
+                      size="sm"
                     >
                       {adminData.health.database.status?.toUpperCase()}
                     </Badge>
@@ -1574,7 +1574,7 @@ export const AdminPage = () => {
             </Card>
 
           {/* Health Status Summary */}
-          <Card padding="lg" variant={adminData.health?.status === 'ok' ? 'success' : 'error'}>
+          <Card padding="lg">
             <Container layout="flex" justify="space-between" align="center">
               <Container layout="flex-column" gap="xs">
                 <Typography weight="semibold" size="lg">
@@ -1606,21 +1606,21 @@ export const AdminPage = () => {
             </Container>
             <Container layout="flex" gap="md">
               <Button 
-                variant="tertiary" 
+                color="tertiary" 
                 onClick={handleGetCleanupInfo}
                 disabled={loadingCleanup}
               >
                 {loadingCleanup ? 'Loading...' : 'Check Cleanup Status'}
               </Button>
               <Button 
-                variant="success" 
+                color="success" 
                 onClick={handleRunCleanup}
                 disabled={runningCleanup || loadingCleanup}
               >
                 {runningCleanup ? 'Running Cleanup...' : 'Run Cleanup Now'}
               </Button>
               <Button 
-                variant="warning" 
+                color="warning" 
                 onClick={handleClearCache}
                 disabled={clearingCache}
               >
@@ -1630,9 +1630,9 @@ export const AdminPage = () => {
           </Container>
 
           {/* Cache Information Card */}
-          <Card padding="lg" variant="tertiary" width="100%">
+          <Card padding="lg" color="tertiary" width="100%">
             <Container layout="flex" align="center" gap="sm" marginBottom="sm">
-              <Icon name="FaInfoCircle" variant="tertiary" />
+              <Icon name="FaInfoCircle" color="tertiary" />
               <Typography weight="semibold">Cache Management Options</Typography>
             </Container>
             <Container layout="grid" columns="3" gap="lg">
@@ -1668,14 +1668,14 @@ export const AdminPage = () => {
 
           {/* Cache Cleanup Service Information */}
           {cleanupInfo && (
-            <Card padding="lg" variant="success" width="100%">
+            <Card padding="lg" color="success" width="100%">
               <Container layout="flex" align="center" justify="space-between" marginBottom="md">
                 <Container layout="flex" align="center" gap="sm">
-                  <Icon name="FaClock" variant="success" />
+                  <Icon name="FaClock" color="success" />
                   <Typography weight="semibold">Cache Cleanup Service Status</Typography>
                 </Container>
                 <Button 
-                  variant="tertiary" 
+                  color="tertiary" 
                   size="sm"
                   onClick={() => setCleanupInfo(null)}
                 >
@@ -1749,11 +1749,11 @@ export const AdminPage = () => {
                     Cache Performance
                   </Typography>
                   {isLoading && (
-                    <CircularProgress size="sm" variant="tertiary" />
+                    <CircularProgress size="sm" color="tertiary" />
                   )}
                   {cacheRefreshed && (
                     <Container layout="flex" align="center" gap="sm">
-                      <Icon name="FaCheckCircle" variant="success" size="sm" />
+                      <Icon name="FaCheckCircle" color="success" size="sm" />
                       <Typography size="sm" color="success" weight="medium">
                         Refreshed
                       </Typography>
@@ -1885,7 +1885,7 @@ export const AdminPage = () => {
 
           {/* Enhanced File Overview Grid */}
           <Container layout="grid" columns="5" gap="md">
-            <Card padding="md" variant="primary">
+            <Card padding="md" color="primary">
               <Typography size="sm" color="secondary">Total Files</Typography>
               <Typography size="2xl" weight="bold">
                 {(adminData.files?.overview?.totalFiles || 0).toLocaleString()}
@@ -1895,7 +1895,7 @@ export const AdminPage = () => {
               </Typography>
             </Card>
             
-            <Card padding="md" variant="tertiary">
+            <Card padding="md" color="tertiary">
               <Typography size="sm" color="secondary">Directories</Typography>
               <Typography size="2xl" weight="bold">
                 {(adminData.files?.overview?.totalDirectories || 0).toLocaleString()}
@@ -1905,7 +1905,7 @@ export const AdminPage = () => {
               </Typography>
             </Card>
             
-            <Card padding="md" variant="success">
+            <Card padding="md" color="success">
               <Typography size="sm" color="secondary">Total Storage</Typography>
               <Typography size="2xl" weight="bold">
                 {adminData.files?.overview?.humanReadableSize || '0 B'}
@@ -1915,7 +1915,7 @@ export const AdminPage = () => {
               </Typography>
             </Card>
             
-            <Card padding="md" variant="warning">
+            <Card padding="md" color="warning">
               <Typography size="sm" color="secondary">Text Files</Typography>
               <Typography size="2xl" weight="bold">
                 {(adminData.files?.overview?.totalTextFiles || 0).toLocaleString()}
@@ -1925,7 +1925,7 @@ export const AdminPage = () => {
               </Typography>
             </Card>
             
-            <Card padding="md" variant="info">
+            <Card padding="md">
               <Typography size="sm" color="secondary">Binary Files</Typography>
               <Typography size="2xl" weight="bold">
                 {(adminData.files?.overview?.totalBinaryFiles || 0).toLocaleString()}
@@ -1936,7 +1936,7 @@ export const AdminPage = () => {
             </Card>
           </Container>          {/* File System Insights */}
           <Container layout="grid" columns="3" gap="md">
-            <Card padding="md" variant="primary">
+            <Card padding="md" color="primary">
               <Typography size="sm" color="secondary">Recent Activity</Typography>
               <Container layout="flex" align="center" gap="sm" marginTop="xs">
                 <Icon name="FiActivity" color="primary" />
@@ -1952,7 +1952,7 @@ export const AdminPage = () => {
               </Typography>
             </Card>
 
-            <Card padding="md" variant="success">
+            <Card padding="md" color="success">
               <Typography size="sm" color="secondary">Compression</Typography>
               <Container layout="flex" align="center" gap="sm" marginTop="xs">
                 <Icon name="FiPackage" color="success" />
@@ -1968,7 +1968,7 @@ export const AdminPage = () => {
               </Typography>
             </Card>
 
-            <Card padding="md" variant="tertiary">
+            <Card padding="md" color="tertiary">
               <Typography size="sm" color="secondary">Active Users</Typography>
               <Container layout="flex" align="center" gap="sm" marginTop="xs">
                 <Icon name="FiUsers" color="tertiary" />
@@ -2227,7 +2227,7 @@ export const AdminPage = () => {
 
           {/* User Overview Statistics */}
           <Container layout="grid" columns="5" gap="md">
-            <Card padding="md" variant="tertiary">
+            <Card padding="md" color="tertiary">
               <Typography size="sm" color="secondary">Total Users</Typography>
               <Typography size="2xl" weight="bold">
                 {adminData.userStats?.summary?.totalUsers?.toLocaleString() || 
@@ -2238,7 +2238,7 @@ export const AdminPage = () => {
               </Typography>
             </Card>
             
-            <Card padding="md" variant="success">
+            <Card padding="md" color="success">
               <Typography size="sm" color="secondary">Active Users</Typography>
               <Typography size="2xl" weight="bold">
                 {adminData.userStats?.summary?.activeUsers?.toLocaleString() || 
@@ -2250,7 +2250,7 @@ export const AdminPage = () => {
               </Typography>
             </Card>
             
-            <Card padding="md" variant="warning">
+            <Card padding="md" color="warning">
               <Typography size="sm" color="secondary">New This Week</Typography>
               <Typography size="2xl" weight="bold">
                 {adminData.userStats?.summary?.newThisWeek || 0}
@@ -2260,7 +2260,7 @@ export const AdminPage = () => {
               </Typography>
             </Card>
             
-            <Card padding="md" variant="tertiary">
+            <Card padding="md" color="tertiary">
               <Typography size="sm" color="secondary">Admin Users</Typography>
               <Typography size="2xl" weight="bold">
                 {adminData.userStats?.summary?.adminUsers || 0}
@@ -2270,7 +2270,7 @@ export const AdminPage = () => {
               </Typography>
             </Card>
             
-            <Card padding="md" variant="error">
+            <Card padding="md" color="error">
               <Typography size="sm" color="secondary">Inactive Users</Typography>
               <Typography size="2xl" weight="bold">
                 {adminData.userStats?.summary?.inactiveUsers || 0}
@@ -2289,7 +2289,7 @@ export const AdminPage = () => {
               </Typography>
               <Data
                 data={adminData.users}
-                variant="table"
+               
                 fieldConfig={{
                   firstName: {
                     component: Typography,
@@ -2413,7 +2413,7 @@ export const AdminPage = () => {
                         roleData.role === 'CREATOR' || roleData.role === 'SUPER_CREATOR' ? 'info' : 'secondary'
                       }
                       showPercentage={true}
-                      size="small"
+                      size="sm"
                     />
                     <Typography size="xs" color="secondary">
                       {roleData.percentage}% of users
@@ -2442,7 +2442,7 @@ export const AdminPage = () => {
                 </Typography>
                 <Container layout="grid" columns={4} gap="sm">
                   {adminData.userStats.timeline.data.map((timeData, index) => (
-                    <Card key={index} padding="sm" variant="tertiary">
+                    <Card key={index} padding="sm" color="tertiary">
                       <Typography size="sm" weight="semibold">{timeData.period}</Typography>
                       <Typography size="lg" weight="bold" color="primary">
                         {timeData.count}
@@ -2469,7 +2469,7 @@ export const AdminPage = () => {
                             (Array.isArray(user.roles) ? user.roles[0] : user.roles) === 'CREATOR' || 
                             (Array.isArray(user.roles) ? user.roles[0] : user.roles) === 'SUPER_CREATOR' ? 'info' : 'default'
                           }
-                          size="small"
+                          size="sm"
                         >
                           {Array.isArray(user.roles) ? user.roles[0] : user.roles}
                         </Badge>
@@ -2484,8 +2484,8 @@ export const AdminPage = () => {
                       </Container>
                       <Container layout="flex-column" align="end" gap="xs">
                         <Badge 
-                          variant={user.active !== false ? 'success' : 'error'}
-                          size="small"
+                         
+                          size="sm"
                         >
                           {user.active !== false ? 'Active' : 'Inactive'}
                         </Badge>
@@ -2507,7 +2507,7 @@ export const AdminPage = () => {
               </Typography>
               <Data
                 data={adminData.users.users}
-                variant="table"
+               
                 fields={[
                   { key: 'firstName', label: 'Name', type: 'text', 
                     transform: (firstName, user) => `${firstName} ${user.lastName}` },
@@ -2560,7 +2560,7 @@ export const AdminPage = () => {
                       if (statsLoading) {
                         return (
                           <Container layout="flex-column" gap="md" align="center" padding="lg" style={{ minWidth: '400px' }}>
-                            <CircularProgress size="default" />
+                            <CircularProgress size="md" />
                             <Typography size="sm" color="secondary">Loading user statistics...</Typography>
                           </Container>
                         );
@@ -2590,7 +2590,7 @@ export const AdminPage = () => {
                             <Typography size="xs" color="secondary">
                               Detailed statistics not available
                             </Typography>
-                            <Button size="small" width="100%" onClick={() => navigate(`/users`)}>
+                            <Button size="sm" width="100%" onClick={() => navigate(`/users`)}>
                               View in User Management
                             </Button>
                           </Container>
@@ -2603,15 +2603,15 @@ export const AdminPage = () => {
                           <Container layout="flex" justify="space-between" align="center">
                             <Typography weight="bold" size="lg">User Analytics</Typography>
                             <Badge 
-                              variant={userStats.user?.active ? 'success' : 'error'}
-                              size="small"
+                             
+                              size="sm"
                             >
                               {userStats.user?.active ? 'Active' : 'Inactive'}
                             </Badge>
                           </Container>
                           
                           {/* User Profile Section */}
-                          <Card padding="sm" variant="default">
+                          <Card padding="sm">
                             <Typography weight="semibold" size="sm" marginBottom="xs">Profile Information</Typography>
                             <Container layout="grid" columns="2" gap="xs">
                               <Typography size="xs">
@@ -2631,7 +2631,7 @@ export const AdminPage = () => {
 
                           {/* Activity Statistics */}
                           {userStats.activity && !userStats.limited && (
-                            <Card padding="sm" variant="tertiary">
+                            <Card padding="sm" color="tertiary">
                               <Typography weight="semibold" size="sm" marginBottom="xs">Activity Overview</Typography>
                               
                               {/* Last Login */}
@@ -2650,7 +2650,7 @@ export const AdminPage = () => {
                                     {userStats.activity.activityBreakdown.slice(0, 4).map((activity, index) => (
                                       <Container key={index} layout="flex" justify="space-between" align="center">
                                         <Container layout="flex" gap="xs" align="center">
-                                          <Badge size="small" variant={
+                                          <Badge size="sm" color={
                                             activity.type === 'AUTH' ? 'success' :
                                             activity.type === 'USER' ? 'info' :
                                             activity.type === 'FILE' ? 'warning' : 'default'
@@ -2671,7 +2671,7 @@ export const AdminPage = () => {
                               
                               {/* Total Activity Count */}
                               <Container layout="flex" justify="center" marginTop="sm">
-                                <Badge variant="tertiary" size="default">
+                                <Badge color="tertiary" size="md">
                                   {userStats.activity.activityBreakdown?.reduce((sum, a) => sum + a.count, 0) || 0} Total Actions
                                 </Badge>
                               </Container>
@@ -2680,7 +2680,7 @@ export const AdminPage = () => {
 
                           {/* File Statistics */}
                           {userStats.files && (
-                            <Card padding="sm" variant="warning">
+                            <Card padding="sm" color="warning">
                               <Typography weight="semibold" size="sm" marginBottom="xs">File Statistics</Typography>
                               
                               {userStats.files.error ? (
@@ -2714,7 +2714,7 @@ export const AdminPage = () => {
                                         {userStats.files.filesByType.slice(0, 3).map((fileType, index) => (
                                           <Container key={index} layout="flex" justify="space-between" align="center">
                                             <Typography size="xs">{fileType.type || 'Unknown'}</Typography>
-                                            <Badge size="small" variant="default">{fileType.count}</Badge>
+                                            <Badge size="sm" color="default">{fileType.count}</Badge>
                                           </Container>
                                         ))}
                                       </Container>
@@ -2734,14 +2734,14 @@ export const AdminPage = () => {
 
                           {/* Security Information */}
                           {userStats.security && !userStats.limited && (
-                            <Card padding="sm" variant="error">
+                            <Card padding="sm" color="error">
                               <Typography weight="semibold" size="sm" marginBottom="xs">Security Status</Typography>
                               <Container layout="flex-column" gap="xs">
                                 <Container layout="flex" justify="space-between">
                                   <Typography size="xs">2FA Enabled:</Typography>
                                   <Badge 
-                                    size="small" 
-                                    variant={userStats.security.twoFactorEnabled ? 'success' : 'error'}
+                                    size="sm" 
+                                   
                                   >
                                     {userStats.security.twoFactorEnabled ? 'Yes' : 'No'}
                                   </Badge>
@@ -2750,8 +2750,8 @@ export const AdminPage = () => {
                                 <Container layout="flex" justify="space-between">
                                   <Typography size="xs">Account Status:</Typography>
                                   <Badge 
-                                    size="small" 
-                                    variant={userStats.security.active ? 'success' : 'error'}
+                                    size="sm" 
+                                   
                                   >
                                     {userStats.security.active ? 'Active' : 'Disabled'}
                                   </Badge>
@@ -2772,7 +2772,7 @@ export const AdminPage = () => {
 
                           {/* Recent Login History */}
                           {userStats.activity?.loginHistory?.length > 0 && !userStats.limited && (
-                            <Card padding="sm" variant="tertiary">
+                            <Card padding="sm" color="tertiary">
                               <Typography weight="semibold" size="sm" marginBottom="xs">Recent Logins</Typography>
                               <Container layout="flex-column" gap="xs">
                                 {userStats.activity.loginHistory.slice(0, 3).map((login, index) => (
@@ -2782,7 +2782,7 @@ export const AdminPage = () => {
                                       <Typography size="xs" weight="semibold">
                                         {new Date(login.timestamp).toLocaleDateString()}
                                       </Typography>
-                                      <Badge size="small" variant={login.success ? 'success' : 'error'}>
+                                      <Badge size="sm" color={login.success ? 'success' : 'error'}>
                                         {login.success ? 'Success' : 'Failed'}
                                       </Badge>
                                     </Container>
@@ -2797,11 +2797,11 @@ export const AdminPage = () => {
 
                           {/* Action Button */}
                           <Container layout="flex" gap="sm">
-                            <Button size="small" variant="secondary" onClick={() => navigate(`/users`)}>
+                            <Button size="sm" color="secondary" onClick={() => navigate(`/users`)}>
                               User Management
                             </Button>
                             {(userStats.user?._id || userStats.user?.id) && (
-                              <Button size="small" onClick={() => {
+                              <Button size="sm" onClick={() => {
                                 // Could navigate to detailed user view or trigger more actions
                                 showInfo(`Full stats for ${userStats.user.username} loaded successfully`);
                               }}>
@@ -2848,7 +2848,7 @@ export const AdminPage = () => {
               </Typography>
               <Data
                 data={adminData.logs}
-                variant="table"
+               
                 fieldConfig={{
                   timestamp: {
                     component: Typography,
@@ -2960,25 +2960,25 @@ export const AdminPage = () => {
 
           {/* Overview Statistics Grid */}
           <Container layout="grid" columns="4" gap="md">
-            <Card padding="md" variant="tertiary">
+            <Card padding="md" color="tertiary">
               <Typography size="sm" color="secondary">Total Logs</Typography>
               <Typography size="2xl" weight="bold">
                 {(adminData.logStats?.overview?.totalLogs || 0).toLocaleString()}
               </Typography>
             </Card>
-            <Card padding="md" variant="success">
+            <Card padding="md" color="success">
               <Typography size="sm" color="secondary">Today's Logs</Typography>
               <Typography size="2xl" weight="bold">
                 {(adminData.logStats?.overview?.logsToday || 0).toLocaleString()}
               </Typography>
             </Card>
-            <Card padding="md" variant="warning">
+            <Card padding="md" color="warning">
               <Typography size="sm" color="secondary">Warnings Today</Typography>
               <Typography size="2xl" weight="bold">
                 {(adminData.logStats?.warnings?.today || 0).toLocaleString()}
               </Typography>
             </Card>
-            <Card padding="md" variant="error">
+            <Card padding="md" color="error">
               <Typography size="sm" color="secondary">Errors Today</Typography>
               <Typography size="2xl" weight="bold">
                 {(adminData.logStats?.errors?.today || 0).toLocaleString()}
@@ -3055,7 +3055,7 @@ export const AdminPage = () => {
 
           {/* System Health Summary */}
           {adminData.logStats?.summary && (
-            <Card padding="lg" variant="tertiary">
+            <Card padding="lg" color="tertiary">
               <Typography weight="semibold" size="lg" marginBottom="md">
                 System Health Summary
               </Typography>
@@ -3071,7 +3071,7 @@ export const AdminPage = () => {
                     variant={(adminData.logStats.summary.systemHealth || 0) > 95 ? 'success' : 
                              (adminData.logStats.summary.systemHealth || 0) > 85 ? 'warning' : 'error'}
                     showPercentage={false}
-                    size="small"
+                    size="sm"
                   />
                 </Container>
                 <Container layout="flex-column" gap="xs" align="center">
@@ -3147,7 +3147,7 @@ export const AdminPage = () => {
                       <Typography size="sm" style={{ maxWidth: '70%', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                         {endpoint._id?.url || endpoint.endpoint}
                       </Typography>
-                      <Badge variant="warning" size="small">
+                      <Badge color="warning" size="sm">
                         {endpoint.avgResponseTime?.toFixed(1)}ms
                       </Badge>
                     </Container>
@@ -3159,7 +3159,7 @@ export const AdminPage = () => {
 
           {/* Error Analysis */}
           {adminData.logStats?.errorAnalysis && (
-            <Card padding="lg" variant="error">
+            <Card padding="lg" color="error">
               <Typography weight="semibold" size="lg" marginBottom="md">
                 Error Analysis
               </Typography>
@@ -3210,7 +3210,7 @@ export const AdminPage = () => {
                         stat._id.toString().includes('4xx') ? 'warning' : 'error'
                       }
                       showPercentage={true}
-                      size="small"
+                      size="sm"
                     />
                   </Container>
                 ))}
@@ -3243,7 +3243,7 @@ export const AdminPage = () => {
                         method._id === 'DELETE' ? 'error' : 'default'
                       }
                       showPercentage={true}
-                      size="small"
+                      size="sm"
                     />
                     <Typography size="xs" color="secondary">
                       Avg: {method.avgResponseTime?.toFixed(1) || 'N/A'}ms
@@ -3266,7 +3266,7 @@ export const AdminPage = () => {
                     <Typography size="sm" style={{ maxWidth: '70%', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                       {endpoint._id}
                     </Typography>
-                    <Badge variant="tertiary" size="small">
+                    <Badge color="tertiary" size="sm">
                       {endpoint.count}
                     </Badge>
                   </Container>
@@ -3277,7 +3277,7 @@ export const AdminPage = () => {
 
           {/* Security Analysis */}
           {adminData.logStats?.security && (
-            <Card padding="lg" variant="warning">
+            <Card padding="lg" color="warning">
               <Typography weight="semibold" size="lg" marginBottom="md">
                 Security Analysis
               </Typography>
@@ -3310,7 +3310,7 @@ export const AdminPage = () => {
                              style={{ padding: '8px 12px', borderRadius: '6px', backgroundColor: 'var(--color-background-secondary)' }}>
                       <Typography size="sm">{activity._id}</Typography>
                       <Typography size="xs" color="secondary">Failed: {activity.failedAttempts}</Typography>
-                      <Badge variant="error" size="small">{activity.endpoints?.length || 0} endpoints</Badge>
+                      <Badge color="error" size="sm">{activity.endpoints?.length || 0} endpoints</Badge>
                     </Container>
                   ))}
                 </Container>
@@ -3329,7 +3329,7 @@ export const AdminPage = () => {
                   {(adminData.logStats.trafficPatterns.peakHours || []).map((hour, index) => (
                     <Container key={index} layout="flex" justify="space-between" align="center">
                       <Typography size="sm">{hour._id}:00</Typography>
-                      <Badge variant="tertiary" size="small">
+                      <Badge color="tertiary" size="sm">
                         {hour.count} requests
                       </Badge>
                     </Container>
@@ -3376,7 +3376,7 @@ export const AdminPage = () => {
                       <Typography size="xs" color="secondary">
                         {content.count} requests
                       </Typography>
-                      <Badge variant="tertiary" size="small">
+                      <Badge color="tertiary" size="sm">
                         {content.avgResponseTime?.toFixed(1)}ms
                       </Badge>
                     </Container>
@@ -3401,7 +3401,7 @@ export const AdminPage = () => {
                       <Typography size="xs" color="secondary">
                         {ua.count} requests
                       </Typography>
-                      <Badge variant="default" size="small">
+                      <Badge color="default" size="sm">
                         {ua.avgResponseTime?.toFixed(1)}ms
                       </Badge>
                     </Container>
@@ -3493,7 +3493,7 @@ export const AdminPage = () => {
             <Button 
               onClick={() => loadSectionData('appstats', true)}
               disabled={refreshing}
-              variant="secondary"
+              color="secondary"
             >
               {refreshing ? 'Refreshing...' : 'Refresh Statistics'}
             </Button>
@@ -3664,7 +3664,7 @@ export const AdminPage = () => {
               </Typography>
               <Data
                 data={adminData.roleRequests}
-                variant="table"
+               
                 fieldConfig={{
                   user: {
                     component: Container,
@@ -3749,8 +3749,8 @@ export const AdminPage = () => {
                         <Container layout="flex-column" gap="xs" padding="xs">
                           <Typography as="h4" size="sm" weight="semibold">Actions</Typography>
                           <Button 
-                            variant="ghost" 
-                            size="small" 
+                            
+                            size="sm" 
                             align="left"
                             onClick={async () => {
                               try {
@@ -3766,8 +3766,8 @@ export const AdminPage = () => {
                             Approve Request
                           </Button>
                           <Button 
-                            variant="ghost" 
-                            size="small" 
+                            
+                            size="sm" 
                             align="left"
                             onClick={async () => {
                               try {
@@ -3815,7 +3815,7 @@ export const AdminPage = () => {
 
           {/* Refresh Button */}
           <Button 
-            variant="secondary" 
+            color="secondary" 
             onClick={() => loadRoleRequestsData()}
             disabled={sectionLoading['role-requests']}
           >

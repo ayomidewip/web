@@ -2,6 +2,15 @@ import React, { createContext, forwardRef, useContext, useMemo, useRef } from 'r
 import { useEffectiveTheme, useTheme } from '@contexts/ThemeContext';
 import { useGeniePortal } from './Genie';
 
+const BUTTON_COLOR_TOKENS = {
+    primary: 'var(--primary-color)',
+    secondary: 'var(--secondary-color)',
+    tertiary: 'var(--tertiary-color)',
+    success: 'var(--success-color)',
+    warning: 'var(--warning-color)',
+    error: 'var(--error-color)'
+};
+
 // Context for ButtonGroup to manage selection
 export const ButtonGroupContext = createContext(null);
 
@@ -20,13 +29,19 @@ export const ButtonGroupContext = createContext(null);
 export const Button = forwardRef(({
     children,
     className = '',
-    variant = 'primary', // 'primary', 'secondary', 'tertiary', 'success', 'warning', 'error', 'border-shadow'
-    size = 'default', // 'small', 'default', 'large'
+    color = 'primary', // 'primary', 'secondary', 'tertiary', 'success', 'warning', 'error'
+    variant = null, // Special variant: 'border-shadow' for unique styling
+    size = 'md', // 'xs', 'sm', 'md', 'lg', 'xl'
     disabled = false,
     selected: externalSelected = null, // Allow external control of selected state
     type = 'button',
     onClick,
     width = null, // Width value (e.g., '100%', '200px', '10rem')
+    height = null, // Height value (e.g., '2.5rem', '40px')
+    minWidth = null, // Minimum width (e.g., '100px', '5rem')
+    minHeight = null, // Minimum height (e.g., '2rem', '32px')
+    maxWidth = null, // Maximum width (e.g., '500px', '100%')
+    maxHeight = null, // Maximum height (e.g., '10rem', '200px')
     theme = null, // Optional theme override for this button
     marginTop = null, // Margin top: 'none', 'xs', 'sm', 'md', 'lg', 'xl' or custom value
     marginBottom = null, // Margin bottom: 'none', 'xs', 'sm', 'md', 'lg', 'xl' or custom value
@@ -47,6 +62,14 @@ export const Button = forwardRef(({
     // Helper function to convert margin prop to CSS style
     const getMarginStyle = () => {
         const style = {};
+
+        // Width and height
+        if (width !== null) style.width = width;
+        if (height !== null) style.height = height;
+        if (minWidth !== null) style.minWidth = minWidth;
+        if (minHeight !== null) style.minHeight = minHeight;
+        if (maxWidth !== null) style.maxWidth = maxWidth;
+        if (maxHeight !== null) style.maxHeight = maxHeight;
 
         // Only apply margins if explicitly provided
         if (marginTop !== null) {
@@ -141,17 +164,34 @@ export const Button = forwardRef(({
         onClick: handleClick // Always use our handleClick which handles both Genie and Button logic
     };
     const getVariantClass = () => {
-        return `themed-button-${variant}`;
+        if (!variant) return '';
+        if (variant === 'border-shadow') {
+            return 'themed-button-border-shadow';
+        }
+        return `themed-button-variant-${variant}`;
+    };
+
+    const getColorClass = () => {
+        return `themed-button-${color}`;
+    };
+
+    const getVariantColorValue = () => {
+        return BUTTON_COLOR_TOKENS[color] || color || BUTTON_COLOR_TOKENS.primary;
     };
 
     const getSizeClass = () => {
         switch (size) {
-            case 'small':
-                return 'small';
-            case 'large':
-                return 'large';
+            case 'xs':
+                return 'xs';
+            case 'sm':
+                return 'sm';
+            case 'lg':
+                return 'lg';
+            case 'xl':
+                return 'xl';
+            case 'md':
             default:
-                return '';
+                return 'md';
         }
     };
 
@@ -169,8 +209,15 @@ export const Button = forwardRef(({
     // Filter out custom props that shouldn't be passed to the DOM element
     const {
         size: _size,
+        color: _color,
+        variant: _variant,
         selected: _selected,
         width: _width,
+        height: _height,
+        minWidth: _minWidth,
+        minHeight: _minHeight,
+        maxWidth: _maxWidth,
+        maxHeight: _maxHeight,
         expandDirection: _expandDirection,
         flexFill: _flexFill,
         genie: _genie,
@@ -180,19 +227,21 @@ export const Button = forwardRef(({
         ...validButtonProps
     } = props;
 
+    const variantColorValue = getVariantColorValue();
+
     return (
         <>
             <button
                 ref={buttonRef}
                 type={type}
-                className={`button themed-button ${getVariantClass()} ${getSizeClass()} ${getSelectedClass()} ${getJustifySelfClass()} ${genieConfig ? 'genie-trigger' : ''} theme-${buttonTheme} ${className}`}
+                className={`button themed-button ${getVariantClass()} ${getColorClass()} ${getSizeClass()} ${getSelectedClass()} ${getJustifySelfClass()} ${genieConfig ? 'genie-trigger' : ''} theme-${buttonTheme} ${className}`}
                 disabled={disabled}
                 data-theme={buttonTheme}
                 data-theme-source={theme ? 'local' : 'inherited'}
                 data-genie-position={genieConfig?.position || 'auto'}
                 {...validButtonProps}
                 {...combinedProps}
-                style={{ justifySelf, width, ...getMarginStyle() }}
+                style={{ justifySelf, ...getMarginStyle(), ...(variantColorValue ? { '--button-variant-color': variantColorValue } : {}) }}
             >
                 <span className="button-content">
                     {children}

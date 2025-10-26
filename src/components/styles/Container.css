@@ -36,14 +36,6 @@
     justify-content: flex-start;
 }
 
-.container.layout-flex-wrap,
-.themed-container.layout-flex-wrap {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    justify-content: flex-start;
-}
-
 .container.layout-flex-column,
 .themed-container.layout-flex-column {
     display: flex;
@@ -383,13 +375,6 @@
 .themed-container.layout-flex > .themed-container.flex-fill {
     flex: 1 1 0;
     min-width: 0;
-}
-
-/* Flex-wrap children behavior */
-.container.layout-flex-wrap > *,
-.themed-container.layout-flex-wrap > * {
-    flex: 0 0 auto;
-    max-width: 100%;
 }
 
 /* Text-wrap children behavior */

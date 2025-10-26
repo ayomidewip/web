@@ -604,7 +604,6 @@ export const ShareForm = ({filePath, isDirectory, onSuccess}) => {
 
 // Simple Directory Selector component reusing Explorer logic
 const DirectorySelector = ({fileTree, onSelect, selectedPath = '', width = '100%'}) => {
-    const [searchQuery, setSearchQuery] = useState('');
     const [expandedNodes, setExpandedNodes] = useState(new Set([selectedPath, '/']));
 
     // Reuse the same directory filtering logic from Explorer
@@ -650,33 +649,6 @@ const DirectorySelector = ({fileTree, onSelect, selectedPath = '', width = '100%
         return filterTree(fileTree, '');
     }, [fileTree]);
 
-    // Reuse the same search filtering logic from Explorer
-    const filteredSearchTree = useMemo(() => {
-        if (!searchQuery.trim()) return filteredTree;
-
-        const query = searchQuery.toLowerCase();
-
-        const searchItems = (tree) => {
-            const filtered = {};
-
-            Object.entries(tree).forEach(([key, node]) => {
-                const nameMatches = key.toLowerCase().includes(query);
-                const hasMatchingChildren = node.children ? Object.keys(searchItems(node.children)).length > 0 : false;
-
-                if (nameMatches || hasMatchingChildren) {
-                    filtered[key] = {
-                        ...node,
-                        children: node.children ? searchItems(node.children) : {}
-                    };
-                }
-            });
-
-            return filtered;
-        };
-
-        return searchItems(filteredTree);
-    }, [filteredTree, searchQuery]);
-
     const handleNodeSelect = useCallback((nodeId, isSelected) => {
         if (isSelected && onSelect) {
             onSelect(fileService.normalizePath(nodeId));
@@ -697,17 +669,9 @@ const DirectorySelector = ({fileTree, onSelect, selectedPath = '', width = '100%
 
     return (
         <Container layout="flex-column" gap="sm" width={width}>
-            <Input
-                placeholder="Search directories..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                icon="FiSearch"
-                size="small"
-                width="100%"
-            />
-            {Object.keys(filteredSearchTree).length > 0 ? (
+            {Object.keys(filteredTree).length > 0 ? (
                 <TreeView
-                    data={filteredSearchTree}
+                    data={filteredTree}
                     onNodeSelect={handleNodeSelect}
                     selectedNodes={[selectedPath]}
                     expandedNodes={Array.from(expandedNodes)}
@@ -716,10 +680,12 @@ const DirectorySelector = ({fileTree, onSelect, selectedPath = '', width = '100%
                     size="small"
                     showIcons={true}
                     width={width}
+                    searchable
+                    searchPlaceholder="Search directories..."
                 />
             ) : (
                 <Typography size="sm" color="muted">
-                    {searchQuery ? 'No directories match your search' : 'No directories available'}
+                    No directories available
                 </Typography>
             )}
         </Container>
@@ -754,6 +720,7 @@ const DirectorySelector = ({fileTree, onSelect, selectedPath = '', width = '100%
  * @param {boolean} props.hideTitle Whether to hide the title (default: false)
  * @param {boolean} props.showContextActions Whether to show context menu actions (default: true)
  * @param {Function} props.onFileAction Callback for file actions (create, delete, etc.)
+ * @param {string} props.contentPadding Internal padding for the explorer content area (default: 'sm')
  */
 const Explorer = ({
                       fileTree,
@@ -770,12 +737,12 @@ const Explorer = ({
                       showIcons = true,
                       hideTitle = false,
                       showContextActions = true,
-                      onFileAction
+                      onFileAction,
+                      contentPadding = 'sm'
                   }) => {
     // Local state
     const [selectorState, setSelectorState] = useState({
         showSelector: showSelector,
-        searchQuery: '',
         selectedPath: currentPath,
         expandedNodes: new Set([currentPath, '/'])
     });
@@ -873,32 +840,6 @@ const Explorer = ({
     }, [fileTree]);
 
     // Filter items based on search query
-    const filteredSearchTree = useMemo(() => {
-        if (!selectorState.searchQuery.trim()) return filteredTree;
-
-        const query = selectorState.searchQuery.toLowerCase();
-
-        const searchItems = (tree) => {
-            const filtered = {};
-
-            Object.entries(tree).forEach(([key, node]) => {
-                const nameMatches = key.toLowerCase().includes(query);
-                const hasMatchingChildren = node.children ? Object.keys(searchItems(node.children)).length > 0 : false;
-
-                if (nameMatches || hasMatchingChildren) {
-                    filtered[key] = {
-                        ...node,
-                        children: node.children ? searchItems(node.children) : {}
-                    };
-                }
-            });
-
-            return filtered;
-        };
-
-        return searchItems(filteredTree);
-    }, [filteredTree, selectorState.searchQuery]);
-
     // Toggle directory explorer visibility
     const toggleSelector = useCallback(() => {
         setSelectorState(prev => ({...prev, showSelector: !prev.showSelector}));
@@ -944,10 +885,6 @@ const Explorer = ({
     }, [onPathSelect, fileTree]);
 
     // Handle search input change
-    const handleSearchChange = useCallback((e) => {
-        setSelectorState(prev => ({...prev, searchQuery: e.target.value}));
-    }, []);
-
     // Handle node expansion/collapse
     const handleNodeExpand = useCallback((nodeId, isExpanded) => {
         setSelectorState(prev => {
@@ -988,28 +925,18 @@ const Explorer = ({
                     minHeight={minHeight}
                     layout="flex-column"
                 >
-                    <Container layout="flex-column" gap="sm" width="100%" flexFill padding="sm">
+                    <Container layout="flex-column" gap="sm" width="100%" flexFill padding={contentPadding}>
                         {!hideTitle && (
                             <Typography size="sm" weight="medium">
                                 Select Directory
                             </Typography>
                         )}
 
-                        {/* Search Input */}
-                        <Input
-                            placeholder="Filter directories..."
-                            value={selectorState.searchQuery}
-                            onChange={handleSearchChange}
-                            icon="FiSearch"
-                            size="small"
-                            width="100%"
-                        />
-
                         {/* File/Directory TreeView */}
                         <Container width="100%" flexFill>
-                            {Object.keys(filteredSearchTree).length > 0 ? (
+                            {Object.keys(filteredTree).length > 0 ? (
                                 <TreeView
-                                    data={filteredSearchTree}
+                                    data={filteredTree}
                                     onNodeSelect={handleNodeSelect}
                                     selectedNodes={[selectorState.selectedPath]}
                                     expandedNodes={Array.from(selectorState.expandedNodes)}
@@ -1018,6 +945,8 @@ const Explorer = ({
                                     size="small"
                                     showIcons={showIcons}
                                     width="100%"
+                                    searchable
+                                    searchPlaceholder="Filter directories..."
                                     getNodeGenie={showContextActions ? (node, nodeState) => {
                                         // Direct genie implementation for files and directories
                                         const isDirectory = node.metadata.type === 'directory';
@@ -1294,9 +1223,7 @@ const Explorer = ({
                                 />
                             ) : (
                                 <Typography size="sm" color="muted">
-                                    {selectorState.searchQuery
-                                        ? 'No directories match your search'
-                                        : 'No directories available'}
+                                    No directories available
                                 </Typography>
                             )}
                         </Container>

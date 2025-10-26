@@ -15,8 +15,16 @@ export const Switch = ({
     label = '',
     disabled = false,
     id,
-    size = 'default',
+    size = 'md', // 'xs', 'sm', 'md', 'lg', 'xl'
     theme = null, // Optional theme override for this switch
+    width = null, // Width value (e.g., '100%', '200px', 'auto')
+    height = null, // Height value (e.g., '2rem', '32px', 'auto')
+    minWidth = null, // Minimum width (e.g., '100px', '5rem')
+    minHeight = null, // Minimum height (e.g., '2rem', '32px')
+    maxWidth = null, // Maximum width (e.g., '500px', '100%')
+    maxHeight = null, // Maximum height (e.g., '10rem', '200px')
+    marginTop = null, // Margin top: 'none', 'xs', 'sm', 'md', 'lg', 'xl' or custom value
+    marginBottom = null, // Margin bottom: 'none', 'xs', 'sm', 'md', 'lg', 'xl' or custom value
     justifySelf = null, // CSS justify-self property: 'auto', 'start', 'end', 'center', 'stretch'
     ...props
 }) => {
@@ -35,14 +43,7 @@ export const Switch = ({
     const {defaultChecked: _, ...inputProps} = props;
 
     const getSizeClass = () => {
-        switch (size) {
-            case 'small':
-                return 'switch-small';
-            case 'large':
-                return 'switch-large';
-            default:
-                return '';
-        }
+        return `switch-${size}`;
     };
 
     const getJustifySelfClass = () => {
@@ -52,10 +53,47 @@ export const Switch = ({
         return '';
     };
 
+    const getSwitchStyle = () => {
+        const style = {};
+
+        // Sizing
+        if (width !== null) style.width = width;
+        if (height !== null) style.height = height;
+        if (minWidth !== null) style.minWidth = minWidth;
+        if (minHeight !== null) style.minHeight = minHeight;
+        if (maxWidth !== null) style.maxWidth = maxWidth;
+        if (maxHeight !== null) style.maxHeight = maxHeight;
+
+        // Margins
+        if (marginTop !== null) {
+            if (marginTop === 'none') {
+                style.marginTop = '0';
+            } else if (['xs', 'sm', 'md', 'lg', 'xl'].includes(marginTop)) {
+                style.marginTop = `var(--spacing-${marginTop})`;
+            } else {
+                style.marginTop = marginTop;
+            }
+        }
+
+        if (marginBottom !== null) {
+            if (marginBottom === 'none') {
+                style.marginBottom = '0';
+            } else if (['xs', 'sm', 'md', 'lg', 'xl'].includes(marginBottom)) {
+                style.marginBottom = `var(--spacing-${marginBottom})`;
+            } else {
+                style.marginBottom = marginBottom;
+            }
+        }
+
+        if (justifySelf !== null) style.justifySelf = justifySelf;
+
+        return style;
+    };
+
     return (
         <div 
             className={`switch-wrapper flex items-center gap-sm ${getJustifySelfClass()} ${className}`}
-            style={{ justifySelf }}
+            style={getSwitchStyle()}
         >
             <div 
                 className={`switch-container themed-switch ${getSizeClass()} theme-${switchTheme}`}

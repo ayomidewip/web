@@ -1,4 +1,4 @@
-import React, { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { forwardRef, useCallback, useEffect, useMemo, useRef } from 'react';
 import {
     BlockTypeSelect,
     BoldItalicUnderlineToggles,
@@ -27,7 +27,6 @@ import {
     UndoRedo
 } from '@mdxeditor/editor';
 import {ThemeProvider, useEffectiveTheme, useTheme} from '../contexts/ThemeContext';
-import {Genie} from './Genie';
 
 /**
  * Editor - Enhanced MDX Editor component with full theme integration and diff support
@@ -36,7 +35,6 @@ import {Genie} from './Genie';
  * - Complete MDX Editor functionality with rich text editing
  * - Full theme system integration with custom CSS variables
  * - Customizable toolbar with all standard features
- * - Genie integration for enhanced interaction
  * - Content styling that matches application themes
  * - Plugin-based architecture for extensibility
  * - Support for markdown shortcuts, code blocks, tables, images, etc.
@@ -44,61 +42,58 @@ import {Genie} from './Genie';
  * - Theme inheritance support
  */
 export const Editor = forwardRef(({
-                                      className = '',
+    className = '',
 
-                                      onChange = null,
-                                      placeholder = 'Start writing...',
-                                      readOnly = false,
-                                      autoFocus = false,
+    onChange = null,
+    placeholder = 'Start writing...',
+    readOnly = false,
+    autoFocus = false,
 
-                                      // Regular content props (no Yjs here)
-                                      content = '',
+    // Regular content props (no Yjs here)
+    content = '',
 
-                                      // Add error handling
-                                      onError = null,
-                                      showParseErrors = true,
+    // Add error handling
+    onError = null,
+    showParseErrors = true,
 
-                                      // Diff mode configuration
-                                      diffContent = '', // content to compare against
+    // Diff mode configuration
+    diffContent = '', // content to compare against
 
-                                      // Theming props
-                                      theme = null,
-                                      contentClassName = '',
+    // Theming props
+    theme = null,
+    contentClassName = '',
 
-                                      // Layout props
-                                      width = null,
-                                      minHeight = null, // Minimum height value (e.g., '200px', '10rem', '50vh')
+    // Layout props
+    width = null,
+    height = null,
+    minWidth = null,
+    minHeight = null, // Minimum height value (e.g., '200px', '10rem', '50vh')
+    maxWidth = null,
+    maxHeight = null,
 
-                                      // Spacing props
-                                      marginTop = null,
-                                      marginBottom = null,
-                                      justifySelf = null,
+    // Spacing props
+    marginTop = null,
+    marginBottom = null,
+    justifySelf = null,
 
-                                      // Toolbar configuration
-                                      showToolbar = true,
-                                      customToolbar = null,
-                                      toolbarPosition = 'top', // 'top', 'bottom', 'none'
+    // Toolbar configuration
+    showToolbar = true,
+    customToolbar = null,
+    toolbarPosition = 'top', // 'top', 'bottom', 'none'
 
-                                      // Image upload handler
-                                      imageUploadHandler = null,
+    // Image upload handler
+    imageUploadHandler = null,
 
-                                      // Genie integration props
-                                      floatingCard = null,
-                                      floatingTrigger = 'click',
-                                      onFloatingShow = null,
-                                      onFloatingHide = null,
+    // Event handlers
+    onFocus = null,
+    onBlur = null,
+    onKeyDown = null,
 
-                                      // Event handlers
-                                      onFocus = null,
-                                      onBlur = null,
-                                      onKeyDown = null,
-
-                                      ...props
-                                  }, ref) => {
+    ...props
+}, ref) => {
     const {currentTheme: globalTheme} = useTheme();
     const effectiveTheme = useEffectiveTheme();
     const editorRef = useRef(null);
-    const [isFloatingVisible, setIsFloatingVisible] = useState(false);
 
     // Use content prop directly - no Yjs management here
     const effectiveContent = content || '';
@@ -119,8 +114,10 @@ export const Editor = forwardRef(({
     const editorTheme = theme || effectiveTheme.currentTheme;
 
     // Consolidated style calculation - removes redundant if-else blocks
+    const { style: styleProp, ...restProps } = props;
+
     const editorStyles = useMemo(() => {
-        const styles = {...props.style};
+        const styles = {...(styleProp || {})};
 
         // Margin handling
         const marginMap = {
@@ -143,7 +140,7 @@ export const Editor = forwardRef(({
         if (minHeight !== null) styles.minHeight = minHeight;
 
         return styles;
-    }, [marginTop, marginBottom, justifySelf, width, minHeight, props.style]);
+    }, [marginTop, marginBottom, justifySelf, width, minHeight, styleProp]);
 
     // Hybrid image upload handler - uses data URLs for simplicity with fallback
     const defaultImageUploadHandler = useCallback(async (file) => {
@@ -284,23 +281,6 @@ export const Editor = forwardRef(({
     // Combine all styles
     const combinedStyle = editorStyles;
 
-    // Simplified event handlers
-    const handleFloatingShow = useCallback(() => {
-        setIsFloatingVisible(true);
-        onFloatingShow?.();
-    }, [onFloatingShow]);
-
-    const handleFloatingHide = useCallback(() => {
-        setIsFloatingVisible(false);
-        onFloatingHide?.();
-    }, [onFloatingHide]);
-
-    const handleClick = useCallback((e) => {
-        if (floatingTrigger === 'click') {
-            isFloatingVisible ? handleFloatingHide() : handleFloatingShow();
-        }
-    }, [floatingTrigger, isFloatingVisible, handleFloatingShow, handleFloatingHide]);
-
     const handleChange = useCallback((value) => {
         // Simple onChange handler - no Yjs logic here
         onChange?.(value);
@@ -316,16 +296,21 @@ export const Editor = forwardRef(({
         blur: () => editorRef.current?.blur()
     }));
 
+    const editorRenderKey = useMemo(
+        () => [showToolbar ? 'toolbar-on' : 'toolbar-off', toolbarPosition, readOnly ? 'read-only' : 'editable'].join(':'),
+        [showToolbar, toolbarPosition, readOnly]
+    );
+
     const editorComponent = (
         <div
             className={combinedClasses}
             data-theme={editorTheme}
             data-theme-source={theme ? 'local' : 'inherited'}
             style={combinedStyle}
-            onClick={handleClick}
-            {...props}
+            {...restProps}
         >
             <MDXEditor
+                key={editorRenderKey}
                 ref={editorRef}
                 markdown={effectiveContent || ''}
                 onChange={handleChange}
@@ -348,19 +333,6 @@ export const Editor = forwardRef(({
             {editorComponent}
         </ThemeProvider>
     ) : editorComponent;
-
-    // Return with Genie if provided
-    if (floatingCard) {
-        return (
-            <Genie
-                trigger={wrappedComponent}
-                content={floatingCard}
-                visible={isFloatingVisible}
-                onVisibilityChange={setIsFloatingVisible}
-                triggerType={floatingTrigger}
-            />
-        );
-    }
 
     return wrappedComponent;
 });

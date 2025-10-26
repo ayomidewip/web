@@ -53,16 +53,6 @@ function AppRouter() {
             <FilesPage />
           </RouteAccessControl>
         } />
-        <Route path="/users" element={
-          <RouteAccessControl path="/users">
-            <ComponentDemo />
-          </RouteAccessControl>
-        } />
-        <Route path="/profile" element={
-          <RouteAccessControl path="/profile">
-            <ComponentDemo />
-          </RouteAccessControl>
-        } />
         <Route path="/admin" element={
           <RouteAccessControl path="/admin">
             <AdminPage />
@@ -71,14 +61,14 @@ function AppRouter() {
 
         {/* Fallback redirects */}
         <Route path="/dashboard" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       
       {/* Global Navigation FAB */}
       <Navigation 
         position="top-right"
         draggable={true}
-        size="default"
-        variant="primary"
+        size="md"
       />
       
       {/* Global Notification Display */}

@@ -38,11 +38,18 @@ export const FloatingActionButton = forwardRef(({
     onClick,
     icon = 'FiPlus', // Default icon for the FAB
     iconSize = null, // Icon size: 'xs', 'sm', 'md', 'lg', 'xl' - auto-sized based on FAB size if null
-    badge = null, // Badge text (max 10 characters) or badge config object
-    badgeVariant = 'error', // Badge variant: 'primary', 'secondary', 'success', 'warning', 'error', 'tertiary', 'default'
+    badge = null, // Badge text (max 10 characters) to display
     position = 'bottom-right', // 'top-left', 'top', 'top-right', 'left', 'right', 'bottom-left', 'bottom', 'bottom-right'
-    positionOffset = 'default', // 'none', 'xs', 'sm', 'md', 'lg', 'xl', 'default' or custom CSS value
     theme = null, // Optional theme override
+    width = null, // Width value (e.g., '100%', '200px', 'auto')
+    height = null, // Height value (e.g., '2rem', '32px', 'auto')
+    minWidth = null, // Minimum width (e.g., '100px', '5rem')
+    minHeight = null, // Minimum height (e.g., '2rem', '32px')
+    maxWidth = null, // Maximum width (e.g., '500px', '100%')
+    maxHeight = null, // Maximum height (e.g., '10rem', '200px')
+    marginTop = null, // Margin top: 'none', 'xs', 'sm', 'md', 'lg', 'xl' or custom value
+    marginBottom = null, // Margin bottom: 'none', 'xs', 'sm', 'md', 'lg', 'xl' or custom value
+    justifySelf = null, // CSS justify-self property: 'auto', 'start', 'end', 'center', 'stretch'
     // Genie integration props
     genie = null, // Genie content to show
     genieTrigger = 'click', // 'click', 'hover', 'contextmenu'
@@ -50,12 +57,10 @@ export const FloatingActionButton = forwardRef(({
     onGenieHide = null, // Callback when genie hides
     // Parent awareness props
     parentType = 'auto', // 'auto', 'page', 'card', 'container' - auto-detects if not specified
-    scrollWithParent = true, // Whether to scroll with parent container
     // Draggable functionality
     draggable = false, // Enable dragging of the FAB within its container
     snapToEdges = true, // Enable snapping to container edges when dragging ends
     snapThreshold = 100, // Distance from edge (in pixels) to trigger snapping
-    edgePadding = 15, // Padding from container edges when snapped (in pixels)
     ...props
 }, ref) => {
     const {currentTheme: globalTheme} = useTheme();
@@ -108,12 +113,12 @@ export const FloatingActionButton = forwardRef(({
         if (typeof genie === 'object' && genie.content) {
             // New API: genie is an object with trigger, content, position
             return {
-                content: genie.content,
-                trigger: genie.trigger || genieTrigger,
-                position: genie.position || 'auto',
-                variant: genie.variant || 'popover',
-                size: genie.size || 'medium',
-                theme: genie.theme || fabTheme // Inherit FAB's theme if not explicitly set
+                ...genie,
+                trigger: genie.trigger ?? genieTrigger,
+                position: genie.position ?? 'auto',
+                variant: genie.variant ?? 'popover',
+                size: genie.size ?? 'medium',
+                theme: genie.theme ?? fabTheme // Inherit FAB's theme if not explicitly set
             };
         }
 
@@ -137,12 +142,17 @@ export const FloatingActionButton = forwardRef(({
 
     const getSizeClass = () => {
         switch (size) {
-            case 'small':
-                return 'small';
-            case 'large':
-                return 'large';
+            case 'xs':
+                return 'xs';
+            case 'sm':
+                return 'sm';
+            case 'lg':
+                return 'lg';
+            case 'xl':
+                return 'xl';
+            case 'md':
             default:
-                return 'default';
+                return 'md';
         }
     };
 
@@ -160,30 +170,8 @@ export const FloatingActionButton = forwardRef(({
         }
     };
 
-    // Process badge prop and limit to 10 characters
-    const getBadgeConfig = () => {
-        if (!badge) return null;
-
-        if (typeof badge === 'string' || typeof badge === 'number') {
-            const text = String(badge).slice(0, 10); // Limit to 10 characters
-            return {
-                text,
-                variant: badgeVariant,
-                size: size === 'large' ? 'default' : 'small'
-            };
-        }
-
-        if (typeof badge === 'object' && badge.text != null) {
-            const text = String(badge.text).slice(0, 10); // Limit to 10 characters
-            return {
-                text,
-                variant: badge.variant || badgeVariant,
-                size: badge.size || (size === 'large' ? 'default' : 'small')
-            };
-        }
-
-        return null;
-    };
+    // Edge padding matches FAB margins from CSS
+    const edgePadding = 16; // var(--spacing-lg) from CSS
 
     const getPositionClass = () => {
         return `fab-position-${position}`;
@@ -191,11 +179,6 @@ export const FloatingActionButton = forwardRef(({
 
     const getParentTypeClass = () => {
         return `fab-parent-${effectiveParentType}`;
-    };
-
-    const getOffsetClass = () => {
-        if (positionOffset === 'default') return '';
-        return `fab-offset-${positionOffset}`;
     };
 
     // Calculate snap position based on current position and container bounds
@@ -247,10 +230,6 @@ export const FloatingActionButton = forwardRef(({
 
         return {x: snapX, y: snapY, willSnap: true, snapEdge};
     }, [snapToEdges, snapThreshold, edgePadding]);
-
-    const getScrollClass = () => {
-        return scrollWithParent ? 'fab-scroll-with-parent' : 'fab-fixed-position';
-    };
 
     // Calculate initial position for draggable FAB within snap boundaries
     const calculateInitialPosition = useCallback(() => {
@@ -475,9 +454,7 @@ export const FloatingActionButton = forwardRef(({
         badge: _badge,
         badgeVariant: _badgeVariant,
         position: _position,
-        positionOffset: _positionOffset,
         parentType: _parentType,
-        scrollWithParent: _scrollWithParent,
         genie: _genie,
         genieTrigger: _genieTrigger,
         onGenieShow: _onGenieShow,
@@ -486,8 +463,103 @@ export const FloatingActionButton = forwardRef(({
         snapToEdges: _snapToEdges,
         snapThreshold: _snapThreshold,
         edgePadding: _edgePadding,
+        width: _width,
+        height: _height,
+        minWidth: _minWidth,
+        minHeight: _minHeight,
+        maxWidth: _maxWidth,
+        maxHeight: _maxHeight,
+        marginTop: _marginTop,
+        marginBottom: _marginBottom,
+        justifySelf: _justifySelf,
         ...validButtonProps
     } = props;
+
+    const getFABStyle = () => {
+        const style = {};
+
+        // Sizing
+        if (width !== null) style.width = width;
+        if (height !== null) style.height = height;
+        if (minWidth !== null) style.minWidth = minWidth;
+        if (minHeight !== null) style.minHeight = minHeight;
+        if (maxWidth !== null) style.maxWidth = maxWidth;
+        if (maxHeight !== null) style.maxHeight = maxHeight;
+
+        // Margins
+        if (marginTop !== null) {
+            if (marginTop === 'none') {
+                style.marginTop = '0';
+            } else if (['xs', 'sm', 'md', 'lg', 'xl'].includes(marginTop)) {
+                style.marginTop = `var(--spacing-${marginTop})`;
+            } else {
+                style.marginTop = marginTop;
+            }
+        }
+
+        if (marginBottom !== null) {
+            if (marginBottom === 'none') {
+                style.marginBottom = '0';
+            } else if (['xs', 'sm', 'md', 'lg', 'xl'].includes(marginBottom)) {
+                style.marginBottom = `var(--spacing-${marginBottom})`;
+            } else {
+                style.marginBottom = marginBottom;
+            }
+        }
+
+        if (justifySelf !== null) style.justifySelf = justifySelf;
+
+        return style;
+    };
+
+    // Calculate position styles for non-draggable FABs
+    const getPositionStyles = () => {
+        if (draggable) return {};
+
+        const styles = {};
+        
+        switch (position) {
+            case 'top-left':
+                styles.top = `${edgePadding}px`;
+                styles.left = `${edgePadding}px`;
+                break;
+            case 'top':
+                styles.top = `${edgePadding}px`;
+                styles.left = '50%';
+                styles.transform = 'translateX(-50%)';
+                break;
+            case 'top-right':
+                styles.top = `${edgePadding}px`;
+                styles.right = `${edgePadding}px`;
+                break;
+            case 'left':
+                styles.top = '50%';
+                styles.left = `${edgePadding}px`;
+                styles.transform = 'translateY(-50%)';
+                break;
+            case 'right':
+                styles.top = '50%';
+                styles.right = `${edgePadding}px`;
+                styles.transform = 'translateY(-50%)';
+                break;
+            case 'bottom-left':
+                styles.bottom = `${edgePadding}px`;
+                styles.left = `${edgePadding}px`;
+                break;
+            case 'bottom':
+                styles.bottom = `${edgePadding}px`;
+                styles.left = '50%';
+                styles.transform = 'translateX(-50%)';
+                break;
+            case 'bottom-right':
+            default:
+                styles.bottom = `${edgePadding}px`;
+                styles.right = `${edgePadding}px`;
+                break;
+        }
+        
+        return styles;
+    };
 
     return (
         <div
@@ -496,8 +568,7 @@ export const FloatingActionButton = forwardRef(({
         fab-container
         ${!isDragging && !draggable ? getPositionClass() : ''}
         ${getParentTypeClass()}
-        ${!isDragging && !draggable ? getOffsetClass() : ''}
-        ${getScrollClass()}
+        fab-scroll-with-parent
         ${draggable ? 'fab-draggable' : ''}
         ${isDragging ? 'fab-dragging' : ''}
         ${isNearEdge ? 'fab-near-edge' : ''}
@@ -517,7 +588,7 @@ export const FloatingActionButton = forwardRef(({
                         transform: 'none',
                         transition: isDragging ? 'none' : isSnapping ? 'left 0.3s ease-out, top 0.3s ease-out' : 'all 0.3s ease'
                     }
-                    : {}
+                    : getPositionStyles()
             }
         >
             {/* Snap Preview Indicator - Shows a shadow/ghost of the button where it will snap to */}
@@ -572,22 +643,23 @@ export const FloatingActionButton = forwardRef(({
                 data-theme={fabTheme}
                 data-theme-source={theme ? 'local' : 'inherited'}
                 data-draggable={draggable}
+                style={getFABStyle()}
                 {...validButtonProps}
                 {...(genieConfig?.trigger !== 'click' ? triggerProps : {})}
             >
         <span className="button-content">
           <Icon name={icon} size={getIconSize()}/>
         </span>
-            </button>
+        </button>
 
             {/* Badge - positioned absolutely on top-right of FAB */}
-            {getBadgeConfig() && (
+            {badge && (
                 <Badge
-                    variant={getBadgeConfig().variant}
-                    size={getBadgeConfig().size}
+                    variant="error"
+                    size="sm"
                     className="fab-badge"
                 >
-                    {getBadgeConfig().text}
+                    {String(badge).slice(0, 10)}
                 </Badge>
             )}
 

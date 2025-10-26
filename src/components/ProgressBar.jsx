@@ -10,13 +10,21 @@ export const ProgressBar = ({
     value = 0,
     max = 100,
     className = '',
-    size = 'default',
+    size = 'md', // 'xs', 'sm', 'md', 'lg', 'xl'
     showLabel = false,
     label = '',
     showPercentage = false,
     animated = false,
     striped = false,
-    variant = 'default', // 'default', 'primary', 'secondary', 'tertiary', 'success', 'warning', 'error'
+    color = 'default', // 'default', 'primary', 'secondary', 'tertiary', 'success', 'warning', 'error'
+    width = null, // Width value (e.g., '100%', '500px')
+    height = null, // Height value (e.g., '1rem', '16px')
+    minWidth = null, // Minimum width
+    minHeight = null, // Minimum height
+    maxWidth = null, // Maximum width
+    maxHeight = null, // Maximum height
+    marginTop = null, // Margin top: 'none', 'xs', 'sm', 'md', 'lg', 'xl' or custom value
+    marginBottom = null, // Margin bottom: 'none', 'xs', 'sm', 'md', 'lg', 'xl' or custom value
     theme = null, // Optional theme override
     justifySelf = null, // CSS justify-self property: 'auto', 'start', 'end', 'center', 'stretch'
     ...props
@@ -31,20 +39,25 @@ export const ProgressBar = ({
     // Helper functions for classes
     const getSizeClass = () => {
         switch (size) {
-            case 'small':
-                return 'progress-bar-small';
-            case 'large':
-                return 'progress-bar-large';
+            case 'xs':
+                return 'progress-bar-xs';
+            case 'sm':
+                return 'progress-bar-sm';
+            case 'lg':
+                return 'progress-bar-lg';
+            case 'xl':
+                return 'progress-bar-xl';
+            case 'md':
             default:
-                return '';
+                return 'progress-bar-md';
         }
     };
     const getAnimatedClass = () => animated ? 'progress-animated' : '';
     const getStripedClass = () => striped ? 'progress-striped' : '';
 
-    // For default variant, pick color class based on percentage
+    // For default color, pick color class based on percentage
     const getDynamicColorClass = () => {
-        if (variant !== 'default') return `progress-${variant}`;
+        if (color !== 'default') return `progress-${color}`;
         if (percentage < 33) return 'progress-error';
         if (percentage < 66) return 'progress-warning';
         if (percentage < 85) return 'progress-tertiary';
@@ -58,8 +71,44 @@ export const ProgressBar = ({
         return '';
     };
 
+    // Helper function for styling
+    const getWrapperStyle = () => {
+        const style = {};
+
+        if (width !== null) style.width = width;
+        if (height !== null) style.height = height;
+        if (minWidth !== null) style.minWidth = minWidth;
+        if (minHeight !== null) style.minHeight = minHeight;
+        if (maxWidth !== null) style.maxWidth = maxWidth;
+        if (maxHeight !== null) style.maxHeight = maxHeight;
+
+        if (marginTop !== null) {
+            if (marginTop === 'none') {
+                style.marginTop = '0';
+            } else if (['xs', 'sm', 'md', 'lg', 'xl'].includes(marginTop)) {
+                style.marginTop = `var(--spacing-${marginTop})`;
+            } else {
+                style.marginTop = marginTop;
+            }
+        }
+
+        if (marginBottom !== null) {
+            if (marginBottom === 'none') {
+                style.marginBottom = '0';
+            } else if (['xs', 'sm', 'md', 'lg', 'xl'].includes(marginBottom)) {
+                style.marginBottom = `var(--spacing-${marginBottom})`;
+            } else {
+                style.marginBottom = marginBottom;
+            }
+        }
+
+        if (justifySelf !== null) style.justifySelf = justifySelf;
+
+        return style;
+    };
+
     return (
-        <div className={`progress-wrapper ${getJustifySelfClass()} ${className}`} style={{ justifySelf }}>
+        <div className={`progress-wrapper ${getJustifySelfClass()} ${className}`} style={getWrapperStyle()}>
             {(showLabel || label) && (
                 <div className="progress-label flex justify-between mb-sm">
                     <Typography as="span" size="sm">{label}</Typography>

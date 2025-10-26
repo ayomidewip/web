@@ -43,14 +43,6 @@
     justify-content: flex-start;
 }
 
-.card.layout-flex-wrap,
-.themed-card.layout-flex-wrap {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    justify-content: flex-start;
-}
-
 .card.layout-flex-column,
 .themed-card.layout-flex-column {
     display: flex;
@@ -372,13 +364,6 @@
 .themed-card.layout-flex > .themed-card.flex-fill {
     flex: 1 1 0;
     min-width: 0;
-}
-
-/* Flex-wrap children behavior */
-.card.layout-flex-wrap > *,
-.themed-card.layout-flex-wrap > * {
-    flex: 0 0 auto;
-    max-width: 100%;
 }
 
 /* Text-wrap children behavior */

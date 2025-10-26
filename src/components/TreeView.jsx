@@ -1,6 +1,7 @@
 import React, { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useEffectiveTheme, useTheme } from '@contexts/ThemeContext';
 import { Icon } from './Icon';
+import Input from './Input';
 import { useGeniePortal } from './Genie';
 
 /**
@@ -140,12 +141,12 @@ const TreeNode = React.memo(({
 
     const {isExpanded, isSelected, hasChildren, isDisabled} = nodeState;
     const {
-        showIcons, expandIcon, collapseIcon, leafIcon, nodeIcon, indentPixels,
-        allowDragDrop, renderNode, renderNodeContent, resolvedIconSize, variant
+    showIcons, expandIcon, collapseIcon, leafIcon, nodeIcon, indentPixels,
+    allowDragDrop, renderNode, renderNodeContent, resolvedIconSize
     } = treeConfig;
 
     // Genie integration using simplified portal hook
-    const {triggerProps, GeniePortal, handleShow} = useGeniePortal(
+    const {triggerProps, GeniePortal} = useGeniePortal(
         genieConfig,
         nodeRef,
         () => onGenieShow?.(node, genieConfig),
@@ -153,28 +154,41 @@ const TreeNode = React.memo(({
     );
 
     // Use appropriate props based on whether there's a Genie
-    const finalProps = useMemo(() => {
+    const nodeProps = useMemo(() => {
+        const selectNode = (event) => {
+            if (!isDisabled && onNodeSelect) {
+                onNodeSelect(node.id, node, event);
+            }
+        };
+
+        const baseStyle = {
+            paddingLeft: `${level * indentPixels}px`,
+            cursor: isDisabled ? 'default' : 'pointer'
+        };
+
         if (!genieConfig) {
-            // No Genie - just handle node selection
             return {
-                onClick: (event) => {
-                    if (!isDisabled && onNodeSelect) {
-                        onNodeSelect(node.id, node, event);
-                    }
-                }
+                style: baseStyle,
+                onClick: selectNode
             };
         }
 
-        // Genies should only use contextmenu - use triggerProps and add onClick for node selection
+        const { style: triggerStyle, onClick: triggerClick, ...restTriggerProps } = triggerProps;
+
         return {
-            ...triggerProps,
+            ...restTriggerProps,
+            style: {
+                ...(triggerStyle || {}),
+                ...baseStyle
+            },
             onClick: (event) => {
-                if (!isDisabled && onNodeSelect) {
-                    onNodeSelect(node.id, node, event);
+                if (typeof triggerClick === 'function') {
+                    triggerClick(event);
                 }
+                selectNode(event);
             }
         };
-    }, [genieConfig, triggerProps, isDisabled, onNodeSelect, node]);
+    }, [genieConfig, triggerProps, isDisabled, onNodeSelect, node, level, indentPixels]);
 
     const nodeClasses = [
         'tree-node',
@@ -192,14 +206,16 @@ const TreeNode = React.memo(({
         }
     }, [hasChildren, isDisabled, onNodeExpand, node.id]);
 
+    const {style: nodeStyle, ...eventProps} = nodeProps;
+
     return (
         <div className={nodeClasses}>
             <div
                 ref={nodeRef}
                 className={`tree-node-content ${genieConfig ? 'genie-trigger' : ''}`}
-                style={{paddingLeft: `${level * indentPixels}px`}}
+                style={nodeStyle}
                 data-theme={treeConfig.theme}
-                {...finalProps}
+                {...eventProps}
                 onDoubleClick={onNodeDoubleClick ? (e) => onNodeDoubleClick(node, e) : undefined}
                 draggable={allowDragDrop && !isDisabled}
                 onDragStart={allowDragDrop ? (e) => handleDragStart(e, node) : undefined}
@@ -253,59 +269,69 @@ const TreeNode = React.memo(({
 TreeNode.displayName = 'TreeNode';
 
 export const TreeView = forwardRef(({
-                                        // Core TreeView props
-                                        data = null, // Server data object in nested format (automatically converted to tree structure)
-                                        iconMapping = {}, // Custom icon overrides: { 'node-id': 'FiCustomIcon', 'pattern': 'FiIcon' }
-                                        children = null, // Optional children content (rendered after tree)
-                                        className = '',
-                                        variant = 'default', // Background variant: 'default' (surface), 'primary', 'secondary', 'tertiary', 'background'
-                                        size = 'default', // 'small', 'default', 'large' - controls typography and icon sizes
-                                        iconSize = null, // Override icon size if needed: 'xs', 'sm', 'md', 'lg', 'xl', '2xl' (defaults based on size prop)
+    // Core TreeView props
+    data = null, // Server data object in nested format (automatically converted to tree structure)
+    iconMapping = {}, // Custom icon overrides: { 'node-id': 'FiCustomIcon', 'pattern': 'FiIcon' }
+    children = null, // Optional children content (rendered after tree)
+    className = '',
+    color: providedColor = undefined, // Preferred background color prop
+    variant: deprecatedVariant = undefined, // Deprecated alias for background color
+    size: providedSize = 'md', // 'xs', 'sm', 'md', 'lg', 'xl' (legacy: 'small', 'default', 'large')
+    iconSize = null, // Override icon size if needed: 'xs', 'sm', 'md', 'lg', 'xl', '2xl' (defaults based on size prop)
 
-                                        // Tree behavior props
-                                        showIcons = true, // Whether to show expand/collapse icons
-                                        showConnectors = false, // Whether to show connecting lines between nodes
-                                        expandedNodes = null, // Array of expanded node IDs, null for uncontrolled
-                                        selectedNodes = null, // Array of selected node IDs, null for uncontrolled
-                                        multiSelect = false, // Whether multiple nodes can be selected
-                                        defaultExpanded = [], // Default expanded nodes for uncontrolled mode
-                                        defaultSelected = [], // Default selected nodes for uncontrolled mode
-                                        expandIcon = 'FiChevronRight', // Icon for collapsed nodes
-                                        collapseIcon = 'FiChevronDown', // Icon for expanded nodes
-                                        leafIcon = null, // Icon for leaf nodes (no children)
-                                        nodeIcon = null, // Default icon for all nodes
-                                        indentSize = 'md', // 'sm', 'md', 'lg' - indentation per level
-                                        maxDepth = null, // Maximum depth to render
-                                        searchValue = '', // Search filter value
-                                        searchProperty = 'label', // Property to search in
-                                        caseSensitive = false, // Whether search is case sensitive
-                                        allowDragDrop = false, // Whether to allow drag and drop
+    // Tree behavior props
+    showIcons = true, // Whether to show expand/collapse icons
+    showConnectors = false, // Whether to show connecting lines between nodes
+    expandedNodes = null, // Array of expanded node IDs, null for uncontrolled
+    selectedNodes = null, // Array of selected node IDs, null for uncontrolled
+    multiSelect = false, // Whether multiple nodes can be selected
+    defaultExpanded = [], // Default expanded nodes for uncontrolled mode
+    defaultSelected = [], // Default selected nodes for uncontrolled mode
+    expandIcon = 'FiChevronRight', // Icon for collapsed nodes
+    collapseIcon = 'FiChevronDown', // Icon for expanded nodes
+    leafIcon = null, // Icon for leaf nodes (no children)
+    nodeIcon = null, // Default icon for all nodes
+    indentSize = 'md', // 'sm', 'md', 'lg' - indentation per level
+    maxDepth = null, // Maximum depth to render
+    searchValue: searchValueProp = undefined, // Search filter value (controlled mode)
+    searchProperty = 'label', // Property to search in
+    caseSensitive = false, // Whether search is case sensitive
+    searchable = false, // Whether to show built-in search input (uncontrolled by default)
+    searchPlaceholder = 'Search nodes...', // Placeholder text for search input
+    onSearchChange = null, // Callback when search input changes (value) => void
+    allowDragDrop = false, // Whether to allow drag and drop
 
-                                        // Event callbacks
-                                        onNodeExpand = null, // Callback: (nodeId, isExpanded) => void
-                                        onNodeSelect = null, // Callback: (nodeId, isSelected, selectedNodes) => void
-                                        onNodeClick = null, // Callback: (node, event) => void
-                                        onNodeDoubleClick = null, // Callback: (node, event) => void
-                                        onNodeRightClick = null, // Callback: (node, event) => void
-                                        onNodeDrop = null, // Callback: (draggedNode, targetNode, position) => void
+    // Event callbacks
+    onNodeExpand = null, // Callback: (nodeId, isExpanded) => void
+    onNodeSelect = null, // Callback: (nodeId, isSelected, selectedNodes) => void
+    onNodeClick = null, // Callback: (node, event) => void
+    onNodeDoubleClick = null, // Callback: (node, event) => void
+    onNodeRightClick = null, // Callback: (node, event) => void
+    onNodeDrop = null, // Callback: (draggedNode, targetNode, position) => void
 
-                                        // Custom renderers
-                                        renderNode = null, // Custom node renderer: (node, { isExpanded, isSelected, level }) => JSX
-                                        renderNodeContent = null, // Custom content renderer: (node, { isExpanded, isSelected, level }) => JSX
+    // Custom renderers
+    renderNode = null, // Custom node renderer: (node, { isExpanded, isSelected, level }) => JSX
+    renderNodeContent = null, // Custom content renderer: (node, { isExpanded, isSelected, level }) => JSX
 
-                                        // Genie integration props (following Container/FAB pattern)
-                                        getNodeGenie = null, // Per-node genie function: (node, nodeState) => { content, trigger?, variant?, position?, ...genieProps } | JSX | null
-                                        onGenieShow = null, // Callback when any node genie shows: (node, genieConfig) => void
-                                        onGenieHide = null, // Callback when any node genie hides: (node, genieConfig) => void
+    // Genie integration props (following Container/FAB pattern)
+    getNodeGenie = null, // Per-node genie function: (node, nodeState) => { content, trigger?, variant?, position?, ...genieProps } | JSX | null
+    onGenieShow = null, // Callback when any node genie shows: (node, genieConfig) => void
+    onGenieHide = null, // Callback when any node genie hides: (node, genieConfig) => void
 
-                                        // Standard component props (following pattern)
-                                        theme = null, // Optional theme override
-                                        marginTop = null, // Margin top: 'none', 'xs', 'sm', 'md', 'lg', 'xl' or custom value
-                                        marginBottom = null, // Margin bottom: 'none', 'xs', 'sm', 'md', 'lg', 'xl' or custom value
-                                        justifySelf = null, // CSS justify-self property: 'auto', 'start', 'end', 'center', 'stretch'
+    // Standard component props (following pattern)
+    theme = null, // Optional theme override
+    width = null, // Width value (e.g., '100%', '200px', 'auto')
+    height = null, // Height value (e.g., '2rem', '32px', 'auto')
+    minWidth = null, // Minimum width (e.g., '100px', '5rem')
+    minHeight = null, // Minimum height (e.g., '2rem', '32px')
+    maxWidth = null, // Maximum width (e.g., '500px', '100%')
+    maxHeight = null, // Maximum height (e.g., '10rem', '200px')
+    marginTop = null, // Margin top: 'none', 'xs', 'sm', 'md', 'lg', 'xl' or custom value
+    marginBottom = null, // Margin bottom: 'none', 'xs', 'sm', 'md', 'lg', 'xl' or custom value
+    justifySelf = null, // CSS justify-self property: 'auto', 'start', 'end', 'center', 'stretch'
 
-                                        ...props
-                                    }, ref) => {
+    ...props
+}, ref) => {
     const {currentTheme: globalTheme} = useTheme();
     const effectiveTheme = useEffectiveTheme();
 
@@ -323,10 +349,18 @@ export const TreeView = forwardRef(({
     }, []);
 
     // Helper function to convert margin props to CSS style (following pattern)
-    const getMarginStyle = () => {
+    const getTreeViewStyle = () => {
         const style = {};
 
-        // Only apply margins if explicitly provided
+        // Sizing
+        if (width !== null) style.width = width;
+        if (height !== null) style.height = height;
+        if (minWidth !== null) style.minWidth = minWidth;
+        if (minHeight !== null) style.minHeight = minHeight;
+        if (maxWidth !== null) style.maxWidth = maxWidth;
+        if (maxHeight !== null) style.maxHeight = maxHeight;
+
+        // Margins
         if (marginTop !== null) {
             if (marginTop === 'none') {
                 style.marginTop = '0';
@@ -337,7 +371,6 @@ export const TreeView = forwardRef(({
             }
         }
 
-        // Only apply margins if explicitly provided
         if (marginBottom !== null) {
             if (marginBottom === 'none') {
                 style.marginBottom = '0';
@@ -348,8 +381,29 @@ export const TreeView = forwardRef(({
             }
         }
 
+        if (justifySelf !== null) style.justifySelf = justifySelf;
+
         return style;
     };
+
+    // Search state management (supports controlled/uncontrolled usage)
+    const isSearchControlled = typeof searchValueProp === 'string';
+    const [internalSearchValue, setInternalSearchValue] = useState('');
+    const effectiveSearchValue = isSearchControlled
+        ? searchValueProp
+        : internalSearchValue;
+
+    const handleSearchInputChange = useCallback((input) => {
+        const value = typeof input === 'string' ? input : input?.target?.value ?? '';
+
+        if (!isSearchControlled) {
+            setInternalSearchValue(value);
+        }
+
+        if (onSearchChange) {
+            onSearchChange(value);
+        }
+    }, [isSearchControlled, onSearchChange]);
 
     // Convert hierarchical data to tree format
     const processedData = useMemo(() => {
@@ -368,6 +422,18 @@ export const TreeView = forwardRef(({
     // TreeView ref
     const treeViewRef = ref || useRef(null);
 
+    const sizeAliasMap = {
+        small: 'sm',
+        default: 'md',
+        large: 'lg'
+    };
+
+    const allowedSizes = new Set(['xs', 'sm', 'md', 'lg', 'xl']);
+    const normalizedSize = (() => {
+        const candidate = sizeAliasMap[providedSize] || providedSize;
+        return allowedSizes.has(candidate) ? candidate : 'md';
+    })();
+
     // Determine if we're in controlled mode
     const isExpandedControlled = expandedNodes !== null;
     const isSelectedControlled = selectedNodes !== null;
@@ -377,8 +443,9 @@ export const TreeView = forwardRef(({
     const currentSelected = isSelectedControlled ? new Set(selectedNodes) : internalSelected;
 
     // Build class names
-    const backgroundClass = variant === 'default' ? 'tree-view-bg-surface' : `tree-view-bg-${variant}`;
-    const sizeClass = size !== 'default' ? `tree-view-${size}` : '';
+    const resolvedColor = providedColor ?? deprecatedVariant ?? 'default';
+    const backgroundClass = resolvedColor === 'default' ? 'tree-view-bg-surface' : `tree-view-bg-${resolvedColor}`;
+    const sizeClass = normalizedSize !== 'md' ? `tree-view-${normalizedSize}` : '';
 
     const classes = [
         'tree-view',
@@ -393,10 +460,21 @@ export const TreeView = forwardRef(({
     ].filter(Boolean).join(' ');
 
     // Determine icon size based on size prop if not explicitly set
-    const resolvedIconSize = iconSize || (
-        size === 'small' ? 'sm' :
-            size === 'large' ? 'lg' : 'md'
-    );
+    const sizeToIconSize = {
+        xs: 'xs',
+        sm: 'sm',
+        md: 'md',
+        lg: 'lg',
+        xl: 'xl'
+    };
+
+    const legacySizeToIconSize = {
+        small: 'sm',
+        default: 'md',
+        large: 'lg'
+    };
+
+    const resolvedIconSize = iconSize || sizeToIconSize[normalizedSize] || legacySizeToIconSize[providedSize] || 'md';
 
     // Flatten tree for search functionality
     const flattenTree = useCallback((nodes, level = 0, parentPath = []) => {
@@ -414,11 +492,11 @@ export const TreeView = forwardRef(({
 
     // Filter nodes based on search
     const filteredData = useMemo(() => {
-        if (!searchValue.trim()) return processedData;
+        if (!effectiveSearchValue || !effectiveSearchValue.trim()) return processedData;
 
         const flatNodes = flattenTree(processedData);
         const matchingNodes = flatNodes.filter(node => {
-            const searchText = caseSensitive ? searchValue : searchValue.toLowerCase();
+            const searchText = caseSensitive ? effectiveSearchValue : effectiveSearchValue.toLowerCase();
             const nodeText = caseSensitive ? node[searchProperty] : node[searchProperty]?.toLowerCase();
             return nodeText?.includes(searchText);
         });
@@ -450,7 +528,7 @@ export const TreeView = forwardRef(({
         };
 
         return rebuildTree(processedData);
-    }, [processedData, searchValue, searchProperty, caseSensitive, flattenTree]);
+    }, [processedData, effectiveSearchValue, searchProperty, caseSensitive, flattenTree]);
 
     // Handle node expansion
     const handleNodeExpand = useCallback((nodeId) => {
@@ -600,7 +678,7 @@ export const TreeView = forwardRef(({
 
         const treeConfig = {
             showIcons, expandIcon, collapseIcon, leafIcon, nodeIcon, indentPixels: getIndentPixels(indentSize),
-            allowDragDrop, renderNode, renderNodeContent, resolvedIconSize, variant,
+            allowDragDrop, renderNode, renderNodeContent, resolvedIconSize,
             theme: treeViewTheme,
             themeSource: theme ? 'local' : 'inherited'
         };
@@ -632,7 +710,7 @@ export const TreeView = forwardRef(({
     }, [
         currentExpanded, currentSelected, maxDepth, getNodeGenie, showIcons, expandIcon,
         collapseIcon, leafIcon, nodeIcon, indentSize, getIndentPixels, allowDragDrop, renderNode, renderNodeContent,
-        resolvedIconSize, variant, treeViewTheme, theme, handleNodeSelect, handleNodeExpand, onNodeDoubleClick, onNodeRightClick,
+    resolvedIconSize, treeViewTheme, theme, handleNodeSelect, handleNodeExpand, onNodeDoubleClick, onNodeRightClick,
         handleDrop, handleDragStart, handleDragOver, onGenieShow, onGenieHide, React.isValidElement
     ]);
 
@@ -642,18 +720,30 @@ export const TreeView = forwardRef(({
             className={classes}
             data-theme={treeViewTheme}
             data-theme-source={theme ? 'local' : 'inherited'}
-            style={{
-                ...getMarginStyle(),
-                ...(justifySelf && {justifySelf})
-            }}
+            style={getTreeViewStyle()}
             {...props}
         >
+            {searchable && (
+                <div className="tree-view-search" data-theme={treeViewTheme}>
+                    <Input
+                        type="search"
+                        variant="default"
+                        size="sm"
+                        placeholder={searchPlaceholder}
+                        value={effectiveSearchValue ?? ''}
+                        onChange={handleSearchInputChange}
+                        theme={treeViewTheme}
+                        width="100%"
+                        icon="FiSearch"
+                    />
+                </div>
+            )}
             <div className="tree-view-content">
                 {filteredData.length > 0 ? (
                     filteredData.map(node => renderTreeNode(node))
                 ) : (
                     <div className="tree-view-empty">
-                        {searchValue ? 'No matching nodes found' : 'No data available'}
+                        {effectiveSearchValue ? 'No matching nodes found' : 'No data available'}
                     </div>
                 )}
             </div>
