@@ -18,6 +18,7 @@ import {
     Data,
     TreeView,
     Editor,
+    Flow,
 } from '@components/Components';
 
 /**
@@ -1146,6 +1147,460 @@ const COMPONENT_METADATA = {
     description: 'Rich MDX editor with markdown support and syntax highlighting'
     },
 
+    Flow: {
+        component: Flow,
+        defaultProps: {
+            nodes: [
+                // Column 1: Entry Point
+                {
+                    id: 'start',
+                    type: 'editable',
+                    position: { x: 50, y: 300 },
+                    data: { 
+                        label: 'User Request', 
+                        shape: 'circle', 
+                        color: 'success',
+                        fontSize: 'md',
+                        fontWeight: 'bold',
+                        textAlign: 'center'
+                    }
+                },
+                // Column 2: API Gateway
+                {
+                    id: 'gateway',
+                    type: 'editable',
+                    position: { x: 320, y: 280 },
+                    data: { 
+                        label: 'API Gateway', 
+                        shape: 'rectangle', 
+                        color: 'primary',
+                        fontSize: 'md',
+                        fontWeight: 'semibold',
+                        textAlign: 'center'
+                    }
+                },
+                // Column 3: Authentication Decision
+                {
+                    id: 'auth',
+                    type: 'editable',
+                    position: { x: 610, y: 290 },
+                    data: { 
+                        label: 'Authenticated?', 
+                        shape: 'diamond', 
+                        color: 'warning',
+                        fontSize: 'sm',
+                        fontWeight: 'medium',
+                        textAlign: 'center'
+                    }
+                },
+                // Error branch (top)
+                {
+                    id: 'auth-fail',
+                    type: 'editable',
+                    position: { x: 630, y: 80 },
+                    data: { 
+                        label: '401 Error', 
+                        shape: 'circle', 
+                        color: 'error',
+                        fontSize: 'sm',
+                        fontWeight: 'bold',
+                        textAlign: 'center'
+                    }
+                },
+                // Column 4: Database Query (main path)
+                {
+                    id: 'query',
+                    type: 'editable',
+                    position: { x: 920, y: 280 },
+                    data: { 
+                        label: 'Fetch Data', 
+                        shape: 'rectangle', 
+                        color: 'secondary',
+                        fontSize: 'sm',
+                        fontWeight: 'medium',
+                        textAlign: 'center'
+                    }
+                },
+                // Database (directly below)
+                {
+                    id: 'database',
+                    type: 'editable',
+                    position: { x: 920, y: 480 },
+                    data: { 
+                        label: 'Database', 
+                        shape: 'cylinder', 
+                        color: 'tertiary',
+                        fontSize: 'lg',
+                        fontWeight: 'extrabold',
+                        textAlign: 'center'
+                    }
+                },
+                // Column 5: Business Logic
+                {
+                    id: 'process',
+                    type: 'editable',
+                    position: { x: 1220, y: 280 },
+                    data: { 
+                        label: 'Process Logic', 
+                        shape: 'rectangle', 
+                        color: 'primary',
+                        fontSize: 'md',
+                        fontWeight: 'semibold',
+                        textAlign: 'center'
+                    }
+                },
+                // Column 6: Validation Decision
+                {
+                    id: 'validate',
+                    type: 'editable',
+                    position: { x: 1520, y: 290 },
+                    data: { 
+                        label: 'Valid Data?', 
+                        shape: 'diamond', 
+                        color: 'warning',
+                        fontSize: 'sm',
+                        fontWeight: 'medium',
+                        textAlign: 'center'
+                    }
+                },
+                // Error branch (top)
+                {
+                    id: 'validation-fail',
+                    type: 'editable',
+                    position: { x: 1540, y: 80 },
+                    data: { 
+                        label: '400 Error', 
+                        shape: 'circle', 
+                        color: 'error',
+                        fontSize: 'sm',
+                        fontWeight: 'bold',
+                        textAlign: 'center'
+                    }
+                },
+                // Column 7: Cache Update (main path)
+                {
+                    id: 'cache-update',
+                    type: 'editable',
+                    position: { x: 1830, y: 280 },
+                    data: { 
+                        label: 'Update Cache', 
+                        shape: 'rectangle', 
+                        color: 'primary',
+                        fontSize: 'sm',
+                        fontWeight: 'medium',
+                        textAlign: 'center'
+                    }
+                },
+                // Redis (directly below)
+                {
+                    id: 'cache',
+                    type: 'editable',
+                    position: { x: 1830, y: 480 },
+                    data: { 
+                        label: 'Redis', 
+                        shape: 'cylinder', 
+                        color: 'secondary',
+                        fontSize: 'md',
+                        fontWeight: 'bold',
+                        textAlign: 'center'
+                    }
+                },
+                // Column 8: Success Response
+                {
+                    id: 'response',
+                    type: 'editable',
+                    position: { x: 2130, y: 280 },
+                    data: { 
+                        label: 'Send Response', 
+                        shape: 'rectangle', 
+                        color: 'primary',
+                        fontSize: 'md',
+                        fontWeight: 'semibold',
+                        textAlign: 'center'
+                    }
+                },
+                // Column 9: End Point
+                {
+                    id: 'success',
+                    type: 'editable',
+                    position: { x: 2430, y: 300 },
+                    data: { 
+                        label: '200 OK', 
+                        shape: 'circle', 
+                        color: 'success',
+                        fontSize: 'md',
+                        fontWeight: 'bold',
+                        textAlign: 'center'
+                    }
+                }
+            ],
+            edges: [
+                // Main flow path (left to right)
+                { 
+                    id: 'e-start-gateway', 
+                    source: 'start', 
+                    target: 'gateway',
+                    sourceHandle: 'right-source',
+                    targetHandle: 'left-target',
+                    label: 'POST /api/data',
+                    type: 'default', 
+                    animated: true,
+                    data: { color: 'primary' },
+                    markerEnd: { type: 'arrowclosed' }
+                },
+                { 
+                    id: 'e-gateway-auth', 
+                    source: 'gateway', 
+                    target: 'auth',
+                    sourceHandle: 'right-source',
+                    targetHandle: 'left-target',
+                    label: 'Check JWT',
+                    type: 'default', 
+                    animated: true,
+                    data: { color: 'primary' },
+                    markerEnd: { type: 'arrowclosed' }
+                },
+                // Auth failure branch (up)
+                { 
+                    id: 'e-auth-fail', 
+                    source: 'auth', 
+                    target: 'auth-fail',
+                    sourceHandle: 'top-source',
+                    targetHandle: 'bottom-target',
+                    label: 'No',
+                    type: 'default', 
+                    animated: false,
+                    data: { color: 'error' },
+                    style: { strokeWidth: 2 },
+                    markerEnd: { type: 'arrowclosed' }
+                },
+                // Auth success to query
+                { 
+                    id: 'e-auth-query', 
+                    source: 'auth', 
+                    target: 'query',
+                    sourceHandle: 'right-source',
+                    targetHandle: 'left-target',
+                    label: 'Yes',
+                    type: 'default', 
+                    animated: true,
+                    data: { color: 'success' },
+                    markerEnd: { type: 'arrowclosed' }
+                },
+                // Database interaction (bidirectional with offset paths)
+                { 
+                    id: 'e-query-db', 
+                    source: 'query', 
+                    target: 'database',
+                    sourceHandle: 'bottom-source',
+                    targetHandle: 'left-target',
+                    label: 'SELECT',
+                    type: 'default', 
+                    animated: false,
+                    data: { color: 'secondary' },
+                    style: { strokeWidth: 2 },
+                    markerEnd: { type: 'arrowclosed' }
+                },
+                { 
+                    id: 'e-db-query', 
+                    source: 'database', 
+                    target: 'query',
+                    sourceHandle: 'right-source',
+                    targetHandle: 'bottom-target',
+                    label: 'Results',
+                    type: 'default', 
+                    animated: false,
+                    data: { color: 'tertiary' },
+                    markerEnd: { type: 'arrowclosed' }
+                },
+                // Query to process
+                { 
+                    id: 'e-query-process', 
+                    source: 'query', 
+                    target: 'process',
+                    sourceHandle: 'right-source',
+                    targetHandle: 'left-target',
+                    label: 'Transform',
+                    type: 'default', 
+                    animated: true,
+                    data: { color: 'primary' },
+                    markerEnd: { type: 'arrowclosed' }
+                },
+                // Process to validate
+                { 
+                    id: 'e-process-validate', 
+                    source: 'process', 
+                    target: 'validate',
+                    sourceHandle: 'right-source',
+                    targetHandle: 'left-target',
+                    label: 'Check Rules',
+                    type: 'default', 
+                    animated: true,
+                    data: { color: 'primary' },
+                    markerEnd: { type: 'arrowclosed' }
+                },
+                // Validation failure branch (up)
+                { 
+                    id: 'e-validate-fail', 
+                    source: 'validate', 
+                    target: 'validation-fail',
+                    sourceHandle: 'top-source',
+                    targetHandle: 'bottom-target',
+                    label: 'No',
+                    type: 'default', 
+                    animated: false,
+                    data: { color: 'error' },
+                    style: { strokeWidth: 2 },
+                    markerEnd: { type: 'arrowclosed' }
+                },
+                // Validation success to cache
+                { 
+                    id: 'e-validate-cache', 
+                    source: 'validate', 
+                    target: 'cache-update',
+                    sourceHandle: 'right-source',
+                    targetHandle: 'left-target',
+                    label: 'Yes',
+                    type: 'default', 
+                    animated: true,
+                    data: { color: 'success' },
+                    markerEnd: { type: 'arrowclosed' }
+                },
+                // Cache interaction (bidirectional with offset paths)
+                { 
+                    id: 'e-cache-redis', 
+                    source: 'cache-update', 
+                    target: 'cache',
+                    sourceHandle: 'bottom-source',
+                    targetHandle: 'left-target',
+                    label: 'SET key',
+                    type: 'default', 
+                    animated: false,
+                    data: { color: 'primary' },
+                    style: { strokeWidth: 2 },
+                    markerEnd: { type: 'arrowclosed' }
+                },
+                { 
+                    id: 'e-redis-cache', 
+                    source: 'cache', 
+                    target: 'cache-update',
+                    sourceHandle: 'right-source',
+                    targetHandle: 'bottom-target',
+                    label: 'OK',
+                    type: 'default', 
+                    animated: false,
+                    data: { color: 'secondary' },
+                    markerEnd: { type: 'arrowclosed' }
+                },
+                // Cache to response
+                { 
+                    id: 'e-cache-response', 
+                    source: 'cache-update', 
+                    target: 'response',
+                    sourceHandle: 'right-source',
+                    targetHandle: 'left-target',
+                    label: 'Format JSON',
+                    type: 'default', 
+                    animated: true,
+                    data: { color: 'primary' },
+                    markerEnd: { type: 'arrowclosed' }
+                },
+                // Response to success
+                { 
+                    id: 'e-response-success', 
+                    source: 'response', 
+                    target: 'success',
+                    sourceHandle: 'right-source',
+                    targetHandle: 'left-target',
+                    label: 'Complete',
+                    type: 'default', 
+                    animated: true,
+                    data: { color: 'success' },
+                    style: { strokeWidth: 3 },
+                    markerEnd: { type: 'arrowclosed' }
+                }
+            ],
+            size: 'md',
+            fitView: true,
+            draggable: true,
+            connectable: true,
+            deletable: true,
+            zoomable: true,
+            pannable: false,
+            selectable: true,
+            enableNodeCreation: false,
+            nodeCreationKey: 'shift',
+            defaultNodeData: {
+                label: 'New Node',
+                color: 'primary',
+                shape: 'rectangle'
+            },
+            controls: true,
+            minimap: false,
+            background: true,
+            backgroundVariant: 'dots',
+            theme: null,
+            width: '100%'
+        },
+        propConfigs: {
+            size: {
+                type: 'select',
+                label: 'Height Size',
+                group: 'Layout',
+                options: STANDARD_SIZES
+            },
+            fitView: { type: 'boolean', label: 'Fit View', group: 'Viewport' },
+            draggable: { type: 'boolean', label: 'Draggable Nodes', group: 'Interaction' },
+            connectable: { type: 'boolean', label: 'Connectable Nodes', group: 'Interaction' },
+            deletable: { type: 'boolean', label: 'Deletable Elements', group: 'Interaction' },
+            zoomable: { type: 'boolean', label: 'Enable Zoom', group: 'Interaction' },
+            pannable: { type: 'boolean', label: 'Enable Panning', group: 'Interaction' },
+            selectable: { type: 'boolean', label: 'Selectable Elements', group: 'Interaction' },
+            enableNodeCreation: { type: 'boolean', label: 'Enable Node Creation', group: 'Interaction' },
+            nodeCreationKey: {
+                type: 'select',
+                label: 'Node Creation Key',
+                group: 'Interaction',
+                options: ['shift', 'ctrl', 'alt', 'none'],
+                optionLabels: {
+                    'shift': 'Shift + Click',
+                    'ctrl': 'Ctrl/Cmd + Click',
+                    'alt': 'Alt + Click',
+                    'none': 'Click Only'
+                }
+            },
+            controls: { type: 'boolean', label: 'Show Controls', group: 'UI Elements' },
+            minimap: { type: 'boolean', label: 'Show Minimap', group: 'UI Elements' },
+            background: { type: 'boolean', label: 'Show Background', group: 'UI Elements' },
+            backgroundVariant: {
+                type: 'select',
+                label: 'Background Pattern',
+                group: 'UI Elements',
+                options: ['dots', 'lines', 'cross']
+            },
+            theme: {
+                type: 'select',
+                label: 'Theme Override',
+                group: 'Appearance',
+                options: THEME_OVERRIDES,
+                optionLabels: THEME_OPTION_LABELS
+            },
+            width: {
+                type: 'select',
+                label: 'Container Width',
+                group: 'Layout',
+                options: ['100%', '80%', '600px', '800px'],
+                optionLabels: {
+                    '100%': 'Full Width',
+                    '80%': '80%',
+                    '600px': '600px',
+                    '800px': '800px'
+                }
+            }
+        },
+        description: 'Interactive flow diagrams with React Flow - draggable, zoomable, connectable nodes with right-click Genie editing for shapes, colors, and typography (font size, weight, alignment)'
+    },
+
     FloatingActionButton: {
         component: FloatingActionButton,
         defaultProps: {
@@ -1667,6 +2122,20 @@ const ComponentDemoRefactoredNew = () => {
                     <ComponentToRender
                         {...effectiveProps}
                         onChange={(content) => handlePropChange('content', content)}
+                    />
+                </Container>
+            );
+        }
+
+        if (selectedComponent === 'Flow') {
+            return (
+                <Container width="100%" minHeight="300px" padding="none">
+                    <ComponentToRender
+                        {...effectiveProps}
+                        onChange={({ nodes, edges }) => {
+                            handlePropChange('nodes', nodes);
+                            handlePropChange('edges', edges);
+                        }}
                     />
                 </Container>
             );

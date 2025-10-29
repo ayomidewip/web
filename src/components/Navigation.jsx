@@ -238,7 +238,7 @@ export const Navigation = ({
                         ACCOUNT
                     </Typography>
                     <Button
-                        variant="solid"
+                        variant="ghost"
                         size="sm"
                         align="left"
                         width="100%"
