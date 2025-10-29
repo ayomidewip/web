@@ -3418,7 +3418,7 @@ export const AdminPage = () => {
           {/* No logs available message */}
           {!sectionLoading.logs && (!adminData.logs || adminData.logs.length === 0) && (
             <Container layout="flex-column" gap="md" align="center">
-              <Icon name="FiFileText" size="3xl" color="secondary" />
+              <Icon name="FiFileText" size="2xl" color="secondary" />
               <Typography as="p" size="lg" color="secondary">
                 No system logs available
               </Typography>
@@ -3803,7 +3803,7 @@ export const AdminPage = () => {
           {/* No role requests message */}
           {!sectionLoading['role-requests'] && (!adminData.roleRequests || adminData.roleRequests.length === 0) && (
             <Container layout="flex-column" gap="md" align="center">
-              <Icon name="FiUserCheck" size="3xl" color="secondary" />
+              <Icon name="FiUserCheck" size="2xl" color="secondary" />
               <Typography as="p" size="lg" color="secondary">
                 No role requests available
               </Typography>

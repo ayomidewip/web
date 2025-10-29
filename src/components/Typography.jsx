@@ -3,15 +3,14 @@ import { useEffectiveTheme, useTheme } from '@contexts/ThemeContext';
 
 /**
  * Typography - Unified typography component for all text in the application
- * Handles both headings and regular text with weight-based font file selection
+ * Simplified text component using size and weight props
  * Automatically converts href prop to link elements with proper styling
  * Enhanced with theme inheritance support
  */
 export const Typography = ({
     children,
     className = '',
-    as = 'p', // 'p', 'span', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'a'
-    size = 'base', // 'xs', 'sm', 'base', 'lg', 'xl', '2xl', '3xl', '4xl'
+    size = 'md', // 'xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl', '4xl'
     weight = 'normal', // 'light', 'normal', 'medium', 'semibold', 'bold', 'extrabold', 'black'
     color = 'default', // 'default', 'primary', 'secondary', 'success', 'warning', 'error', 'muted', 'header', 'tertiary', 'contrast'
     font = 'primary', // 'primary', 'secondary', 'monospace' - different font families per theme
@@ -27,7 +26,7 @@ export const Typography = ({
     marginBottom = null, // Margin bottom spacing: 'xs', 'sm', 'md', 'lg', 'xl'
     margin = null, // All margin spacing: 'none', 'xs', 'sm', 'md', 'lg', 'xl'
     padding = null, // All padding spacing: 'none', 'xs', 'sm', 'md', 'lg', 'xl'
-    href, // URL for links - automatically sets as='a' and applies link styling
+    href, // URL for links - automatically renders as link with proper styling
     target, // Link target (_blank, _self, etc.)
     rel, // Link relationship (e.g., 'noopener noreferrer' for external links)
     ...props
@@ -39,7 +38,7 @@ export const Typography = ({
     const typographyTheme = theme || effectiveTheme.currentTheme;
 
     // If href is provided, automatically render as a link
-    const Component = href ? 'a' : as;
+    const Component = href ? 'a' : 'span';
 
     // Detect if this is an external link
     const isExternalLink = href && (
@@ -55,8 +54,7 @@ export const Typography = ({
         target: target || (isExternalLink ? '_blank' : undefined),
         rel: rel || (isExternalLink ? 'noopener noreferrer' : undefined)
     } : {};
-    // Determine if this is a heading element
-    const isHeading = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(Component);
+    
     const isLink = Component === 'a' || href;
 
     const getSizeClass = () => {
@@ -110,11 +108,7 @@ export const Typography = ({
 
     const getElementClass = () => {
         if (isLink) return 'typography-link';
-        return isHeading ? 'typography-heading' : 'typography-text';
-    };
-
-    const getLevelClass = () => {
-        return isHeading ? `typography-level-${Component}` : '';
+        return 'typography-text';
     };
 
     const getLinkClass = () => {
@@ -168,7 +162,7 @@ export const Typography = ({
 
     return (
         <Component
-            className={`typography ${getElementClass()} ${getLevelClass()} ${getSizeClass()} ${getWeightClass()} ${getFontClass()} ${getColorClass()} ${getLinkClass()} ${getJustifySelfClass()} ${getMarginClasses()} ${getPaddingClasses()} theme-${typographyTheme} ${className}`.trim()}
+            className={`typography ${getElementClass()} ${getSizeClass()} ${getWeightClass()} ${getFontClass()} ${getColorClass()} ${getLinkClass()} ${getJustifySelfClass()} ${getMarginClasses()} ${getPaddingClasses()} theme-${typographyTheme} ${className}`.trim()}
             data-typography-element={Component}
             data-typography-weight={weight}
             data-typography-font={font}

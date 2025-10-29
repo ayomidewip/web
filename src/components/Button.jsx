@@ -241,7 +241,7 @@ export const Button = forwardRef(({
                 data-genie-position={genieConfig?.position || 'auto'}
                 {...validButtonProps}
                 {...combinedProps}
-                style={{ justifySelf, ...getMarginStyle(), ...(variantColorValue ? { '--button-variant-color': variantColorValue } : {}) }}
+                style={{ ...getMarginStyle(), ...(variantColorValue ? { '--button-variant-color': variantColorValue } : {}) }}
             >
                 <span className="button-content">
                     {children}

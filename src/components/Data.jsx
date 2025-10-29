@@ -35,6 +35,7 @@ export const Data = forwardRef(({
     fieldConfig = {},
     variant = 'table', // 'table', 'cards', 'list'
     className = '',
+    size = 'sm', // 'xs', 'sm', 'md', 'lg', 'xl' - Controls size of all nested components
     sortable = true, // Default to true for new sorting functionality
     maxColumns = 6, // Maximum columns to show before condensing (table variant)
     exclude = [], // Array of field names to exclude from display and filters
@@ -86,6 +87,17 @@ export const Data = forwardRef(({
         const [internalSelectedItems, setInternalSelectedItems] = useState([]);
         const isControlledSelection = selectedItems !== null;
         const currentSelectedItems = isControlledSelection ? selectedItems : internalSelectedItems;
+
+        // Size mapping helpers - derive smaller/larger sizes from main size prop
+        const getSmallerSize = (baseSize) => {
+            const sizeMap = { xl: 'lg', lg: 'md', md: 'sm', sm: 'xs', xs: 'xs' };
+            return sizeMap[baseSize] || 'xs';
+        };
+
+        const getTypographySize = () => size; // Typography uses main size
+        const getIconSize = () => getSmallerSize(size); // Icons one size smaller
+        const getButtonSize = () => size; // Buttons use main size
+        const getInputSize = () => size; // Inputs use main size
 
         // Get fields to display - use JSON order, not priority-based
         const getDisplayFields = () => {
@@ -391,21 +403,26 @@ export const Data = forwardRef(({
                                 variant: 'popover'
                             }}
                         >
-                            <Typography as="span" size="sm">{getPreviewValue(value)}</Typography>
-                            <Icon name="FiEye" size="xs" color="muted"/>
+                            <Typography as="span" size={getTypographySize()}>{getPreviewValue(value)}</Typography>
+                            <Icon name="FiEye" size={getIconSize()} color="muted"/>
                         </Container>
                     );
                 }
-                return <Typography as="span" size="sm">{String(value)}</Typography>;
+                return <Typography as="span" size={getTypographySize()}>{String(value)}</Typography>;
             }
 
             const Component = config.component;
             let componentProps = {...config.props};
 
+            // Remove any size prop from fieldConfig - parent Data component's size prop takes precedence
+            delete componentProps.size;
+
             // Apply transform if available
             if (config.transform) {
                 const transformedProps = config.transform(value);
                 componentProps = {...componentProps, ...transformedProps};
+                // Also remove size from transformed props
+                delete componentProps.size;
             } else {
                 componentProps.children = hasComplexData ? getPreviewValue(value) : value;
             }
@@ -430,13 +447,13 @@ export const Data = forwardRef(({
                             variant: 'popover'
                         }}
                     >
-                        <Component {...componentProps} />
-                        <Icon name="FiEye" size="xs" color="muted"/>
+                        <Component {...componentProps} size={getTypographySize()} />
+                        <Icon name="FiEye" size={getIconSize()} color="muted"/>
                     </Container>
                 );
             }
 
-            return <Component {...componentProps} />;
+            return <Component {...componentProps} size={getTypographySize()} />;
         };
 
         // Handle sort field and direction change
@@ -632,7 +649,7 @@ export const Data = forwardRef(({
                                         type="checkbox"
                                         checked={isItemSelected(item, rowIndex)}
                                         onChange={(e) => handleItemSelection(item, rowIndex, e.target.checked)}
-                                        size="small"
+                                        size={getInputSize()}
                                     />
                                 </Container>
                             </td>
@@ -668,7 +685,7 @@ export const Data = forwardRef(({
                                         checked={selectAllState === 'all'}
                                         indeterminate={selectAllState === 'some'}
                                         onChange={(e) => handleSelectAll(e.target.checked)}
-                                        size="small"
+                                        size={getButtonSize()}
                                     />
                                 </th>
                             )}
@@ -677,7 +694,7 @@ export const Data = forwardRef(({
                                     key={field}
                                     className="table-header-cell"
                                 >
-                                    <Typography as="span" weight="semibold" size="sm">
+                                    <Typography as="span" weight="semibold" size={getTypographySize()}>
                                         {formatFieldName(field)}
                                     </Typography>
                                 </th>
@@ -708,7 +725,7 @@ export const Data = forwardRef(({
                 >
                     {paginatedFilteredData.length === 0 ? (
                         <Card padding="lg">
-                            <Typography color="muted" size="sm">No data available</Typography>
+                            <Typography color="muted" size={getTypographySize()}>No data available</Typography>
                         </Card>
                     ) : (
                         paginatedFilteredData.map((item, index) => {
@@ -740,14 +757,14 @@ export const Data = forwardRef(({
                                                         type="checkbox"
                                                         checked={isItemSelected(item, rowIndex)}
                                                         onChange={(e) => handleItemSelection(item, rowIndex, e.target.checked)}
-                                                        size="small"
+                                                        size={getButtonSize()}
                                                     />
                                                 </div>
                                                 <Container layout="flex-column" gap="sm" padding="none" flexFill>
                                                     {visibleFields.map((field) => (
                                                         <Container key={field} layout="flex" gap="sm" align="center"
                                                                    padding="none">
-                                                            <Typography weight="medium" size="xs" color="muted"
+                                                            <Typography weight="medium" size={getIconSize()} color="muted"
                                                                         style={{minWidth: '80px', flex: '0 0 auto'}}>
                                                                 {formatFieldName(field)}:
                                                             </Typography>
@@ -763,7 +780,7 @@ export const Data = forwardRef(({
                                                 {visibleFields.map((field) => (
                                                     <Container key={field} layout="flex" gap="sm" align="center"
                                                                padding="none">
-                                                        <Typography weight="medium" size="xs" color="muted"
+                                                        <Typography weight="medium" size={getIconSize()} color="muted"
                                                                     style={{minWidth: '80px', flex: '0 0 auto'}}>
                                                             {formatFieldName(field)}:
                                                         </Typography>
@@ -789,7 +806,7 @@ export const Data = forwardRef(({
                 <Container layout="flex-column" gap="sm" padding="none" className="data-item-container">
                     {paginatedFilteredData.length === 0 ? (
                         <Card padding="md">
-                            <Typography color="muted" size="sm">No data available</Typography>
+                            <Typography color="muted" size={getTypographySize()}>No data available</Typography>
                         </Card>
                     ) : (
                         paginatedFilteredData.map((item, index) => {
@@ -821,7 +838,7 @@ export const Data = forwardRef(({
                                                         type="checkbox"
                                                         checked={isItemSelected(item, rowIndex)}
                                                         onChange={(e) => handleItemSelection(item, rowIndex, e.target.checked)}
-                                                        size="small"
+                                                        size={getButtonSize()}
                                                     />
                                                 </div>
                                                 <Container layout="flex" justify="wrap" gap="lg" align="center"
@@ -830,7 +847,7 @@ export const Data = forwardRef(({
                                                         <Container key={field} layout="flex-column" gap="xs"
                                                                    padding="none"
                                                                    flexFill={fieldIndex === 0}>
-                                                            <Typography weight="medium" size="xs" color="muted">
+                                                            <Typography weight="medium" size={getIconSize()} color="muted">
                                                                 {formatFieldName(field)}
                                                             </Typography>
                                                             {renderFieldValue(item, field, listItemRef)}
@@ -843,7 +860,7 @@ export const Data = forwardRef(({
                                                 {visibleFields.map((field, fieldIndex) => (
                                                     <Container key={field} layout="flex-column" gap="xs" padding="none"
                                                                flexFill={fieldIndex === 0}>
-                                                        <Typography weight="medium" size="xs" color="muted">
+                                                        <Typography weight="medium" size={getIconSize()} color="muted">
                                                             {formatFieldName(field)}
                                                         </Typography>
                                                         {renderFieldValue(item, field, listItemRef)}
@@ -948,7 +965,7 @@ export const Data = forwardRef(({
                                 placeholder="Search all columns..."
                                 value={globalSearch}
                                 onChange={(e) => setGlobalSearch(e.target.value)}
-                                size="small"
+                                size={getButtonSize()}
                                 variant="outline"
                                 type="search"
                                 icon="FaSearch"
@@ -961,25 +978,25 @@ export const Data = forwardRef(({
                             {/* Column Filters Toggle */}
                             <Button
                                 variant="secondary"
-                                size="small"
+                                size={getButtonSize()}
                                 onClick={() => setShowColumnFilters(!showColumnFilters)}
                             >
-                                <Icon name="FiFilter" size="xs"/>
+                                <Icon name="FiFilter" size={getIconSize()}/>
                                 Filters
                             </Button>
 
                             {/* Show/Hide Columns Toggle */}
                             <Button
                                 variant="secondary"
-                                size="small"
+                                size={getButtonSize()}
                                 genie={
                                     <Container layout="flex-column" gap="sm" padding="md">
                                         <Container layout="flex" align="center" justify="between" padding="none">
-                                            <Typography size="sm" weight="medium">Select Columns</Typography>
+                                            <Typography size={getTypographySize()} weight="medium">Select Columns</Typography>
                                             <Container layout="flex" gap="xs" padding="none">
                                                 <Button
                                                     variant="tertiary"
-                                                    size="small"
+                                                    size={getButtonSize()}
                                                     onClick={() => {
                                                         const allVisible = {};
                                                         displayFields.forEach(field => {
@@ -992,7 +1009,7 @@ export const Data = forwardRef(({
                                                 </Button>
                                                 <Button
                                                     variant="tertiary"
-                                                    size="small"
+                                                    size={getButtonSize()}
                                                     onClick={() => {
                                                         const allHidden = {};
                                                         displayFields.forEach(field => {
@@ -1018,7 +1035,7 @@ export const Data = forwardRef(({
                                                 <Typography
                                                     as="label"
                                                     htmlFor={`column-${column}`}
-                                                    size="sm"
+                                                    size={getTypographySize()}
                                                     className="column-selection-label"
                                                 >
                                                     {fieldConfig[column]?.label || column}
@@ -1029,7 +1046,7 @@ export const Data = forwardRef(({
                                 }
                                 genieTrigger="click"
                             >
-                                <Icon name="FiColumns" size="xs"/>
+                                <Icon name="FiColumns" size={getIconSize()}/>
                                 Columns
                             </Button>
                         </Container>
@@ -1037,29 +1054,29 @@ export const Data = forwardRef(({
 
                     {/* Right side - Variant Switcher */}
                     <Container layout="flex" gap="sm" align="center" padding="none">
-                        <ButtonGroup size="small">
+                        <ButtonGroup size={getButtonSize()}>
                             <Button
                                 variant={currentVariant === 'table' ? 'primary' : 'secondary'}
-                                size="small"
+                                size={getButtonSize()}
                                 onClick={() => setCurrentVariant('table')}
                             >
-                                <Icon name="FiGrid" size="xs"/>
+                                <Icon name="FiGrid" size={getIconSize()}/>
                                 Table
                             </Button>
                             <Button
                                 variant={currentVariant === 'cards' ? 'primary' : 'secondary'}
-                                size="small"
+                                size={getButtonSize()}
                                 onClick={() => setCurrentVariant('cards')}
                             >
-                                <Icon name="FiGrid" size="xs"/>
+                                <Icon name="FiGrid" size={getIconSize()}/>
                                 Cards
                             </Button>
                             <Button
                                 variant={currentVariant === 'list' ? 'primary' : 'secondary'}
-                                size="small"
+                                size={getButtonSize()}
                                 onClick={() => setCurrentVariant('list')}
                             >
-                                <Icon name="FiList" size="xs"/>
+                                <Icon name="FiList" size={getIconSize()}/>
                                 List
                             </Button>
                         </ButtonGroup>
@@ -1070,10 +1087,10 @@ export const Data = forwardRef(({
                 {showColumnFilters && (
                     <Container gap="md" padding="md" backgroundColor="surface" marginBottom="sm">
                         <Container layout="flex" align="center" justify="between" padding="none">
-                            <Typography as="h4" weight="semibold" size="sm">Column Filters</Typography>
+                            <Typography as="h4" weight="semibold" size={getTypographySize()}>Column Filters</Typography>
                             <Button
                                 variant="secondary"
-                                size="small"
+                                size={getButtonSize()}
                                 onClick={() => setColumnFilters({})}
                             >
                                 Clear All
@@ -1095,16 +1112,16 @@ export const Data = forwardRef(({
                                                     label={formatFieldName(field) + ' (Start)'}
                                                     value={columnFilters[field]?.from || ''}
                                                     onChange={(e) => handleDateRangeChange(field, 'from', e.target.value)}
-                                                    size="small"
+                                                    size={getButtonSize()}
                                                     variant="floating"
                                                 />
-                                                <Typography size="xs" color="muted">to</Typography>
+                                                <Typography size={getIconSize()} color="muted">to</Typography>
                                                 <Input
                                                     type="date"
                                                     label={formatFieldName(field) + ' (End)'}
                                                     value={columnFilters[field]?.to || ''}
                                                     onChange={(e) => handleDateRangeChange(field, 'to', e.target.value)}
-                                                    size="small"
+                                                    size={getButtonSize()}
                                                     variant="floating"
                                                 />
                                             </Container>
@@ -1121,7 +1138,7 @@ export const Data = forwardRef(({
                                                         label: String(option)
                                                     }))
                                                 ]}
-                                                size="small"
+                                                size={getButtonSize()}
                                             />
                                         ) : (
                                             // Use Input for text search or fields with many options
@@ -1129,12 +1146,12 @@ export const Data = forwardRef(({
                                                 placeholder={`Filter ${formatFieldName(field)}...`}
                                                 value={columnFilters[field] || ''}
                                                 onChange={(e) => handleColumnFilterChange(field, e.target.value)}
-                                                size="small"
+                                                size={getButtonSize()}
                                                 variant="outline"
                                             />
                                         )}
                                         {hasOptions && options.length > 20 && (
-                                            <Typography as="span" size="xs" color="muted">
+                                            <Typography as="span" size={getIconSize()} color="muted">
                                                 {options.length} unique values
                                             </Typography>
                                         )}
@@ -1153,7 +1170,7 @@ export const Data = forwardRef(({
                     {/* Left Side: Rows per page with entries count as helper text */}
                     <Container layout="flex" padding="none" flexFill>
                         <Select
-                            size="small"
+                            size={getButtonSize()}
                             value={pageSize.toString()}
                             onChange={(e) => {
                                 setPageSize(Number(e.target.value));
@@ -1171,7 +1188,7 @@ export const Data = forwardRef(({
                         {/* Center: Sort by selector */}
                         {sortable && (
                             <Select
-                                size="small"
+                                size={getButtonSize()}
                                 value={getCurrentSortValue()}
                                 onChange={(e) => handleSortChange(e.target.value)}
                                 options={getSortOptions()}
@@ -1182,10 +1199,10 @@ export const Data = forwardRef(({
 
                     {/* Right Side: Pagination Controls */}
                     <Container layout="flex" padding="none" justify="end" flexFill>
-                        <ButtonGroup size="small" spaced>
-                            <Button size="small" selected={false} onClick={() => setPage(1)} disabled={page === 1}><Icon
+                        <ButtonGroup size={getButtonSize()} spaced>
+                            <Button size={getButtonSize()} selected={false} onClick={() => setPage(1)} disabled={page === 1}><Icon
                                 name="FiChevronsLeft" size='xs'/></Button>
-                            <Button size="small" selected={false} onClick={() => setPage(page - 1)}
+                            <Button size={getButtonSize()} selected={false} onClick={() => setPage(page - 1)}
                                     disabled={page === 1}><Icon name="FiChevronLeft" size='xs'/></Button>
 
                             {/* Three page buttons showing current page and adjacent pages */}
@@ -1217,7 +1234,7 @@ export const Data = forwardRef(({
                                 return pages.map(pageNum => (
                                     <Button
                                         key={pageNum}
-                                        size="small"
+                                        size={getButtonSize()}
                                         variant="secondary"
                                         selected={pageNum === page}
                                         onClick={() => setPage(pageNum)}
@@ -1227,10 +1244,10 @@ export const Data = forwardRef(({
                                 ));
                             })()}
 
-                            <Button size="small" selected={false} onClick={() => setPage(page + 1)}
+                            <Button size={getButtonSize()} selected={false} onClick={() => setPage(page + 1)}
                                     disabled={page === totalFilteredPages}><Icon name="FiChevronRight"
                                                                                  size='xs'/></Button>
-                            <Button size="small" selected={false} onClick={() => setPage(totalFilteredPages)}
+                            <Button size={getButtonSize()} selected={false} onClick={() => setPage(totalFilteredPages)}
                                     disabled={page === totalFilteredPages}><Icon name="FiChevronsRight"
                                                                                  size='xs'/></Button>
                         </ButtonGroup>

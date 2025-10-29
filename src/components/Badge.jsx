@@ -98,7 +98,7 @@ export const Badge = ({
             className={`badge themed-badge ${getColorClass()} ${getSizeClass()} ${getJustifySelfClass()} theme-${badgeTheme} ${className}`}
             data-theme={badgeTheme}
             data-theme-source={theme ? 'local' : 'inherited'}
-            style={{ justifySelf, ...getMarginStyle() }}
+            style={getMarginStyle()}
             {...props}
         >
             {children}

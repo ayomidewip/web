@@ -511,7 +511,7 @@ export const Input = ({
         return (
             <div
                 className={`input-container input-floating-container variant-${inputVariant} ${getColorClass()} ${getJustifySelfClass()} theme-${inputTheme}`}
-                style={{justifySelf, width, ...getMarginStyle()}} data-theme={inputTheme}
+                style={{width, ...getMarginStyle()}} data-theme={inputTheme}
                 data-theme-source={theme ? 'local' : 'inherited'}>
                 <div
                     className={`input-field-wrapper ${effectiveIcon ? `has-icon has-icon-${effectiveIconPosition}` : ''} ${getStateClasses()} ${getColorClass()}`}>
@@ -564,7 +564,7 @@ export const Input = ({
     if (type === 'checkbox') {
         return (
             <div className={`checkbox-wrapper input-container ${getColorClass()} ${getJustifySelfClass()} theme-${inputTheme}`}
-                 style={{justifySelf, width, ...getMarginStyle()}} data-theme={inputTheme}
+                 style={{width, ...getMarginStyle()}} data-theme={inputTheme}
                  data-theme-source={theme ? 'local' : 'inherited'}>
                 <div className="checkbox-input-wrapper">
                     {renderInput()}
@@ -593,7 +593,7 @@ export const Input = ({
     }
     return (
         <div className={`input-container ${getColorClass()} ${getJustifySelfClass()} theme-${inputTheme}`}
-             style={{justifySelf, width, ...getMarginStyle()}} data-theme={inputTheme}
+             style={{width, ...getMarginStyle()}} data-theme={inputTheme}
              data-theme-source={theme ? 'local' : 'inherited'}>
             {label && (
                 <label

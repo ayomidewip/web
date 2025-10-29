@@ -7,6 +7,43 @@
     align-items: center;
     justify-content: center;
     position: relative;
+    /* Base scale for mobile */
+    transform: scale(1);
+}
+
+/* ===== Responsive Scaling ===== */
+/* Mobile first - base sizes set in JavaScript */
+
+/* Large phones (480px - 767px) */
+@media (min-width: 480px) {
+    .circular-progress,
+    .themed-circular-progress {
+        transform: scale(1.15);
+    }
+}
+
+/* Tablets (768px - 1024px) */
+@media (min-width: 768px) {
+    .circular-progress,
+    .themed-circular-progress {
+        transform: scale(1.35);
+    }
+}
+
+/* Desktop (1025px - 1439px) */
+@media (min-width: 1025px) {
+    .circular-progress,
+    .themed-circular-progress {
+        transform: scale(1.5);
+    }
+}
+
+/* Large desktop (≥1440px) */
+@media (min-width: 1440px) {
+    .circular-progress,
+    .themed-circular-progress {
+        transform: scale(1.7);
+    }
 }
 
 /* ===== SVG Container ===== */

@@ -51,7 +51,7 @@ const THEME_OPTION_LABELS = {
     pink: 'Pink',
     fancy: 'Fancy'
 };
-const FAB_SIZES = ['small', 'default', 'large'];
+const FAB_SIZES = STANDARD_SIZES; // ['xs', 'sm', 'md', 'lg', 'xl']
 const FAB_VARIANTS = STATUS_COLORS;
 const FAB_POSITIONS = ['top-left', 'top', 'top-right', 'left', 'center', 'right', 'bottom-left', 'bottom', 'bottom-right'];
 const FAB_PARENT_TYPES = ['auto', 'page', 'card', 'container'];
@@ -160,12 +160,26 @@ const COMPONENT_METADATA = {
             size: 'md',
             disabled: false,
             selected: false,
+            icon: '',
+            iconPosition: 'left',
             theme: null,
             genie: createButtonGenieConfig('click'),
             genieTrigger: 'click'
         },
         propConfigs: {
             children: { type: 'text', label: 'Button Text', group: 'Content' },
+            icon: {
+                type: 'text',
+                label: 'Icon Name (Demo Only)',
+                group: 'Content',
+                placeholder: 'e.g., FiSave, FiEdit, FiTrash - Leave empty for no icon'
+            },
+            iconPosition: {
+                type: 'select',
+                label: 'Icon Position (Demo Only)',
+                group: 'Content',
+                options: ['left', 'right']
+            },
             color: { 
                 type: 'select', 
                 label: 'Color', 
@@ -501,12 +515,6 @@ const COMPONENT_METADATA = {
         },
         propConfigs: {
             children: { type: 'text', label: 'Text Content', group: 'Content' },
-            as: {
-                type: 'select',
-                label: 'HTML Element',
-                group: 'Basic',
-                options: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'span', 'div', 'label']
-            },
             size: {
                 type: 'select',
                 label: 'Size',
@@ -563,7 +571,7 @@ const COMPONENT_METADATA = {
                 type: 'select',
                 label: 'Size',
                 group: 'Size',
-                options: [...STANDARD_SIZES, '2xl', '3xl']
+                options: [...STANDARD_SIZES, '2xl']
             },
             color: {
                 type: 'select',
@@ -1024,7 +1032,7 @@ const COMPONENT_METADATA = {
                 },
                 email: {
                     component: Typography,
-                    props: { font: 'monospace', size: 'sm', color: 'muted' }
+                    props: { font: 'monospace', color: 'muted' }
                 },
                 role: {
                     component: Badge,
@@ -1064,6 +1072,12 @@ const COMPONENT_METADATA = {
             genie: createDataRowGenieConfig('click')
         },
         propConfigs: {
+            size: {
+                type: 'select',
+                label: 'Component Size',
+                group: 'Size',
+                options: STANDARD_SIZES
+            },
             variant: {
                 type: 'select',
                 label: 'Display Variant',
@@ -1606,7 +1620,7 @@ const COMPONENT_METADATA = {
         defaultProps: {
             icon: 'FiPlus',
             variant: 'primary',
-            size: 'default',
+            size: 'md',
             position: 'bottom-right',
             disabled: false,
             draggable: false,
@@ -1625,7 +1639,7 @@ const COMPONENT_METADATA = {
                 type: 'text', 
                 label: 'Icon Name', 
                 group: 'Content',
-                placeholder: 'e.g., FiPlus, FiEdit'
+                placeholder: 'e.g., FiPlus, FiEdit, FiSettings, FiHeart, FiMail'
             },
             variant: {
                 type: 'select',
@@ -1649,16 +1663,16 @@ const COMPONENT_METADATA = {
             draggable: { type: 'boolean', label: 'Draggable', group: 'Behavior' },
             iconSize: {
                 type: 'select',
-                label: 'Icon Size',
+                label: 'Icon Size Override',
                 group: 'Appearance',
-                options: [null, 'xs', 'sm', 'md', 'lg', 'xl'],
-                optionLabels: { null: 'Auto' }
+                options: [null, 'xs', 'sm', 'md', 'lg', 'xl', '2xl'],
+                optionLabels: { null: 'Auto (based on button size)' }
             },
             badge: {
                 type: 'text',
                 label: 'Badge Text',
                 group: 'Content',
-                placeholder: 'Leave blank to hide'
+                placeholder: 'e.g., 5, New, !'
             },
             snapToEdges: { type: 'boolean', label: 'Snap To Edges', group: 'Behavior' },
             snapThreshold: { type: 'number', label: 'Snap Threshold (px)', group: 'Behavior', min: 10, max: 300 },
@@ -2086,6 +2100,18 @@ const ComponentDemoRefactoredNew = () => {
             );
         }
 
+        if (selectedComponent === 'Button') {
+            const { icon, iconPosition, children, ...restProps } = effectiveProps;
+            
+            return (
+                <ComponentToRender {...restProps}>
+                    {icon && iconPosition === 'left' && <Icon name={icon} />}
+                    {children}
+                    {icon && iconPosition === 'right' && <Icon name={icon} />}
+                </ComponentToRender>
+            );
+        }
+
         if (selectedComponent === 'ButtonGroup') {
             return (
                 <ComponentToRender {...effectiveProps}>
@@ -2413,7 +2439,7 @@ const ComponentDemoRefactoredNew = () => {
             <Container layout="flex-column" gap="lg" width="100%">
                 {/* Section 2: Live Demo Area */}
                 <Container layout="flex-column" gap="none" padding="none" width="100%">
-                    <Typography as="h2" size="xl" weight="semibold">
+                    <Typography size="xl" weight="semibold">
                         Component Live Demo
                     </Typography>
 
@@ -2451,7 +2477,7 @@ const ComponentDemoRefactoredNew = () => {
 
                         <FloatingActionButton
                             variant="secondary"
-                            size="small"
+                            size="sm"
                             icon="FiCode"
                             position="top-left"
                             parentType="container"
@@ -2497,7 +2523,7 @@ const ComponentDemoRefactoredNew = () => {
                 <Container layout="flex" justify="center" align="center" padding="none" width="100%">
                     <Card padding="md" elevation="md" width="100%" maxWidth="960px">
                         <Container layout="flex-column" gap="sm" height="100%">
-                            <Typography as="h4" color="primary" size="xl" weight="semibold">
+                            <Typography color="primary" size="xl" weight="semibold">
                                 Properties
                             </Typography>
 
@@ -2534,7 +2560,7 @@ const ComponentDemoRefactoredNew = () => {
                 genie={{
                     content: (
                         <Container gap="sm">
-                            <Typography as="h4" color="primary">
+                            <Typography color="primary">
                                 Theme Switcher
                             </Typography>
                             <Container layout="flex-column" align="stretch" gap="xs">

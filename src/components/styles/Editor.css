@@ -489,38 +489,6 @@
     background: var(--surface-accent-color);
 }
 
-/* ===== Responsive Design ===== */
-
-@media (max-width: 768px) {
-    .themed-editor .mdxeditor-toolbar {
-        padding: var(--spacing-xs);
-        gap: var(--spacing-xs);
-    }
-
-    .themed-editor .mdxeditor-toolbar button {
-        padding: var(--spacing-xs);
-        font-size: var(--font-size-xs);
-        min-width: 28px;
-        min-height: 28px;
-    }
-
-    .themed-editor .mdxeditor-toolbar button svg {
-        width: 14px;
-        height: 14px;
-    }
-
-    .themed-editor.themed-editor [class*="_contentEditable_"] {
-        font-size: var(--font-size-sm);
-        padding: var(--spacing-sm);
-    }
-
-    /* Ensure placeholder matches responsive content area */
-    .themed-editor.themed-editor [class*="_placeholder_"] {
-        font-size: var(--font-size-sm);
-        padding: var(--spacing-sm);
-    }
-}
-
 /* ===== Focus and Accessibility ===== */
 
 .themed-editor .mdxeditor-root-contenteditable:focus {

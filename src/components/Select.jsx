@@ -573,7 +573,7 @@ export const Select = ({
         <div
             ref={containerRef}
             className={`select-container ${getColorClass()} ${getJustifySelfClass()} ${isOpen ? 'select-open' : ''}`}
-            style={{justifySelf, ...getSelectStyle()}}
+            style={getSelectStyle()}
         >
             {label && (
                 <label

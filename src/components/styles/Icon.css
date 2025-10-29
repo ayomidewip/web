@@ -58,41 +58,202 @@
     margin: 0 var(--spacing-xs);
 }
 
-/* Size variations */
+/* Size variations - Mobile first (small phones) */
+/* Matches Typography component pixel sizes exactly */
 .themed-icon.icon-xs {
-    width: 12px;
-    height: 12px;
-    font-size: 12px;
+    width: 9px;
+    height: 9px;
+    font-size: 9px;
 }
 
 .themed-icon.icon-sm {
-    width: 16px;
-    height: 16px;
-    font-size: 16px;
+    width: 11px;
+    height: 11px;
+    font-size: 11px;
 }
 
 .themed-icon.icon-md {
-    width: 20px;
-    height: 20px;
-    font-size: 20px;
+    width: 13px;
+    height: 13px;
+    font-size: 13px;
 }
 
 .themed-icon.icon-lg {
-    width: 24px;
-    height: 24px;
-    font-size: 24px;
+    width: 14px;
+    height: 14px;
+    font-size: 14px;
 }
 
 .themed-icon.icon-xl {
-    width: 32px;
-    height: 32px;
-    font-size: 32px;
+    width: 15px;
+    height: 15px;
+    font-size: 15px;
 }
 
 .themed-icon.icon-2xl {
-    width: 40px;
-    height: 40px;
-    font-size: 40px;
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+}
+
+/* Large phones (480px - 767px) */
+/* Matches Typography component pixel sizes exactly */
+@media (min-width: 480px) {
+    .themed-icon.icon-xs {
+        width: 11px;
+        height: 11px;
+        font-size: 11px;
+    }
+
+    .themed-icon.icon-sm {
+        width: 13px;
+        height: 13px;
+        font-size: 13px;
+    }
+
+    .themed-icon.icon-md {
+        width: 15px;
+        height: 15px;
+        font-size: 15px;
+    }
+
+    .themed-icon.icon-lg {
+        width: 16px;
+        height: 16px;
+        font-size: 16px;
+    }
+
+    .themed-icon.icon-xl {
+        width: 18px;
+        height: 18px;
+        font-size: 18px;
+    }
+
+    .themed-icon.icon-2xl {
+        width: 22px;
+        height: 22px;
+        font-size: 22px;
+    }
+}
+
+/* Tablets (768px - 1024px) */
+/* Matches Typography component pixel sizes exactly */
+@media (min-width: 768px) {
+    .themed-icon.icon-xs {
+        width: 14px;
+        height: 14px;
+        font-size: 14px;
+    }
+
+    .themed-icon.icon-sm {
+        width: 16px;
+        height: 16px;
+        font-size: 16px;
+    }
+
+    .themed-icon.icon-md {
+        width: 19px;
+        height: 19px;
+        font-size: 19px;
+    }
+
+    .themed-icon.icon-lg {
+        width: 21px;
+        height: 21px;
+        font-size: 21px;
+    }
+
+    .themed-icon.icon-xl {
+        width: 24px;
+        height: 24px;
+        font-size: 24px;
+    }
+
+    .themed-icon.icon-2xl {
+        width: 30px;
+        height: 30px;
+        font-size: 30px;
+    }
+}
+
+/* Desktop (1025px - 1439px) */
+/* Matches Typography component pixel sizes exactly */
+@media (min-width: 1025px) {
+    .themed-icon.icon-xs {
+        width: 16px;
+        height: 16px;
+        font-size: 16px;
+    }
+
+    .themed-icon.icon-sm {
+        width: 19px;
+        height: 19px;
+        font-size: 19px;
+    }
+
+    .themed-icon.icon-md {
+        width: 22px;
+        height: 22px;
+        font-size: 22px;
+    }
+
+    .themed-icon.icon-lg {
+        width: 26px;
+        height: 26px;
+        font-size: 26px;
+    }
+
+    .themed-icon.icon-xl {
+        width: 31px;
+        height: 31px;
+        font-size: 31px;
+    }
+
+    .themed-icon.icon-2xl {
+        width: 40px;
+        height: 40px;
+        font-size: 40px;
+    }
+}
+
+/* Large desktop (≥1440px) */
+/* Matches Typography component pixel sizes exactly */
+@media (min-width: 1440px) {
+    .themed-icon.icon-xs {
+        width: 18px;
+        height: 18px;
+        font-size: 18px;
+    }
+
+    .themed-icon.icon-sm {
+        width: 22px;
+        height: 22px;
+        font-size: 22px;
+    }
+
+    .themed-icon.icon-md {
+        width: 26px;
+        height: 26px;
+        font-size: 26px;
+    }
+
+    .themed-icon.icon-lg {
+        width: 32px;
+        height: 32px;
+        font-size: 32px;
+    }
+
+    .themed-icon.icon-xl {
+        width: 40px;
+        height: 40px;
+        font-size: 40px;
+    }
+
+    .themed-icon.icon-2xl {
+        width: 52px;
+        height: 52px;
+        font-size: 52px;
+    }
 }
 
 /* Hover effects */

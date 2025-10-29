@@ -299,58 +299,6 @@
     position: absolute;
 }
 
-/* ===== Responsive Design ===== */
-/* Mobile optimizations */
-
-@media (max-width: 768px) {
-    .floating-action-button {
-        /* Slightly smaller on mobile */
-        width: 48px;
-        height: 48px;
-        min-width: 48px;
-        min-height: 48px;
-    }
-
-    .floating-action-button.sm {
-        width: 36px;
-        height: 36px;
-        min-width: 36px;
-        min-height: 36px;
-    }
-
-    .floating-action-button.lg {
-        width: 60px;
-        height: 60px;
-        min-width: 60px;
-        min-height: 60px;
-    }
-
-    /* Reduce offsets on mobile for more space */
-    .floating-action-button.fab-position-top-left,
-    .floating-action-button.fab-position-top,
-    .floating-action-button.fab-position-top-right {
-        top: var(--spacing-sm);
-    }
-
-    .floating-action-button.fab-position-bottom-left,
-    .floating-action-button.fab-position-bottom,
-    .floating-action-button.fab-position-bottom-right {
-        bottom: var(--spacing-sm);
-    }
-
-    .floating-action-button.fab-position-left,
-    .floating-action-button.fab-position-top-left,
-    .floating-action-button.fab-position-bottom-left {
-        left: var(--spacing-sm);
-    }
-
-    .floating-action-button.fab-position-right,
-    .floating-action-button.fab-position-top-right,
-    .floating-action-button.fab-position-bottom-right {
-        right: var(--spacing-sm);
-    }
-}
-
 /* ===== Accessibility ===== */
 /* Focus styling */
 .floating-action-button:focus-visible {

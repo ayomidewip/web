@@ -552,37 +552,3 @@
 .justify-self-stretch {
     justify-self: stretch;
 }
-
-/* ===== Responsive Design ===== */
-@media (max-width: 768px) {
-    /* Only apply mobile styles to default size, not explicit size variants */
-    .tree-view:not(.tree-view-small):not(.tree-view-sm):not(.tree-view-xs):not(.tree-view-large):not(.tree-view-lg):not(.tree-view-xl) {
-        font-size: var(--font-size-sm);
-    }
-
-    .tree-view:not(.tree-view-small):not(.tree-view-sm):not(.tree-view-xs):not(.tree-view-large):not(.tree-view-lg):not(.tree-view-xl) .tree-node-content {
-        min-height: 2.25rem;
-        padding: var(--spacing-xs);
-    }
-
-    /* Reduce indentation on mobile for default size only */
-    .tree-view:not(.tree-view-small):not(.tree-view-sm):not(.tree-view-xs):not(.tree-view-large):not(.tree-view-lg):not(.tree-view-xl) .tree-node-level-1 .tree-node-content {
-        margin-left: 16px;
-    }
-
-    .tree-view:not(.tree-view-small):not(.tree-view-sm):not(.tree-view-xs):not(.tree-view-large):not(.tree-view-lg):not(.tree-view-xl) .tree-node-level-2 .tree-node-content {
-        margin-left: 32px;
-    }
-
-    .tree-view:not(.tree-view-small):not(.tree-view-sm):not(.tree-view-xs):not(.tree-view-large):not(.tree-view-lg):not(.tree-view-xl) .tree-node-level-3 .tree-node-content {
-        margin-left: 48px;
-    }
-
-    .tree-view:not(.tree-view-small):not(.tree-view-sm):not(.tree-view-xs):not(.tree-view-large):not(.tree-view-lg):not(.tree-view-xl) .tree-node-level-4 .tree-node-content {
-        margin-left: 64px;
-    }
-
-    .tree-view:not(.tree-view-small):not(.tree-view-sm):not(.tree-view-xs):not(.tree-view-large):not(.tree-view-lg):not(.tree-view-xl) .tree-node-level-5 .tree-node-content {
-        margin-left: 80px;
-    }
-}

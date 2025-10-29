@@ -1,3 +1,7 @@
+/* ===== ButtonGroup Component CSS ===== */
+/* ButtonGroup inherits sizes from Button components - no separate sizing needed */
+/* The group container adapts to the size of buttons passed via the size prop */
+
 .button-group {
     display: inline-flex;
     flex-wrap: wrap;
@@ -112,13 +116,6 @@
 
 .button-group .button.themed-button.themed-button-border-shadow:first-child:last-child {
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.15) !important;
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-    .button-group {
-        margin: var(--spacing-xs);
-    }
 }
 
 /* ===== Genie Integration Support ===== */

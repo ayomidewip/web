@@ -6,43 +6,37 @@
     color: var(--text-color); /* Inherit theme text color by default */
 }
 
+/* Size classes are defined in the responsive section below */
+/* Letter-spacing for each size */
 .typography-size-xs {
-    font-size: var(--font-size-xs);
     letter-spacing: 0.025em; /* More open spacing for small text readability */
 }
 
 .typography-size-sm {
-    font-size: var(--font-size-sm);
     letter-spacing: 0.015em; /* Slightly open spacing for small text */
 }
 
-.typography-size-base {
-    font-size: var(--font-size-base);
-    letter-spacing: 0.01em; /* Subtle spacing for base text */
+.typography-size-md {
+    letter-spacing: 0.01em; /* Subtle spacing for medium text */
 }
 
 .typography-size-lg {
-    font-size: var(--font-size-lg);
     letter-spacing: 0.005em; /* Very subtle spacing for larger text */
 }
 
 .typography-size-xl {
-    font-size: var(--font-size-xl);
     letter-spacing: 0; /* Normal spacing */
 }
 
 .typography-size-2xl {
-    font-size: var(--font-size-2xl);
     letter-spacing: -0.005em; /* Slightly tight for large text */
 }
 
 .typography-size-3xl {
-    font-size: var(--font-size-3xl);
     letter-spacing: -0.015em; /* Tighter for very large text */
 }
 
 .typography-size-4xl {
-    font-size: var(--font-size-4xl);
     letter-spacing: -0.025em; /* Tight spacing for display text */
 }
 
@@ -81,53 +75,10 @@
     font-family: var(--font-family-black, var(--font-family));
 }
 
-.typography-heading {
-    line-height: var(--line-height-tight);
-    margin: var(--spacing-sm) 0;
-    font-weight: var(--font-weight-bold);
-    letter-spacing: -0.01em; /* Subtle tight spacing for all headings */
-}
-
 .typography-text {
     line-height: var(--line-height-normal);
     margin: var(--spacing-sm) 0;
     letter-spacing: 0.01em; /* Subtle open spacing for body text readability */
-}
-
-.typography-level-h1 {
-    font-size: var(--font-size-4xl);
-    margin: var(--spacing-lg) 0;
-    letter-spacing: -0.025em; /* Tight spacing for large headings */
-}
-
-.typography-level-h2 {
-    font-size: var(--font-size-3xl);
-    margin: var(--spacing-lg) 0;
-    letter-spacing: -0.02em; /* Slightly tight spacing */
-}
-
-.typography-level-h3 {
-    font-size: var(--font-size-2xl);
-    margin: var(--spacing-md) 0;
-    letter-spacing: -0.015em; /* Subtle tight spacing */
-}
-
-.typography-level-h4 {
-    font-size: var(--font-size-xl);
-    margin: var(--spacing-md) 0;
-    letter-spacing: -0.01em; /* Very subtle tight spacing */
-}
-
-.typography-level-h5 {
-    font-size: var(--font-size-lg);
-    margin-bottom: var(--spacing-sm);
-    letter-spacing: 0; /* Normal spacing */
-}
-
-.typography-level-h6 {
-    font-size: var(--font-size-base);
-    margin: var(--spacing-sm) 0;
-    letter-spacing: 0.01em; /* Slightly open spacing for smaller headings */
 }
 
 /* Typography Link Styles */
@@ -238,12 +189,6 @@
 
 .typography-font-secondary.typography-weight-black {
     font-family: var(--font-family-secondary-black, var(--font-family-secondary, var(--font-family-black, var(--font-family))));
-}
-
-@media (max-width: 768px) {
-    .typography.typography-heading {
-        margin: var(--spacing-md) 0 var(--spacing-sm) 0;
-    }
 }
 
 /* JustifySelf utility classes for Typography components */
@@ -363,4 +308,182 @@
 
 .typography.padding-xl {
     padding: var(--spacing-xl) !important;
+}
+
+/* ===== Responsive Size System ===== */
+/* Component-level responsive design: sizes grow significantly from mobile to desktop */
+/* Mobile-first approach: very compact on mobile, progressively much larger on bigger screens */
+/* Breakpoints: 480px (small→large phones), 768px (tablet portrait), 1025px (desktop), 1440px (large desktop) */
+
+/* Mobile base styles (< 480px) - Extra compact for small phones */
+.typography-size-xs {
+    font-size: 0.5625rem;  /* 9px */
+}
+
+.typography-size-sm {
+    font-size: 0.6875rem;  /* 11px */
+}
+
+.typography-size-md {
+    font-size: 0.8125rem;  /* 13px */
+}
+
+.typography-size-lg {
+    font-size: 0.875rem;   /* 14px */
+}
+
+.typography-size-xl {
+    font-size: 0.9375rem;  /* 15px */
+}
+
+.typography-size-2xl {
+    font-size: 1.125rem;   /* 18px */
+}
+
+.typography-size-3xl {
+    font-size: 1.5rem;     /* 24px */
+}
+
+.typography-size-4xl {
+    font-size: 1.875rem;   /* 30px */
+}
+
+/* Large phone adjustments (480px - 767px) - Standard phone size */
+@media (min-width: 480px) {
+    .typography-size-xs {
+        font-size: 0.6875rem;  /* 11px - +22% from small phone */
+    }
+
+    .typography-size-sm {
+        font-size: 0.8125rem;  /* 13px - +18% from small phone */
+    }
+
+    .typography-size-md {
+        font-size: 0.9375rem;  /* 15px - +15% from small phone */
+    }
+
+    .typography-size-lg {
+        font-size: 1rem;       /* 16px - +14% from small phone */
+    }
+
+    .typography-size-xl {
+        font-size: 1.125rem;   /* 18px - +20% from small phone */
+    }
+
+    .typography-size-2xl {
+        font-size: 1.375rem;   /* 22px - +22% from small phone */
+    }
+
+    .typography-size-3xl {
+        font-size: 1.875rem;   /* 30px - +25% from small phone */
+    }
+
+    .typography-size-4xl {
+        font-size: 2.375rem;   /* 38px - +27% from small phone */
+    }
+}
+
+/* Tablet adjustments (768px - 1024px) - Moderately sized for comfortable viewing */
+@media (min-width: 768px) {
+    .typography-size-xs {
+        font-size: 0.875rem;   /* 14px - +27% from large phone */
+    }
+
+    .typography-size-sm {
+        font-size: 1rem;       /* 16px - +23% from large phone */
+    }
+
+    .typography-size-md {
+        font-size: 1.1875rem;  /* 19px - +27% from large phone */
+    }
+
+    .typography-size-lg {
+        font-size: 1.3125rem;  /* 21px - +31% from large phone */
+    }
+
+    .typography-size-xl {
+        font-size: 1.5rem;     /* 24px - +33% from large phone */
+    }
+
+    .typography-size-2xl {
+        font-size: 1.875rem;   /* 30px - +36% from large phone */
+    }
+
+    .typography-size-3xl {
+        font-size: 2.625rem;   /* 42px - +40% from large phone */
+    }
+
+    .typography-size-4xl {
+        font-size: 3.375rem;   /* 54px - +42% from large phone */
+    }
+}
+
+/* Desktop adjustments (1025px - 1439px) - Spacious for optimal desktop experience */
+@media (min-width: 1025px) {
+    .typography-size-xs {
+        font-size: 1rem;       /* 16px - +14% from tablet */
+    }
+
+    .typography-size-sm {
+        font-size: 1.1875rem;  /* 19px - +19% from tablet */
+    }
+
+    .typography-size-md {
+        font-size: 1.375rem;   /* 22px - +16% from tablet */
+    }
+
+    .typography-size-lg {
+        font-size: 1.625rem;   /* 26px - +24% from tablet */
+    }
+
+    .typography-size-xl {
+        font-size: 1.9375rem;  /* 31px - +29% from tablet */
+    }
+
+    .typography-size-2xl {
+        font-size: 2.5rem;     /* 40px - +33% from tablet */
+    }
+
+    .typography-size-3xl {
+        font-size: 3.5rem;     /* 56px - +33% from tablet */
+    }
+
+    .typography-size-4xl {
+        font-size: 4.5rem;     /* 72px - +33% from tablet */
+    }
+}
+
+/* Large desktop adjustments (>= 1440px) - Extra spacious for large monitors */
+@media (min-width: 1440px) {
+    .typography-size-xs {
+        font-size: 1.125rem;   /* 18px - +13% from desktop */
+    }
+
+    .typography-size-sm {
+        font-size: 1.375rem;   /* 22px - +16% from desktop */
+    }
+
+    .typography-size-md {
+        font-size: 1.625rem;   /* 26px - +18% from desktop */
+    }
+
+    .typography-size-lg {
+        font-size: 2rem;       /* 32px - +23% from desktop */
+    }
+
+    .typography-size-xl {
+        font-size: 2.5rem;     /* 40px - +29% from desktop */
+    }
+
+    .typography-size-2xl {
+        font-size: 3.25rem;    /* 52px - +30% from desktop */
+    }
+
+    .typography-size-3xl {
+        font-size: 4.625rem;   /* 74px - +32% from desktop */
+    }
+
+    .typography-size-4xl {
+        font-size: 6rem;       /* 96px - +33% from desktop */
+    }
 }

@@ -164,45 +164,196 @@
     font-size: var(--font-size-sm);
 }
 
-/* Size variants */
+/* ===== Responsive Size System ===== */
+/* Matches Button and Input component sizing exactly for visual consistency */
+/* Breakpoints: 480px (small→large phones), 768px (tablet portrait), 1025px (desktop), 1440px (large desktop) */
+
+/* Mobile base styles (< 480px) - Extra compact for small phones */
 .themed-select.select-xs {
-    height: 1.75rem; /* 28px - xs size */
-    margin: var(--spacing-xs) 0;
-    padding: 0 var(--spacing-xs);
-    padding-right: 1.75rem;
-    font-size: var(--font-size-xs);
+    height: 1.25rem;        /* 20px */
+    padding: 0 0.375rem;    /* 6px */
+    padding-right: 1.5rem;  /* Space for dropdown arrow */
+    font-size: 0.625rem;    /* 10px */
 }
 
 .themed-select.select-sm {
-    height: 2rem; /* 32px - sm size */
-    margin: var(--spacing-xs) 0;
-    padding: 0 var(--spacing-sm);
-    padding-right: 2rem;
-    font-size: var(--font-size-xs);
+    height: 1.5rem;         /* 24px */
+    padding: 0 0.5rem;      /* 8px */
+    padding-right: 1.75rem;
+    font-size: 0.6875rem;   /* 11px */
 }
 
 .themed-select.select-md {
-    height: 2.5rem; /* 40px - md size */
-    margin: var(--spacing-sm) 0;
-    padding: 0 var(--spacing-md);
-    padding-right: 2.5rem;
-    font-size: var(--font-size-sm);
+    height: 1.875rem;       /* 30px */
+    padding: 0 0.625rem;    /* 10px */
+    padding-right: 2rem;
+    font-size: 0.75rem;     /* 12px */
 }
 
 .themed-select.select-lg {
-    height: 3rem; /* 48px - lg size */
-    margin: var(--spacing-md) 0;
-    padding: 0 var(--spacing-lg);
-    padding-right: 3rem;
-    font-size: var(--font-size-base);
+    height: 2rem;           /* 32px */
+    padding: 0 0.75rem;     /* 12px */
+    padding-right: 2.125rem;
+    font-size: 0.8125rem;   /* 13px */
 }
 
 .themed-select.select-xl {
-    height: 3.5rem; /* 56px - xl size */
-    margin: var(--spacing-md) 0;
-    padding: 0 var(--spacing-lg);
-    padding-right: 3.5rem;
-    font-size: var(--font-size-lg);
+    height: 2.25rem;        /* 36px */
+    padding: 0 0.875rem;    /* 14px */
+    padding-right: 2.375rem;
+    font-size: 0.875rem;    /* 14px */
+}
+
+/* Large phone adjustments (480px - 767px) - Slightly larger for standard phones */
+@media (min-width: 480px) {
+    .themed-select.select-xs {
+        height: 1.5rem;         /* 24px */
+        padding: 0 0.5rem;      /* 8px */
+        padding-right: 1.75rem;
+        font-size: 0.6875rem;   /* 11px */
+    }
+
+    .themed-select.select-sm {
+        height: 1.75rem;        /* 28px */
+        padding: 0 0.625rem;    /* 10px */
+        padding-right: 2rem;
+        font-size: 0.75rem;     /* 12px */
+    }
+
+    .themed-select.select-md {
+        height: 2rem;           /* 32px */
+        padding: 0 0.75rem;     /* 12px */
+        padding-right: 2.125rem;
+        font-size: 0.8125rem;   /* 13px */
+    }
+
+    .themed-select.select-lg {
+        height: 2.25rem;        /* 36px */
+        padding: 0 0.875rem;    /* 14px */
+        padding-right: 2.375rem;
+        font-size: 0.875rem;    /* 14px */
+    }
+
+    .themed-select.select-xl {
+        height: 2.5rem;         /* 40px */
+        padding: 0 1rem;        /* 16px */
+        padding-right: 2.625rem;
+        font-size: 0.9375rem;   /* 15px */
+    }
+}
+
+/* Tablet adjustments (768px - 1024px) - Moderately sized for comfortable interaction */
+@media (min-width: 768px) {
+    .themed-select.select-xs {
+        height: 1.75rem;        /* 28px */
+        padding: 0 0.75rem;     /* 12px */
+        padding-right: 2rem;
+        font-size: 0.75rem;     /* 12px */
+    }
+
+    .themed-select.select-sm {
+        height: 2rem;           /* 32px */
+        padding: 0 0.875rem;    /* 14px */
+        padding-right: 2.125rem;
+        font-size: 0.8125rem;   /* 13px */
+    }
+
+    .themed-select.select-md {
+        height: 2.25rem;        /* 36px */
+        padding: 0 1rem;        /* 16px */
+        padding-right: 2.375rem;
+        font-size: 0.875rem;    /* 14px */
+    }
+
+    .themed-select.select-lg {
+        height: 2.5rem;         /* 40px */
+        padding: 0 1.125rem;    /* 18px */
+        padding-right: 2.625rem;
+        font-size: 0.9375rem;   /* 15px */
+    }
+
+    .themed-select.select-xl {
+        height: 2.875rem;       /* 46px */
+        padding: 0 1.375rem;    /* 22px */
+        padding-right: 3rem;
+        font-size: 1rem;        /* 16px */
+    }
+}
+
+/* Desktop adjustments (1025px - 1439px) - Spacious for optimal desktop experience */
+@media (min-width: 1025px) {
+    .themed-select.select-xs {
+        height: 2rem;           /* 32px */
+        padding: 0 0.875rem;    /* 14px */
+        padding-right: 2.125rem;
+        font-size: 0.8125rem;   /* 13px */
+    }
+
+    .themed-select.select-sm {
+        height: 2.25rem;        /* 36px */
+        padding: 0 1rem;        /* 16px */
+        padding-right: 2.375rem;
+        font-size: 0.875rem;    /* 14px */
+    }
+
+    .themed-select.select-md {
+        height: 2.5rem;         /* 40px */
+        padding: 0 1.125rem;    /* 18px */
+        padding-right: 2.625rem;
+        font-size: 0.9375rem;   /* 15px */
+    }
+
+    .themed-select.select-lg {
+        height: 2.75rem;        /* 44px */
+        padding: 0 1.375rem;    /* 22px */
+        padding-right: 2.875rem;
+        font-size: 1rem;        /* 16px */
+    }
+
+    .themed-select.select-xl {
+        height: 3.125rem;       /* 50px */
+        font-size: 1.0625rem;   /* 17px */
+        padding: 0 1.625rem;    /* 26px */
+        padding-right: 3.25rem;
+    }
+}
+
+/* Large desktop adjustments (>= 1440px) - Extra spacious for large monitors */
+@media (min-width: 1440px) {
+    .themed-select.select-xs {
+        height: 2.125rem;       /* 34px */
+        padding: 0 1rem;        /* 16px */
+        padding-right: 2.25rem;
+        font-size: 0.875rem;    /* 14px */
+    }
+
+    .themed-select.select-sm {
+        height: 2.375rem;       /* 38px */
+        padding: 0 1.125rem;    /* 18px */
+        padding-right: 2.5rem;
+        font-size: 0.9375rem;   /* 15px */
+    }
+
+    .themed-select.select-md {
+        height: 2.75rem;        /* 44px */
+        padding: 0 1.25rem;     /* 20px */
+        padding-right: 2.875rem;
+        font-size: 1rem;        /* 16px */
+    }
+
+    .themed-select.select-lg {
+        height: 3rem;           /* 48px */
+        padding: 0 1.5rem;      /* 24px */
+        padding-right: 3.125rem;
+        font-size: 1.0625rem;   /* 17px */
+    }
+
+    .themed-select.select-xl {
+        height: 3.5rem;         /* 56px */
+        font-size: 1.125rem;    /* 18px */
+        padding: 0 1.875rem;    /* 30px */
+        padding-right: 3.625rem;
+    }
 }
 
 /* Size variants for multi-select */
@@ -376,48 +527,6 @@
 .select-required {
     color: var(--error-color);
     margin-left: var(--spacing-xs);
-}
-
-/* Responsive styles */
-@media (max-width: 768px) {
-    .select-container {
-        margin: var(--spacing-sm) 0;
-    }
-
-    .select-badges-container {
-        gap: calc(var(--spacing-xs) / 2);
-        padding: calc(var(--spacing-xs) / 2) 0;
-        margin: var(--spacing-xs) 0;
-        top: calc(var(--spacing-xs) / 2);
-        left: var(--spacing-sm);
-        right: calc(2rem + var(--spacing-sm));
-    }
-
-    /* Small size mobile adjustments */
-    .select-input-container .themed-select.select-xs ~ .select-badges-container,
-    .select-input-container .themed-select.select-sm ~ .select-badges-container {
-        padding: 2px 0;
-        left: var(--spacing-xs);
-        right: calc(2rem + var(--spacing-xs));
-        gap: 2px;
-    }
-
-    /* Large size mobile adjustments */
-    .select-input-container .themed-select.select-lg ~ .select-badges-container,
-    .select-input-container .themed-select.select-xl ~ .select-badges-container {
-        padding: var(--spacing-xs) 0;
-        left: var(--spacing-md);
-        right: calc(3rem + var(--spacing-md));
-        gap: var(--spacing-xs);
-    }
-
-    .select-badge {
-        font-size: 0.75rem;
-    }
-
-    .select-badge-remove {
-        padding: 1px;
-    }
 }
 
 /* JustifySelf utility classes for Select components */

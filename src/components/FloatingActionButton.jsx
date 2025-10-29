@@ -32,7 +32,7 @@ import Badge from './Badge';
 export const FloatingActionButton = forwardRef(({
     className = '',
     variant = 'primary', // Button variant: 'primary', 'secondary', etc.
-    size = 'default', // Button size: 'small', 'default', 'large'
+    size = 'md', // Button size: 'xs', 'sm', 'md', 'lg', 'xl'
     disabled = false,
     type = 'button',
     onClick,
@@ -160,14 +160,16 @@ export const FloatingActionButton = forwardRef(({
     const getIconSize = () => {
         if (iconSize) return iconSize;
 
-        switch (size) {
-            case 'small':
-                return 'sm';
-            case 'large':
-                return 'lg';
-            default:
-                return 'md';
-        }
+        // Map FAB size to Icon size (one size smaller for better visual balance)
+        const sizeMap = {
+            xs: 'xs',
+            sm: 'xs',
+            md: 'sm',
+            lg: 'md',
+            xl: 'lg'
+        };
+
+        return sizeMap[size] || 'sm';
     };
 
     // Edge padding matches FAB margins from CSS

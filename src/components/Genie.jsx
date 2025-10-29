@@ -520,6 +520,11 @@ export const Genie = forwardRef(({
   }, [visible, onClose, triggerRef, updatePosition]);
 
   const resolveMaxDimension = useCallback((propValue, available, axis) => {
+    // If no propValue is provided, return undefined to allow fit-content behavior
+    if (propValue === null || propValue === undefined) {
+      return undefined;
+    }
+
     const viewportLimit = Number.isFinite(available) ? Math.max(available, 0) : null;
     const propLimit = convertToPixels(propValue, axis);
     const hasViewportLimit = viewportLimit !== null;

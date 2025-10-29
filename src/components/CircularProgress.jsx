@@ -104,16 +104,16 @@ export const CircularProgress = ({
     const getSizeDimensions = () => {
         switch (size) {
             case 'xs':
-                return {size: 20, defaultStroke: 2, dashRatio: 0.15};
+                return {size: 16, defaultStroke: 2, dashRatio: 0.15};
             case 'sm':
-                return {size: 24, defaultStroke: 3, dashRatio: 0.15};
+                return {size: 20, defaultStroke: 2.5, dashRatio: 0.15};
             case 'lg':
-                return {size: 64, defaultStroke: 6, dashRatio: 0.35};
+                return {size: 48, defaultStroke: 5, dashRatio: 0.35};
             case 'xl':
-                return {size: 80, defaultStroke: 8, dashRatio: 0.4};
+                return {size: 60, defaultStroke: 6, dashRatio: 0.4};
             case 'md':
             default:
-                return {size: 40, defaultStroke: 4, dashRatio: 0.25};
+                return {size: 32, defaultStroke: 3.5, dashRatio: 0.25};
         }
     };
 
