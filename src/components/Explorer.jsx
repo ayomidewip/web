@@ -104,10 +104,10 @@ const CreateFileForm = ({targetPath, onSuccess}) => {
             />
 
             <Container layout="flex-row" gap="sm" justify="end">
-                <Button size="small" variant="secondary">
+                <Button size="sm" variant="secondary">
                     Cancel
                 </Button>
-                <Button size="small" variant="primary" onClick={handleSubmit}>
+                <Button size="sm" variant="primary" onClick={handleSubmit}>
                     Create File
                 </Button>
             </Container>
@@ -163,10 +163,10 @@ const CreateDirectoryForm = ({targetPath, onSuccess}) => {
             />
 
             <Container layout="flex-row" gap="sm" justify="end">
-                <Button size="small" variant="secondary">
+                <Button size="sm" variant="secondary">
                     Cancel
                 </Button>
-                <Button size="small" variant="primary" onClick={handleSubmit}>
+                <Button size="sm" variant="primary" onClick={handleSubmit}>
                     Create Directory
                 </Button>
             </Container>
@@ -221,10 +221,10 @@ const DeleteConfirmForm = ({filePath, isDirectory, onSuccess}) => {
             )}
 
             <Container layout="flex-row" gap="sm" justify="end">
-                <Button size="small" variant="secondary">
+                <Button size="sm" variant="secondary">
                     Cancel
                 </Button>
-                <Button size="small" variant="error" onClick={handleSubmit}>
+                <Button size="sm" variant="error" onClick={handleSubmit}>
                     Delete
                 </Button>
             </Container>
@@ -287,10 +287,10 @@ const CopyMoveForm = ({filePath, operation, fileTree, onSuccess}) => {
             />
 
             <Container layout="flex-row" gap="sm" justify="end">
-                <Button size="small" variant="secondary">
+                <Button size="sm" variant="secondary">
                     Cancel
                 </Button>
-                <Button size="small" variant="primary" onClick={handleSubmit}>
+                <Button size="sm" variant="primary" onClick={handleSubmit}>
                     {operation === 'copy' ? 'Copy' : 'Move'}
                 </Button>
             </Container>
@@ -342,10 +342,10 @@ const RenameForm = ({filePath, isDirectory, onSuccess}) => {
             />
 
             <Container layout="flex-row" gap="sm" justify="end">
-                <Button size="small" variant="secondary">
+                <Button size="sm" variant="secondary">
                     Cancel
                 </Button>
-                <Button size="small" variant="primary" onClick={handleSubmit}>
+                <Button size="sm" variant="primary" onClick={handleSubmit}>
                     Rename
                 </Button>
             </Container>
@@ -419,11 +419,11 @@ const UploadForm = ({targetPath, onSuccess}) => {
             )}
 
             <Container layout="flex-row" gap="sm" justify="end">
-                <Button size="small" variant="secondary">
+                <Button size="sm" variant="secondary">
                     Cancel
                 </Button>
                 <Button
-                    size="small"
+                    size="sm"
                     variant="primary"
                     onClick={handleSubmit}
                     disabled={files.length === 0}
@@ -473,10 +473,10 @@ const PublishForm = ({filePath, onSuccess}) => {
             />
 
             <Container layout="flex-row" gap="sm" justify="end">
-                <Button size="small" variant="secondary">
+                <Button size="sm" variant="secondary">
                     Cancel
                 </Button>
-                <Button size="small" variant="primary" onClick={handleSubmit}>
+                <Button size="sm" variant="primary" onClick={handleSubmit}>
                     Publish
                 </Button>
             </Container>
@@ -578,19 +578,19 @@ export const ShareForm = ({filePath, isDirectory, onSuccess}) => {
                     {value: 'write', label: 'Read & Write'}
                 ]}
                 width="100%"
-                size="small"
+                size="sm"
             />
 
             <Container layout="flex" gap="sm" justify="end">
                 <Button
-                    size="small"
+                    size="sm"
                     variant="secondary"
                     disabled={isSubmitting}
                 >
                     Cancel
                 </Button>
                 <Button
-                    size="small"
+                    size="sm"
                     variant="primary"
                     onClick={handleSubmit}
                     disabled={selectedUsers.length === 0 || isSubmitting}
@@ -676,8 +676,8 @@ const DirectorySelector = ({fileTree, onSelect, selectedPath = '', width = '100%
                     selectedNodes={[selectedPath]}
                     expandedNodes={Array.from(expandedNodes)}
                     onNodeExpand={handleNodeExpand}
-                    variant="default"
-                    size="small"
+                    color="surface"
+                    size="sm"
                     showIcons={true}
                     width={width}
                     searchable
@@ -941,8 +941,8 @@ const Explorer = ({
                                     selectedNodes={[selectorState.selectedPath]}
                                     expandedNodes={Array.from(selectorState.expandedNodes)}
                                     onNodeExpand={handleNodeExpand}
-                                    variant="default"
-                                    size="small"
+                                    color="surface"
+                                    size="sm"
                                     showIcons={showIcons}
                                     width="100%"
                                     searchable
@@ -967,7 +967,7 @@ const Explorer = ({
                                                         {isDirectory ? (
                                                             <>
                                                                 <Button
-                                                                    size="small"
+                                                                    size="sm"
                                                                     width="100%"
                                                                     icon="FiFilePlus"
                                                                     genie={{
@@ -986,7 +986,7 @@ const Explorer = ({
                                                                     New File
                                                                 </Button>
                                                                 <Button
-                                                                    size="small"
+                                                                    size="sm"
                                                                     width="100%"
                                                                     icon="FiFolderPlus"
                                                                     genie={{
@@ -1005,7 +1005,7 @@ const Explorer = ({
                                                                     New Folder
                                                                 </Button>
                                                                 <Button
-                                                                    size="small"
+                                                                    size="sm"
                                                                     width="100%"
                                                                     icon="FiUpload"
                                                                     genie={{
@@ -1024,7 +1024,7 @@ const Explorer = ({
                                                                     Upload Files
                                                                 </Button>
                                                                 <Button
-                                                                    size="small"
+                                                                    size="sm"
                                                                     width="100%"
                                                                     icon="FiCopy"
                                                                     genie={{
@@ -1045,7 +1045,7 @@ const Explorer = ({
                                                                     Copy
                                                                 </Button>
                                                                 <Button
-                                                                    size="small"
+                                                                    size="sm"
                                                                     width="100%"
                                                                     icon="FiMove"
                                                                     genie={{
@@ -1066,7 +1066,7 @@ const Explorer = ({
                                                                     Move
                                                                 </Button>
                                                                 <Button
-                                                                    size="small"
+                                                                    size="sm"
                                                                     width="100%"
                                                                     icon="FiEdit2"
                                                                     genie={{
@@ -1086,7 +1086,7 @@ const Explorer = ({
                                                                     Rename
                                                                 </Button>
                                                                 <Button
-                                                                    size="small"
+                                                                    size="sm"
                                                                     width="100%"
                                                                     icon="FiShare2"
                                                                     genie={{
@@ -1109,7 +1109,7 @@ const Explorer = ({
                                                         ) : (
                                                             <>
                                                                 <Button
-                                                                    size="small"
+                                                                    size="sm"
                                                                     width="100%"
                                                                     icon="FiEdit2"
                                                                     genie={{
@@ -1129,7 +1129,7 @@ const Explorer = ({
                                                                     Rename
                                                                 </Button>
                                                                 <Button
-                                                                    size="small"
+                                                                    size="sm"
                                                                     width="100%"
                                                                     icon="FiCopy"
                                                                     genie={{
@@ -1150,7 +1150,7 @@ const Explorer = ({
                                                                     Copy
                                                                 </Button>
                                                                 <Button
-                                                                    size="small"
+                                                                    size="sm"
                                                                     width="100%"
                                                                     icon="FiMove"
                                                                     genie={{
@@ -1171,7 +1171,7 @@ const Explorer = ({
                                                                     Move
                                                                 </Button>
                                                                 <Button
-                                                                    size="small"
+                                                                    size="sm"
                                                                     width="100%"
                                                                     icon="FiShare2"
                                                                     genie={{
@@ -1193,7 +1193,7 @@ const Explorer = ({
                                                             </>
                                                         )}
                                                         <Button
-                                                            size="small"
+                                                            size="sm"
                                                             width="100%"
                                                             icon="FiTrash2"
                                                             variant="error"

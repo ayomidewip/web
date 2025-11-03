@@ -206,27 +206,6 @@ export const Button = forwardRef(({
         return '';
     };
 
-    // Filter out custom props that shouldn't be passed to the DOM element
-    const {
-        size: _size,
-        color: _color,
-        variant: _variant,
-        selected: _selected,
-        width: _width,
-        height: _height,
-        minWidth: _minWidth,
-        minHeight: _minHeight,
-        maxWidth: _maxWidth,
-        maxHeight: _maxHeight,
-        expandDirection: _expandDirection,
-        flexFill: _flexFill,
-        genie: _genie,
-        genieTrigger: _genieTrigger,
-        onGenieShow: _onGenieShow,
-        onGenieHide: _onGenieHide,
-        ...validButtonProps
-    } = props;
-
     const variantColorValue = getVariantColorValue();
 
     return (
@@ -239,7 +218,7 @@ export const Button = forwardRef(({
                 data-theme={buttonTheme}
                 data-theme-source={theme ? 'local' : 'inherited'}
                 data-genie-position={genieConfig?.position || 'auto'}
-                {...validButtonProps}
+                {...props}
                 {...combinedProps}
                 style={{ ...getMarginStyle(), ...(variantColorValue ? { '--button-variant-color': variantColorValue } : {}) }}
             >

@@ -260,19 +260,13 @@ export const Genie = forwardRef(({
     return null;
   }, []);
 
-  // Helper: Get visible bounds considering scrollable containers
+  // Helper: Get visible bounds - always returns page viewport bounds
+  // Genies should only be prevented from escaping the page, not parent containers
   const getVisibleBounds = useCallback((scrollableParent) => {
     const vw = window.innerWidth;
     const vh = window.innerHeight;
-    if (!scrollableParent) return { left: 0, right: vw, top: 0, bottom: vh };
-    
-    const rect = scrollableParent.getBoundingClientRect();
-    return {
-      left: Math.max(0, rect.left),
-      right: Math.min(vw, rect.right),
-      top: Math.max(0, rect.top),
-      bottom: Math.min(vh, rect.bottom)
-    };
+    // Always return viewport bounds - don't constrain to parent containers
+    return { left: 0, right: vw, top: 0, bottom: vh };
   }, []);
 
   // Helper: Clamp value between min and max
@@ -520,14 +514,16 @@ export const Genie = forwardRef(({
   }, [visible, onClose, triggerRef, updatePosition]);
 
   const resolveMaxDimension = useCallback((propValue, available, axis) => {
-    // If no propValue is provided, return undefined to allow fit-content behavior
-    if (propValue === null || propValue === undefined) {
-      return undefined;
+    const viewportLimit = Number.isFinite(available) ? Math.max(available, 0) : null;
+    const hasViewportLimit = viewportLimit !== null;
+    const hasPropValue = propValue !== null && propValue !== undefined;
+
+    if (!hasPropValue) {
+      // Default to viewport-constrained size when no explicit limit is provided
+      return hasViewportLimit ? `${viewportLimit}px` : undefined;
     }
 
-    const viewportLimit = Number.isFinite(available) ? Math.max(available, 0) : null;
     const propLimit = convertToPixels(propValue, axis);
-    const hasViewportLimit = viewportLimit !== null;
     const hasPropLimit = Number.isFinite(propLimit);
 
     if (!hasViewportLimit && !hasPropLimit) {

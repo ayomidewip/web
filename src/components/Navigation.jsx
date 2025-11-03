@@ -257,7 +257,6 @@ export const Navigation = ({
                         size="sm"
                         onClick={() => handleNavigation('/login')}
                         disabled={isNavigating}
-                        flexFill
                     >
                         <Icon name="FiLogIn" size="sm"/>
                         Sign In
@@ -267,7 +266,6 @@ export const Navigation = ({
                         size="sm"
                         onClick={() => handleNavigation('/signup')}
                         disabled={isNavigating}
-                        flexFill
                     >
                         <Icon name="FiUserPlus" size="sm"/>
                         Sign Up

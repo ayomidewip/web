@@ -370,36 +370,8 @@ export const Input = ({
     };
 
     const renderInput = () => {
-        // Filter out custom props that shouldn't be passed to the DOM element
-        const {
-            variant: _variant,
-            color: _color,
-            size: _size,
-            label: _label,
-            helpText: _helpText,
-            state: _state,
-            icon: _icon,
-            iconPosition: _iconPosition,
-            showPasswordToggle: _showPasswordToggle,
-            onFocus: _onFocus,
-            onBlur: _onBlur,
-            name: _name,
-            position: _position,
-            positionOffset: _positionOffset,
-            theme: _theme,
-            justifySelf: _justifySelf,
-            width: _width,
-            onKeyDown: _onKeyDown,
-            defaultValue: _defaultValue, // Remove defaultValue to prevent controlled/uncontrolled conflicts
-            value: _value, // Remove value to handle controlled/uncontrolled properly
-            multiline: _multiline, // Remove multiline from DOM props
-            rows: _rows, // Remove rows from DOM props for input elements
-            type: _type, // Remove type from DOM props when rendering textarea
-            ...validInputProps
-        } = props;
-
         // For textarea, filter out type since textarea doesn't accept type attribute
-        const domProps = multiline ? validInputProps : {type: actualType, ...validInputProps};
+        const domProps = multiline ? props : {type: actualType, ...props};
 
         // Generate ARIA attributes for accessibility
     const isAriaInvalid = (shouldValidateByProps && isTouched && !internalValidation.isValid) || sanitizedValidationState === 'error';

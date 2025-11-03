@@ -24,6 +24,7 @@ export {default as TreeView} from './TreeView';
 export {default as Explorer} from './Explorer';
 export {default as Editor} from './Editor';
 export {default as Flow} from './Flow';
+export {default as Image} from './Image';
 export {default as Genie} from './Genie';
 export {default as Data} from './Data';
 export {useGenie, useGenieTrigger, withGenie, GenieTrigger} from './Genie';

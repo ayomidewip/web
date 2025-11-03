@@ -130,7 +130,7 @@ export const NotificationDisplay = ({
 
                             <Button
                                 variant="ghost"
-                                size="small"
+                                size="sm"
                                 onClick={() => removeNotification(notification.id)}
                                 style={{
                                     flexShrink: 0,

@@ -253,7 +253,7 @@ function MyComponent() {
         <Typography as="p" color="muted">
           This card uses the current theme automatically
         </Typography>
-        <Button variant="primary" size="large">
+        <Button variant="primary" size="lg">
           Get Started
         </Button>
       </Card>
@@ -350,7 +350,7 @@ function ContactForm() {
         onChange={(checked) => setFormData({...formData, newsletter: checked})}
       />
       
-      <Button variant="primary" size="large" width="100%">
+      <Button variant="primary" size="lg" width="100%">
         Submit Form
       </Button>
     </Container>

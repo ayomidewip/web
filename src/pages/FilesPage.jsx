@@ -15,7 +15,8 @@ import {
   FloatingActionButton,
   CircularProgress,
   ProgressBar,
-  Switch
+  Switch,
+  Image
 } from '../components/Components';
 import { ShareForm } from '../components/Explorer';
 
@@ -859,7 +860,7 @@ const QuickActions = ({ targetPath, fileTree, onActionComplete }) => {
   }
 };
 
-const FileMetadata = ({ file, isReadOnly, onDownload, onVersionLoaded }) => {
+const FileMetadata = ({ file, isReadOnly, onDownload, onVersionLoaded, onSave, isSavingImage }) => {
   const [metadata, setMetadata] = useState(null);
   const [lastModified, setLastModified] = useState(null);
   const { error: showError } = useNotification();
@@ -972,6 +973,18 @@ const FileMetadata = ({ file, isReadOnly, onDownload, onVersionLoaded }) => {
         </Container>
 
         <Container layout="flex" align="center" gap="xs">
+          {file.isImage && !isReadOnly && (
+            <Button
+              color="success"
+              size="sm"
+              onClick={onSave}
+              disabled={isSavingImage}
+            >
+              <Icon name={isSavingImage ? "FiLoader" : "FiSave"} size="xs" />
+              {isSavingImage ? 'Saving...' : 'Save Image'}
+            </Button>
+          )}
+          
           <Button
             color="secondary"
             size="sm"
@@ -1104,6 +1117,8 @@ export const FilesPage = () => {
   
   // Refs
   const editorRef = useRef(null);
+  const imageRef = useRef(null);
+  const [isSavingImage, setIsSavingImage] = useState(false);
   
   // Hooks
   const { success: showSuccess, error: showError, warning: showWarning, info: showInfo } = useNotification();
@@ -1182,11 +1197,16 @@ export const FilesPage = () => {
       const isReadOnlyForUser = await checkIfReadOnly(filePath);
 
       if (isImage) {
+        // Get image blob URL for Image component
         const imageBlob = await fileService.downloadFile(filePath);
-        const dataUrl = URL.createObjectURL(imageBlob);
-        const content = `# Image Preview\n![${file.name || filePath.split('/').pop()}](${dataUrl})\n\n*READ ONLY: You cannot edit image files directly in the text editor.*`;
+        const imageSrc = URL.createObjectURL(imageBlob);
         
-        setActiveFile({ file: { ...file, isImage: true, type: 'image' }, content, isLoading: false, isReadOnly: true });
+        setActiveFile({ 
+          file: { ...file, isImage: true, type: 'image', imageSrc }, 
+          content: '', 
+          isLoading: false, 
+          isReadOnly: isReadOnlyForUser 
+        });
         setLatestVersionContent('');
       } else if (file.type === 'text') {
         setActiveFile({ file: { ...file, isImage: false, type: 'text' }, content: '', isLoading: false, isReadOnly: isReadOnlyForUser });
@@ -1369,6 +1389,50 @@ export const FilesPage = () => {
       showError(`Failed to download file: ${error.message}`);
     }
   }, [activeFile.file, showError]);
+
+  // Handle image save - convert blob to base64 and save via file service
+  const handleImageSave = useCallback(async ({ blob }) => {
+    if (!activeFile.file?.filePath || !blob) {
+      showError('Failed to save image');
+      return;
+    }
+    
+    setIsSavingImage(true);
+    try {
+      // Convert blob to base64
+      const reader = new FileReader();
+      reader.readAsDataURL(blob);
+      
+      await new Promise((resolve, reject) => {
+        reader.onloadend = async () => {
+          try {
+            const base64Data = reader.result.split(',')[1]; // Remove data:image/png;base64, prefix
+            
+            if (!base64Data) {
+              throw new Error('Failed to convert image to base64');
+            }
+            
+            // Update file content via API
+            await fileService.updateContent(activeFile.file.filePath, base64Data);
+            
+            showSuccess('Image saved successfully');
+            
+            // Reload the image to show updated version
+            await loadFileContent(activeFile.file);
+            
+            resolve();
+          } catch (error) {
+            reject(error);
+          }
+        };
+        reader.onerror = reject;
+      });
+    } catch (error) {
+      showError(`Failed to save image: ${error.message}`);
+    } finally {
+      setIsSavingImage(false);
+    }
+  }, [activeFile.file, showSuccess, showError, loadFileContent]);
 
   // Handle content changes (now uses Yjs)
   const handleContentChange = useCallback((newContent) => {
@@ -1674,15 +1738,21 @@ export const FilesPage = () => {
               minHeight="400px"
             />
           ) : activeFile.file.isImage ? (
-            <Editor
-              key={`image-editor-${activeFile.file.filePath}`}
-              ref={editorRef}
-              content={activeFile.content}
-              placeholder="Loading image..."
-              showToolbar={false}
-              readOnly={true}
-              minHeight="400px"
-            />
+            <Container layout="flex" align="center" justify="center" width="100%">
+              <Image
+                ref={imageRef}
+                key={`image-viewer-${activeFile.file.filePath}`}
+                src={activeFile.file.imageSrc}
+                alt={activeFile.file.name}
+                editable={!activeFile.isReadOnly}
+                size="xl"
+                fit="contain"
+                fileName={activeFile.file.name.split('.')[0]}
+                onSave={handleImageSave}
+                allowDownload={true}
+                controlsPlacement="bottom-right"
+              />
+            </Container>
           ) : (
             <Container layout="flex" align="center" justify="center" minHeight="400px">
               <Container layout="flex-column" align="center" gap="md">
@@ -1702,6 +1772,12 @@ export const FilesPage = () => {
           isReadOnly={activeFile.isReadOnly}
           onDownload={handleFileDownload}
           onVersionLoaded={handleVersionLoaded}
+          onSave={activeFile.file.isImage ? async () => {
+            if (imageRef.current?.save) {
+              await imageRef.current.save();
+            }
+          } : undefined}
+          isSavingImage={isSavingImage}
         />
       </Container>
     );

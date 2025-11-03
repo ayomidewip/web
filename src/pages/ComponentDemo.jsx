@@ -19,6 +19,7 @@ import {
     TreeView,
     Editor,
     Flow,
+    Image,
 } from '@components/Components';
 
 /**
@@ -243,7 +244,7 @@ const COMPONENT_METADATA = {
                 type: 'select',
                 label: 'Input Type',
                 group: 'Basic',
-                options: ['text', 'password', 'email', 'search', 'checkbox']
+                options: ['text', 'password', 'email', 'search', 'checkbox', 'range']
             },
             variant: {
                 type: 'select',
@@ -840,7 +841,6 @@ const COMPONENT_METADATA = {
             multiSelect: false,
             allowDragDrop: false,
             theme: null,
-            genieTrigger: 'contextmenu',
             getNodeGenie: (node) => ({
                 trigger: 'contextmenu',
                 variant: 'popover',
@@ -879,13 +879,7 @@ const COMPONENT_METADATA = {
             showIcons: { type: 'boolean', label: 'Show Expand Icons', group: 'Features' },
             showConnectors: { type: 'boolean', label: 'Show Connectors', group: 'Features' },
             multiSelect: { type: 'boolean', label: 'Allow Multi-Select', group: 'Features' },
-            allowDragDrop: { type: 'boolean', label: 'Enable Drag & Drop', group: 'Features' },
-            genieTrigger: {
-                type: 'select',
-                label: 'Genie Trigger',
-                group: 'Genie',
-                options: ['click', 'hover', 'contextmenu']
-            }
+            allowDragDrop: { type: 'boolean', label: 'Enable Drag & Drop', group: 'Features' }
         },
         description: 'Hierarchical tree view for displaying nested data structures'
     },
@@ -1699,6 +1693,80 @@ const COMPONENT_METADATA = {
         },
     description: 'Floating action button with fixed positioning and drag support'
     },
+
+    Image: {
+        component: Image,
+        defaultProps: {
+            src: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop',
+            alt: 'Demo landscape image',
+            editable: true,
+            size: 'md',
+            fit: 'contain',
+            controlsPlacement: 'bottom-right',
+            allowDownload: true,
+            fileName: 'edited-image',
+            outputFormat: 'image/png',
+            outputQuality: 0.92,
+            theme: null
+        },
+        propConfigs: {
+            src: {
+                type: 'select',
+                label: 'Image Source',
+                group: 'Content',
+                options: [
+                    'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop',
+                    'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&h=600&fit=crop',
+                    'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=800&h=600&fit=crop',
+                    'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=800&h=600&fit=crop'
+                ],
+                optionLabels: {
+                    'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop': 'Mountain Landscape',
+                    'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&h=600&fit=crop': 'Forest Scene',
+                    'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=800&h=600&fit=crop': 'Beach Sunset',
+                    'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=800&h=600&fit=crop': 'Desert Vista'
+                }
+            },
+            alt: { type: 'text', label: 'Alt Text', group: 'Content' },
+            editable: { type: 'boolean', label: 'Editable', group: 'Behavior' },
+            size: {
+                type: 'select',
+                label: 'Size',
+                group: 'Size',
+                options: [null, 'xs', 'sm', 'md', 'lg', 'xl', 'full'],
+                optionLabels: { null: 'Natural Size', xs: 'XS', sm: 'SM', md: 'MD', lg: 'LG', xl: 'XL', full: 'Full Width' }
+            },
+            fit: {
+                type: 'select',
+                label: 'Object Fit',
+                group: 'Appearance',
+                options: ['contain', 'cover', 'fill', 'none', 'scale-down']
+            },
+            controlsPlacement: {
+                type: 'select',
+                label: 'Controls Placement',
+                group: 'Layout',
+                options: ['top-left', 'top-right', 'bottom-left', 'bottom-right']
+            },
+            allowDownload: { type: 'boolean', label: 'Allow Download', group: 'Behavior' },
+            fileName: { type: 'text', label: 'Download File Name', group: 'Behavior' },
+            outputFormat: {
+                type: 'select',
+                label: 'Output Format',
+                group: 'Behavior',
+                options: ['image/png', 'image/jpeg', 'image/webp']
+            },
+            outputQuality: { type: 'number', label: 'Output Quality', group: 'Behavior', min: 0.1, max: 1, step: 0.1 },
+            theme: {
+                type: 'select',
+                label: 'Theme Override',
+                group: 'Appearance',
+                options: THEME_OVERRIDES,
+                optionLabels: THEME_OPTION_LABELS
+            }
+        },
+        description: 'Enhanced image component with CSS-based editing (rotation, filters, transforms, crop)'
+    },
 };
 const DEFAULT_COMPONENT = 'Button';
 
@@ -2070,7 +2138,6 @@ const ComponentDemoRefactoredNew = () => {
         if (!metadata) return null;
 
         const ComponentToRender = metadata.component;
-        // Use props directly without transformation
         const effectiveProps = componentProps;
 
         if (selectedComponent === 'Select') {
@@ -2450,30 +2517,15 @@ const ComponentDemoRefactoredNew = () => {
                         layout="flex"
                         minHeight="60vh"
                         align="center"
+                        justify="center"
+                        overflow="scroll"
                         style={{
                             border: '2px dashed var(--border-color)',
-                            borderRadius: 'var(--border-radius)',
-                            position: 'relative'
+                            borderRadius: 'var(--border-radius)'
                         }}
                     >
-                        <Container
-                            layout="flex"
-                            gap="none"
-                            align="center"
-                            justify="center"
-                            padding="none"
-                            minWidth="0"
-                            minHeight="150px"
-                            width="100%"
-                            overflow="auto"
-                            style={{
-                                width: '100%',
-                                minWidth: 0,
-                                maxWidth: '100%'
-                            }}
-                        >
-                            {liveDemo}
-                        </Container>
+                        
+                        {liveDemo}
 
                         <FloatingActionButton
                             variant="secondary"

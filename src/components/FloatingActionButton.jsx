@@ -449,34 +449,6 @@ export const FloatingActionButton = forwardRef(({
         }
     }, [draggable, position, calculateInitialPosition]);
 
-    // Filter out custom props that shouldn't be passed to the DOM element
-    const {
-        icon: _icon,
-        iconSize: _iconSize,
-        badge: _badge,
-        badgeVariant: _badgeVariant,
-        position: _position,
-        parentType: _parentType,
-        genie: _genie,
-        genieTrigger: _genieTrigger,
-        onGenieShow: _onGenieShow,
-        onGenieHide: _onGenieHide,
-        draggable: _draggable,
-        snapToEdges: _snapToEdges,
-        snapThreshold: _snapThreshold,
-        edgePadding: _edgePadding,
-        width: _width,
-        height: _height,
-        minWidth: _minWidth,
-        minHeight: _minHeight,
-        maxWidth: _maxWidth,
-        maxHeight: _maxHeight,
-        marginTop: _marginTop,
-        marginBottom: _marginBottom,
-        justifySelf: _justifySelf,
-        ...validButtonProps
-    } = props;
-
     const getFABStyle = () => {
         const style = {};
 
@@ -646,7 +618,7 @@ export const FloatingActionButton = forwardRef(({
                 data-theme-source={theme ? 'local' : 'inherited'}
                 data-draggable={draggable}
                 style={getFABStyle()}
-                {...validButtonProps}
+                {...props}
                 {...(genieConfig?.trigger !== 'click' ? triggerProps : {})}
             >
         <span className="button-content">
