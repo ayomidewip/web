@@ -20,6 +20,8 @@ import {
     Editor,
     Flow,
     Image,
+    Video,
+    Audio,
 } from '@components/Components';
 
 /**
@@ -1767,6 +1769,180 @@ const COMPONENT_METADATA = {
         },
         description: 'Enhanced image component with CSS-based editing (rotation, filters, transforms, crop)'
     },
+
+    Video: {
+        component: Video,
+        defaultProps: {
+            src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+            poster: 'https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=1200&auto=format&fit=crop',
+            autoPlay: false,
+            loop: false,
+            muted: false,
+            volume: 0.8,
+            aspectRatio: '16/9',
+            width: '100%',
+            color: 'default',
+            theme: null
+        },
+        propConfigs: {
+            src: {
+                type: 'text',
+                label: 'Video Source URL',
+                group: 'Content',
+                placeholder: 'https://example.com/video.mp4'
+            },
+            poster: {
+                type: 'text',
+                label: 'Poster Image URL',
+                group: 'Content',
+                placeholder: 'Optional poster image shown before playback'
+            },
+            autoPlay: { type: 'boolean', label: 'Autoplay', group: 'Playback' },
+            loop: { type: 'boolean', label: 'Loop', group: 'Playback' },
+            muted: { type: 'boolean', label: 'Muted', group: 'Playback' },
+            volume: {
+                type: 'number',
+                label: 'Initial Volume',
+                group: 'Playback',
+                min: 0,
+                max: 1,
+                step: 0.05
+            },
+            aspectRatio: {
+                type: 'select',
+                label: 'Aspect Ratio',
+                group: 'Layout',
+                options: ['21/9', '16/9', '4/3', '1/1', '9/16'],
+                optionLabels: {
+                    '21/9': '21:9 Wide',
+                    '16/9': '16:9 Standard',
+                    '4/3': '4:3 Classic',
+                    '1/1': 'Square',
+                    '9/16': '9:16 Portrait'
+                }
+            },
+            width: {
+                type: 'select',
+                label: 'Width',
+                group: 'Layout',
+                options: ['100%', '80%', '640px', '960px']
+            },
+            color: {
+                type: 'select',
+                label: 'Control Bar Color',
+                group: 'Appearance',
+                options: ['default', 'primary', 'secondary', 'tertiary'],
+                optionLabels: {
+                    'default': 'Default (Surface)',
+                    'primary': 'Primary',
+                    'secondary': 'Secondary',
+                    'tertiary': 'Tertiary'
+                }
+            },
+            theme: {
+                type: 'select',
+                label: 'Theme Override',
+                group: 'Appearance',
+                options: THEME_OVERRIDES,
+                optionLabels: THEME_OPTION_LABELS
+            }
+        },
+        description: 'Slim horizontal video player with hover-revealed controls and color variants'
+    },
+
+    Audio: {
+        component: Audio,
+        defaultProps: {
+            src: 'https://cdn.pixabay.com/audio/2022/05/27/audio_1808fbf07a.mp3',
+            title: 'Lofi Study',
+            artist: 'FASSounds',
+            album: 'Chill Beats Vol. 1',
+            cover: 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=400&auto=format&fit=crop&q=80',
+            autoPlay: false,
+            loop: false,
+            muted: false,
+            initialVolume: 0.8,
+            color: 'default',
+            size: 'md',
+            theme: null
+        },
+        propConfigs: {
+            src: {
+                type: 'text',
+                label: 'Audio Source URL',
+                group: 'Content',
+                placeholder: 'https://example.com/audio.mp3'
+            },
+            title: {
+                type: 'text',
+                label: 'Track Title',
+                group: 'Content',
+                placeholder: 'Enter track title'
+            },
+            artist: {
+                type: 'text',
+                label: 'Artist Name',
+                group: 'Content',
+                placeholder: 'Enter artist name'
+            },
+            album: {
+                type: 'text',
+                label: 'Album Name',
+                group: 'Content',
+                placeholder: 'Enter album name'
+            },
+            cover: {
+                type: 'text',
+                label: 'Cover Image URL',
+                group: 'Content',
+                placeholder: 'Album or track cover image'
+            },
+            autoPlay: { type: 'boolean', label: 'Autoplay', group: 'Playback' },
+            loop: { type: 'boolean', label: 'Loop', group: 'Playback' },
+            muted: { type: 'boolean', label: 'Muted', group: 'Playback' },
+            initialVolume: {
+                type: 'number',
+                label: 'Initial Volume',
+                group: 'Playback',
+                min: 0,
+                max: 1,
+                step: 0.05
+            },
+            size: {
+                type: 'select',
+                label: 'Size',
+                group: 'Appearance',
+                options: ['xs', 'sm', 'md', 'lg', 'xl'],
+                optionLabels: {
+                    'xs': 'XS (100px)',
+                    'sm': 'Small (120px)',
+                    'md': 'Medium (160px)',
+                    'lg': 'Large (200px)',
+                    'xl': 'XL (240px)'
+                }
+            },
+            color: {
+                type: 'select',
+                label: 'Color Variant',
+                group: 'Appearance',
+                options: ['default', 'primary', 'secondary', 'tertiary'],
+                optionLabels: {
+                    'default': 'Default',
+                    'primary': 'Primary',
+                    'secondary': 'Secondary',
+                    'tertiary': 'Tertiary'
+                }
+            },
+            theme: {
+                type: 'select',
+                label: 'Theme Override',
+                group: 'Appearance',
+                options: THEME_OVERRIDES,
+                optionLabels: THEME_OPTION_LABELS
+            }
+        },
+        description: 'Spinning disc audio player with minimalist design and centered controls'
+    },
 };
 const DEFAULT_COMPONENT = 'Button';
 
@@ -2506,7 +2682,7 @@ const ComponentDemoRefactoredNew = () => {
             <Container layout="flex-column" gap="lg" width="100%">
                 {/* Section 2: Live Demo Area */}
                 <Container layout="flex-column" gap="none" padding="none" width="100%">
-                    <Typography size="xl" weight="semibold">
+                    <Typography size="xl" weight="bold" color="primary" margin="none">
                         Component Live Demo
                     </Typography>
 
@@ -2573,9 +2749,8 @@ const ComponentDemoRefactoredNew = () => {
 
                 {/* Section 3: Props Control Panel */}
                 <Container layout="flex" justify="center" align="center" padding="none" width="100%">
-                    <Card padding="md" elevation="md" width="100%" maxWidth="960px">
-                        <Container layout="flex-column" gap="sm" height="100%">
-                            <Typography color="primary" size="xl" weight="semibold">
+                    <Card padding="md" elevation="md" gap="md">
+                           <Typography color="primary" size="xl" weight="semibold">
                                 Properties
                             </Typography>
 
@@ -2583,8 +2758,6 @@ const ComponentDemoRefactoredNew = () => {
                             <Container
                                 layout="flex"
                                 gap="sm"
-                                overflow="visible"
-                                maxHeight="420px"
                                 padding="xs"
                                 wrap
                                 align="center"
@@ -2598,7 +2771,6 @@ const ComponentDemoRefactoredNew = () => {
                                     </Typography>
                                 )}
                             </Container>
-                        </Container>
                     </Card>
                 </Container>
             </Container>
