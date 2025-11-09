@@ -6,7 +6,6 @@ import React, {
     useRef,
     useState
 } from 'react';
-import ReactPlayer from 'react-player';
 import { ThemeProvider, useEffectiveTheme } from '@contexts/ThemeContext';
 import Button from './Button';
 import Icon from './Icon';
@@ -105,6 +104,7 @@ export const Video = forwardRef(({
     color = 'default', // 'default', 'primary', 'secondary', 'tertiary'
     className = '',
     style = {},
+    crossOrigin = 'auto', // 'auto', 'use-credentials', 'anonymous', or undefined
     onPlay,
     onPause,
     onEnded,
@@ -124,6 +124,39 @@ export const Video = forwardRef(({
     const playerElementRef = useRef(null);
     const controlsTimeoutRef = useRef(null);
     const [showControls, setShowControls] = useState(false);
+
+    // Determine crossOrigin value based on URL
+    const effectiveCrossOrigin = useMemo(() => {
+        if (crossOrigin === 'auto') {
+            if (!src) return undefined;
+            
+            try {
+                const url = new URL(src, window.location.origin);
+                
+                // Only send credentials to explicitly trusted origins
+                // In development: localhost
+                // In production: configure VITE_API_BASE_URL to match deployment
+                const trustedOrigins = [
+                    window.location.origin, // Same origin (always safe)
+                ];
+                
+                // In development, trust localhost on any port
+                if (window.location.hostname === 'localhost' && url.hostname === 'localhost') {
+                    return 'use-credentials';
+                }
+                
+                // Check if URL origin is in trusted list
+                const isTrusted = trustedOrigins.includes(url.origin);
+                return isTrusted ? 'use-credentials' : 'anonymous';
+            } catch {
+                return undefined;
+            }
+        }
+        
+        return crossOrigin === 'use-credentials' ? 'use-credentials' : 
+               crossOrigin === 'anonymous' ? 'anonymous' : 
+               undefined;
+    }, [src, crossOrigin]);
 
     const assignRefs = useCallback((element) => {
         playerElementRef.current = element;
@@ -152,14 +185,24 @@ export const Video = forwardRef(({
     }, [muted]);
 
     useEffect(() => {
-        const clamped = clamp(initialVolume, 0, 1);
-        setVolume(clamped);
-        previousVolumeRef.current = clamped || previousVolumeRef.current;
+        if (initialVolume !== undefined) {
+            setVolume(clamp(initialVolume, 0, 1));
+        }
     }, [initialVolume]);
 
     useEffect(() => {
         setPlaybackRate(initialPlaybackRate || 1);
     }, [initialPlaybackRate]);
+
+    // Sync native video element with state
+    useEffect(() => {
+        const element = playerElementRef.current;
+        if (!element) return;
+
+        element.volume = volume;
+        element.muted = isMuted;
+        element.playbackRate = playbackRate;
+    }, [volume, isMuted, playbackRate]);
 
     useEffect(() => {
         const handleFullscreenChange = () => {
@@ -237,35 +280,37 @@ export const Video = forwardRef(({
         setIsScrubbing(false);
     }, [duration]);
 
-    const handleTimeUpdateInternal = useCallback((event) => {
-        const element = event?.currentTarget;
-        if (!element) {
-            return;
-        }
-
-        if (!isScrubbing) {
-            setPlayedSeconds(element.currentTime || 0);
-        }
-
-        const mediaDuration = element.duration;
-        if (Number.isFinite(mediaDuration) && mediaDuration !== duration) {
-            setDuration(mediaDuration);
+    const handleTimeUpdateInternal = useCallback((state) => {
+        // Native video element onTimeUpdate event
+        if (!isScrubbing && state?.playedSeconds !== undefined) {
+            setPlayedSeconds(state.playedSeconds);
         }
 
         if (onTimeUpdate) {
-            onTimeUpdate(event);
+            onTimeUpdate(state);
         }
-    }, [duration, isScrubbing, onTimeUpdate]);
+    }, [isScrubbing, onTimeUpdate]);
 
-    const handleDurationChangeInternal = useCallback((event) => {
-        const mediaDuration = event?.currentTarget?.duration;
-        if (Number.isFinite(mediaDuration)) {
-            setDuration(mediaDuration);
+    const handleReadyInternal = useCallback((player) => {
+        // Native video element ready - get duration
+        if (player) {
+            const playerDuration = player.duration;
+            if (Number.isFinite(playerDuration)) {
+                setDuration(playerDuration);
+            }
         }
-        if (onDurationChange) {
-            onDurationChange(event);
+        
+        if (onReady) {
+            onReady(player);
         }
-    }, [onDurationChange]);
+        
+        if (onDurationChange && player) {
+            const playerDuration = player.duration;
+            if (Number.isFinite(playerDuration)) {
+                onDurationChange(playerDuration);
+            }
+        }
+    }, [onReady, onDurationChange]);
 
     const handlePlayInternal = useCallback((event) => {
         setIsPlaying(true);
@@ -289,6 +334,13 @@ export const Video = forwardRef(({
             onEnded(event);
         }
     }, [loop, onEnded]);
+
+    const handleErrorInternal = useCallback((error, data) => {
+        console.error('Video error:', error, data);
+        if (onError) {
+            onError(error, data);
+        }
+    }, [onError]);
 
     // Mirror the native fullscreen API for the container wrapper
     const handleToggleFullscreen = useCallback(() => {
@@ -389,7 +441,7 @@ export const Video = forwardRef(({
     ].filter(Boolean).join(' '), [className, videoTheme, color, isScrubbing, showControls]);
 
     if (!src) {
-        console.warn('Video component requires a valid "src" prop.');
+        return null;
     }
 
     const videoElement = (
@@ -408,31 +460,57 @@ export const Video = forwardRef(({
                 style={{
                     width,
                     height: height || 'auto',
-                    aspectRatio
+                    aspectRatio,
+                    backgroundColor: '#000',
+                    position: 'relative'
                 }}
             >
-                <ReactPlayer
+                {/* Native HTML5 video element with HTTP range request support */}
+                <video
                     ref={assignRefs}
                     src={src}
-                    playing={isPlaying}
-                    muted={isMuted}
-                    volume={isMuted ? 0 : volume}
-                    playbackRate={playbackRate}
-                    loop={loop}
-                    controls={false}
+                    crossOrigin={effectiveCrossOrigin}
+                    preload="auto"
                     playsInline
+                    loop={loop}
+                    muted={isMuted}
                     poster={poster || undefined}
-                    width="100%"
-                    height="100%"
+                    style={{ 
+                        width: '100%', 
+                        height: '100%',
+                        objectFit: 'contain'
+                    }}
                     onPlay={handlePlayInternal}
                     onPause={handlePauseInternal}
                     onEnded={handleEndedInternal}
-                    onReady={onReady}
-                    onError={onError}
-                    onTimeUpdate={handleTimeUpdateInternal}
-                    onProgress={onProgress}
-                    onDurationChange={handleDurationChangeInternal}
-                    {...playerProps}
+                    onLoadedMetadata={(e) => {
+                        const videoDuration = e.target.duration;
+                        if (Number.isFinite(videoDuration)) {
+                            setDuration(videoDuration);
+                        }
+                        if (onReady) {
+                            onReady(e.target);
+                        }
+                        if (onDurationChange && Number.isFinite(videoDuration)) {
+                            onDurationChange(videoDuration);
+                        }
+                    }}
+                    onTimeUpdate={(e) => {
+                        if (!isScrubbing) {
+                            setPlayedSeconds(e.target.currentTime);
+                        }
+                        if (onTimeUpdate) {
+                            onTimeUpdate({
+                                playedSeconds: e.target.currentTime,
+                                played: e.target.duration > 0 ? e.target.currentTime / e.target.duration : 0
+                            });
+                        }
+                    }}
+                    onError={handleErrorInternal}
+                    onVolumeChange={(e) => {
+                        setVolume(e.target.volume);
+                        setIsMuted(e.target.muted);
+                    }}
                 />
             </div>
 

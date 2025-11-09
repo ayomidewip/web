@@ -390,14 +390,11 @@ export const fileService = {
      * @returns {Promise<object>} Created file metadata
      */
     async createFile(filePath, content = '', description = '') {
-        const normalizedPath = this.normalizePath(filePath);
-        const payload = {
-            filePath: normalizedPath,
+        return await api.post('/files', {
+            filePath: this.normalizePath(filePath),
             content,
             description
-        };
-
-        return await api.post('/files', payload);
+        });
     },
 
     /**
@@ -407,13 +404,10 @@ export const fileService = {
      * @returns {Promise<object>} Created directory metadata
      */
     async createDirectory(dirPath, description = '') {
-        const normalizedPath = this.normalizePath(dirPath);
-        const payload = {
-            dirPath: normalizedPath,
+        return await api.post('/files/directory', {
+            dirPath: this.normalizePath(dirPath),
             description
-        };
-
-        return await api.post('/files/directory', payload);
+        });
     },
 
     /**
@@ -422,8 +416,7 @@ export const fileService = {
      * @returns {Promise<object>} File metadata
      */
     async getMetadata(filePath) {
-        const normalizedPath = this.normalizePath(filePath);
-        const encodedPath = encodeURIComponent(normalizedPath);
+        const encodedPath = encodeURIComponent(this.normalizePath(filePath));
         return await api.get(`/files/${encodedPath}/metadata`);
     },
 
@@ -433,8 +426,7 @@ export const fileService = {
      * @returns {Promise<object>} File content response
      */
     async getContent(filePath) {
-        const normalizedPath = this.normalizePath(filePath);
-        const encodedPath = encodeURIComponent(normalizedPath);
+        const encodedPath = encodeURIComponent(this.normalizePath(filePath));
         return await api.get(`/files/${encodedPath}/content`);
     },
 
@@ -446,8 +438,7 @@ export const fileService = {
      * @returns {Promise<object>} Update response
      */
     async updateContent(filePath, content, options = {}) {
-        const normalizedPath = this.normalizePath(filePath);
-        const encodedPath = encodeURIComponent(normalizedPath);
+        const encodedPath = encodeURIComponent(this.normalizePath(filePath));
         const payload = { content, ...options };
         return await api.put(`/files/${encodedPath}/content`, payload);
     },
@@ -458,8 +449,7 @@ export const fileService = {
      * @returns {Promise<object>} Deletion response
      */
     async deleteFile(filePath) {
-        const normalizedPath = this.normalizePath(filePath);
-        const encodedPath = encodeURIComponent(normalizedPath);
+        const encodedPath = encodeURIComponent(this.normalizePath(filePath));
         return await api.delete(`/files/${encodedPath}`);
     },
 
@@ -470,19 +460,10 @@ export const fileService = {
      * @returns {Promise<object>} Move response
      */
     async moveFile(sourcePath, destinationPath) {
-        const normalizedSource = this.normalizePath(sourcePath);
-        const normalizedDest = this.normalizePath(destinationPath);
-        
-        try {
-            const response = await api.post('/files/move', {
-                sourcePath: normalizedSource,
-                destinationPath: normalizedDest
-            });
-            
-            return response;
-        } catch (error) {
-            throw error;
-        }
+        return await api.post('/files/move', {
+            sourcePath: this.normalizePath(sourcePath),
+            destinationPath: this.normalizePath(destinationPath)
+        });
     },
 
     /**
@@ -492,12 +473,9 @@ export const fileService = {
      * @returns {Promise<object>} Copy response
      */
     async copyFile(sourcePath, destinationPath) {
-        const normalizedSource = this.normalizePath(sourcePath);
-        const normalizedDest = this.normalizePath(destinationPath);
-        
         return await api.post('/files/copy', {
-            sourcePath: normalizedSource,
-            destinationPath: normalizedDest
+            sourcePath: this.normalizePath(sourcePath),
+            destinationPath: this.normalizePath(destinationPath)
         });
     },
 
@@ -508,9 +486,7 @@ export const fileService = {
      * @returns {Promise<object>} Rename response
      */
     async renameFile(filePath, newName) {
-        const normalizedPath = this.normalizePath(filePath);
-        const encodedPath = encodeURIComponent(normalizedPath);
-        
+        const encodedPath = encodeURIComponent(this.normalizePath(filePath));
         return await api.post(`/files/${encodedPath}/rename`, {
             newName: newName.trim()
         });
@@ -671,12 +647,9 @@ export const fileService = {
         const normalizedPath = this.normalizePath(targetPath);
         const formData = new FormData();
         
-        // Add files to form data
         Array.from(files).forEach((file, index) => {
             formData.append('files', file);
         });
-        
-        formData.append('targetPath', normalizedPath);
 
         const config = {
             headers: {
@@ -710,6 +683,30 @@ export const fileService = {
         });
         
         return response;
+    },
+
+    /**
+     * Get streaming URL for video/audio files
+     * Returns direct URL for HTTP range request streaming (RFC 7233)
+     * 
+     * How it works:
+     * 1. Browser makes requests with Range headers (e.g., "Range: bytes=0-1023")
+     * 2. Server responds with HTTP 206 Partial Content
+     * 3. Native <video>/<audio> elements handle seeking and buffering automatically
+     * 
+     * Authentication:
+     * - Components auto-detect same-origin URLs and use crossOrigin="use-credentials"
+     * - External URLs use crossOrigin="anonymous"
+     * 
+     * @param {string} filePath - File path
+     * @returns {string} Direct URL for streaming
+     */
+    getStreamingUrl(filePath) {
+        const normalizedPath = this.normalizePath(filePath);
+        const encodedPath = encodeURIComponent(normalizedPath);
+        const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api/v1';
+        
+        return `${baseUrl}/files/${encodedPath}/download`;
     },
 
     // =============================================================================

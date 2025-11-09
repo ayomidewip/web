@@ -59,6 +59,7 @@ export const Audio = forwardRef(({
     size = 'md', // 'sm', 'md', 'lg'
     className = '',
     style = {},
+    crossOrigin = 'auto', // 'auto', 'use-credentials', 'anonymous', or undefined
     onPlay,
     onPause,
     onEnded,
@@ -75,7 +76,41 @@ export const Audio = forwardRef(({
 
     const containerRef = useRef(null);
     const playerElementRef = useRef(null);
-    const [allowCrossOrigin, setAllowCrossOrigin] = useState(true);
+    
+    // Determine crossOrigin value based on URL
+    const effectiveCrossOrigin = useMemo(() => {
+        if (crossOrigin === 'auto') {
+            if (!src) return undefined;
+            
+            try {
+                const url = new URL(src, window.location.origin);
+                
+                // Only send credentials to explicitly trusted origins
+                // In development: localhost
+                // In production: configure VITE_API_BASE_URL to match deployment
+                const trustedOrigins = [
+                    window.location.origin, // Same origin (always safe)
+                ];
+                
+                // In development, trust localhost on any port
+                if (window.location.hostname === 'localhost' && url.hostname === 'localhost') {
+                    return 'use-credentials';
+                }
+                
+                // Check if URL origin is in trusted list
+                const isTrusted = trustedOrigins.includes(url.origin);
+                return isTrusted ? 'use-credentials' : 'anonymous';
+            } catch {
+                return undefined;
+            }
+        }
+        
+        return crossOrigin === 'use-credentials' ? 'use-credentials' : 
+               crossOrigin === 'anonymous' ? 'anonymous' : 
+               undefined;
+    }, [src, crossOrigin]);
+    
+    const allowCrossOrigin = Boolean(effectiveCrossOrigin);
     const [waveformSourceElement, setWaveformSourceElement] = useState(null);
     const [waveformError, setWaveformError] = useState(null);
     const [waveformBarColor, setWaveformBarColor] = useState('transparent');
@@ -372,7 +407,7 @@ export const Audio = forwardRef(({
         const unsupported = mediaError?.code === (mediaError?.MEDIA_ERR_SRC_NOT_SUPPORTED ?? 4);
 
         if (allowCrossOrigin && (noSource || unsupported)) {
-            setAllowCrossOrigin(false);
+            // Note: allowCrossOrigin is derived from crossOrigin prop, not a state
             setWaveformError('Waveform unavailable (cross-origin request blocked).');
         }
 
@@ -425,11 +460,11 @@ export const Audio = forwardRef(({
         >
             {/* Hidden audio element */}
             <audio
-                key={`${src || 'audio'}:${allowCrossOrigin ? 'cors' : 'no-cors'}`}
+                key={`${src || 'audio'}:${effectiveCrossOrigin || 'no-cors'}`}
                 ref={assignRefs}
                 src={src || undefined}
                 preload="auto"
-                crossOrigin={allowCrossOrigin ? 'anonymous' : undefined}
+                crossOrigin={effectiveCrossOrigin}
                 muted={isMuted}
                 loop={isLooping}
                 controls={false}
@@ -492,6 +527,7 @@ export const Audio = forwardRef(({
                                 src={cover} 
                                 alt={title}
                                 className="audio-cover"
+                                crossOrigin={effectiveCrossOrigin}
                             />
                         ) : (
                             <div className="audio-placeholder">

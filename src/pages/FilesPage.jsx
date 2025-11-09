@@ -16,7 +16,9 @@ import {
   CircularProgress,
   ProgressBar,
   Switch,
-  Image
+  Image,
+  Video,
+  Audio
 } from '../components/Components';
 import { ShareForm } from '../components/Explorer';
 
@@ -360,19 +362,16 @@ const UploadForm = ({ targetPath, onSuccess, onCancel }) => {
     setUploadProgress(0);
     
     try {
-      const uploadPromises = Array.from(files).map(async (file, index) => {
-        const safePath = targetPath || '/';
-        
-        // Use uploadFiles method which handles the file upload
-        await fileService.uploadFiles([file], safePath, (progress) => {
-          setUploadProgress((prev) => prev + (progress / files.length));
-        });
-        
-        const filePath = `${safePath}/${file.name}`.replace(/\/+/g, '/');
-        return filePath;
+      const safePath = targetPath || '/';
+      
+      // Upload all files and get the response
+      const response = await fileService.uploadFiles(files, safePath, (progress) => {
+        setUploadProgress(progress);
       });
-
-      const uploadedPaths = await Promise.all(uploadPromises);
+      
+      // Extract file paths from the server response
+      const uploadedPaths = response.files.map(file => file.filePath);
+      
       showSuccess(`Successfully uploaded ${uploadedPaths.length} file(s)`);
       onSuccess?.(uploadedPaths[0], 'file');
     } catch (err) {
@@ -1100,6 +1099,9 @@ export const FilesPage = () => {
   // Get current user for permission checks
   const { user } = useAuth();
   
+  // API base URL for constructing media URLs
+  const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api/v1';
+  
   // Core state
   const [fileTree, setFileTree] = useState({});
   const [activeFile, setActiveFile] = useState({
@@ -1192,6 +1194,19 @@ export const FilesPage = () => {
     try {
       const filePath = file.filePath;
       const isImage = filePath.match(/\.(png|jpg|jpeg|gif|bmp|webp|svg|ico|tiff|tif)$/i);
+      const isVideo = filePath.match(/\.(mp4|webm|avi|mov|wmv|flv)$/i);
+      const isAudio = filePath.match(/\.(mp3|wav)$/i);
+      
+      // For audio/video files, fetch full metadata to get mediaMetadata field
+      let fileWithMetadata = file;
+      if (isAudio || isVideo) {
+        try {
+          const fullMetadata = await fileService.getMetadata(filePath);
+          fileWithMetadata = { ...file, ...fullMetadata };
+        } catch (metadataError) {
+          console.warn('[FilesPage] Failed to fetch full metadata:', metadataError);
+        }
+      }
       
       // Check if file should be read-only
       const isReadOnlyForUser = await checkIfReadOnly(filePath);
@@ -1202,10 +1217,32 @@ export const FilesPage = () => {
         const imageSrc = URL.createObjectURL(imageBlob);
         
         setActiveFile({ 
-          file: { ...file, isImage: true, type: 'image', imageSrc }, 
+          file: { ...fileWithMetadata, isImage: true, type: 'image', imageSrc }, 
           content: '', 
           isLoading: false, 
           isReadOnly: isReadOnlyForUser 
+        });
+        setLatestVersionContent('');
+      } else if (isVideo) {
+        // Get streaming URL for Video component (uses HTTP range requests)
+        const videoSrc = fileService.getStreamingUrl(filePath);
+        
+        setActiveFile({ 
+          file: { ...fileWithMetadata, isVideo: true, type: 'video', videoSrc }, 
+          content: '', 
+          isLoading: false, 
+          isReadOnly: true // Videos are always read-only
+        });
+        setLatestVersionContent('');
+      } else if (isAudio) {
+        // Get streaming URL for Audio component (uses HTTP range requests)
+        const audioSrc = fileService.getStreamingUrl(filePath);
+        
+        setActiveFile({ 
+          file: { ...fileWithMetadata, isAudio: true, type: 'audio', audioSrc }, 
+          content: '', 
+          isLoading: false, 
+          isReadOnly: true // Audio files are always read-only
         });
         setLatestVersionContent('');
       } else if (file.type === 'text') {
@@ -1690,6 +1727,18 @@ export const FilesPage = () => {
                     <Typography size="xs" color="primary">IMAGE</Typography>
                 </Container>
             )}
+            {activeFile.file.isVideo && (
+                <Container layout="flex" align="center" gap="sm">
+                    <Icon name="FiVideo" size="sm" />
+                    <Typography size="xs" color="primary">VIDEO</Typography>
+                </Container>
+            )}
+            {activeFile.file.isAudio && (
+                <Container layout="flex" align="center" gap="sm">
+                    <Icon name="FiMusic" size="sm" />
+                    <Typography size="xs" color="primary">AUDIO</Typography>
+                </Container>
+            )}
             {activeFile.file.isBinary && (
                 <Container layout="flex" align="center" gap="sm">
                     <Icon name="FiFile" size="sm" />
@@ -1752,6 +1801,61 @@ export const FilesPage = () => {
                 allowDownload={true}
                 controlsPlacement="bottom-right"
               />
+            </Container>
+          ) : activeFile.file.isVideo ? (
+            <Container layout="flex" align="center" justify="center" width="100%">
+              {(() => {
+                const metadata = activeFile.file.mediaMetadata;
+                const posterUrl = metadata?.thumbnailId ? 
+                  `${baseUrl}/files/${encodeURIComponent(activeFile.file.filePath)}/thumbnail` : 
+                  null;
+                
+                return (
+                  <Video
+                    key={`video-player-${activeFile.file.filePath}`}
+                    src={activeFile.file.videoSrc}
+                    crossOrigin="use-credentials"
+                    controls={true}
+                    autoPlay={false}
+                    loop={false}
+                    width="100%"
+                    height="auto"
+                    aspectRatio="16/9"
+                    color="default"
+                    poster={posterUrl}
+                  />
+                );
+              })()}
+            </Container>
+          ) : activeFile.file.isAudio ? (
+            <Container layout="flex" align="center" justify="center" width="100%">
+              {(() => {
+                const metadata = activeFile.file.mediaMetadata;
+                const title = metadata?.title || activeFile.file.name.replace(/\.[^/.]+$/, '');
+                const artist = metadata?.artist || null;
+                const album = metadata?.album || null;
+                const coverUrl = metadata?.coverArtId ? 
+                  `${baseUrl}/files/${encodeURIComponent(activeFile.file.filePath)}/cover` : 
+                  null;
+                
+                return (
+                  <Audio
+                    key={`audio-player-${activeFile.file.filePath}`}
+                    src={activeFile.file.audioSrc}
+                    crossOrigin="use-credentials"
+                    title={title}
+                    artist={artist}
+                    album={album}
+                    cover={coverUrl}
+                    autoPlay={false}
+                    loop={false}
+                    muted={false}
+                    initialVolume={0.8}
+                    color="default"
+                    size="lg"
+                  />
+                );
+              })()}
             </Container>
           ) : (
             <Container layout="flex" align="center" justify="center" minHeight="400px">
