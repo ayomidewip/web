@@ -154,6 +154,273 @@ const createContainerGenieConfig = (trigger = 'click') => ({
 });
 
 const COMPONENT_METADATA = {
+    Typography: {
+        component: Typography,
+        defaultProps: {
+            children: 'Sample Text for Animation Demo ',
+            as: 'p',
+            size: 'xl',
+            weight: 'bold',
+            color: 'default',
+            font: 'primary',
+            theme: null,
+            animation: 'blur',
+            animateOn: 'mount',
+            animationDelay: 0,
+            animationDuration: 600,
+            animationStagger: 50,
+            animationConfig: {
+                splitBy: 'words',
+                direction: 'top',
+                sequential: false,
+                revealDirection: 'start',
+                loop: false,
+                showCursor: true,
+                typingSpeed: 50,
+                deletingSpeed: 30,
+                borderColor: null,
+            }
+        },
+        propConfigs: {
+            children: { type: 'text', label: 'Text Content', group: 'Content' },
+            size: {
+                type: 'select',
+                label: 'Size',
+                group: 'Appearance',
+                options: EXTENDED_TEXT_SIZES
+            },
+            weight: {
+                type: 'select',
+                label: 'Font Weight',
+                group: 'Appearance',
+                options: ['light', 'normal', 'medium', 'semibold', 'bold']
+            },
+            color: {
+                type: 'select',
+                label: 'Color',
+                group: 'Appearance',
+                options: ['default', 'primary', 'secondary', 'tertiary', 'success', 'warning', 'error', 'muted']
+            },
+            font: {
+                type: 'select',
+                label: 'Font Family',
+                group: 'Appearance',
+                options: ['primary', 'secondary', 'monospace']
+            },
+            theme: {
+                type: 'select',
+                label: 'Theme Override',
+                group: 'Appearance',
+                options: THEME_OVERRIDES,
+                optionLabels: THEME_OPTION_LABELS
+            },
+            animation: {
+                type: 'select',
+                label: 'Animation Type',
+                group: 'Animation',
+                options: ['none', 'blur', 'fade', 'slide', 'decrypt', 'gradient', 'shiny', 'glitch', 'typewriter', 'circular', 'proximity', 'focus', 'scramble']
+            },
+            animateOn: {
+                type: 'select',
+                label: 'Trigger',
+                group: 'Animation',
+                options: ['mount', 'hover']
+            },
+            animationDelay: {
+                type: 'number',
+                label: 'Delay (ms)',
+                group: 'Animation',
+                min: 0,
+                max: 5000
+            },
+            animationDuration: {
+                type: 'number',
+                label: 'Duration (ms)',
+                group: 'Animation',
+                min: 100,
+                max: 5000
+            },
+            animationStagger: {
+                type: 'number',
+                label: 'Stagger (ms)',
+                group: 'Animation',
+                min: 0,
+                max: 500
+            },
+            'animationConfig.splitBy': {
+                type: 'select',
+                label: 'Split By',
+                group: 'Animation Config',
+                options: ['chars', 'words'],
+                applyTo: ['blur', 'fade', 'slide']
+            },
+            'animationConfig.direction': {
+                type: 'select',
+                label: 'Direction',
+                group: 'Animation Config',
+                options: ['top', 'bottom', 'left', 'right'],
+                applyTo: ['blur', 'slide']
+            },
+            'animationConfig.sequential': {
+                type: 'boolean',
+                label: 'Sequential Reveal',
+                group: 'Animation Config',
+                applyTo: ['decrypt']
+            },
+            'animationConfig.revealDirection': {
+                type: 'select',
+                label: 'Reveal From',
+                group: 'Animation Config',
+                options: ['start', 'end', 'center'],
+                applyTo: ['decrypt']
+            },
+            'animationConfig.loop': {
+                type: 'boolean',
+                label: 'Loop Animation',
+                group: 'Animation Config',
+                applyTo: ['typewriter']
+            },
+            'animationConfig.showCursor': {
+                type: 'boolean',
+                label: 'Show Cursor',
+                group: 'Animation Config',
+                applyTo: ['typewriter']
+            },
+            'animationConfig.typingSpeed': {
+                type: 'number',
+                label: 'Typing Speed (ms)',
+                group: 'Animation Config',
+                min: 10,
+                max: 500,
+                applyTo: ['typewriter']
+            },
+            'animationConfig.deletingSpeed': {
+                type: 'number',
+                label: 'Deleting Speed (ms)',
+                group: 'Animation Config',
+                min: 10,
+                max: 500,
+                applyTo: ['typewriter']
+            },
+            'animationConfig.spinDuration': {
+                type: 'number',
+                label: 'Spin Duration (ms)',
+                group: 'Animation Config',
+                min: 1000,
+                max: 30000,
+                applyTo: ['circular']
+            },
+            'animationConfig.onHover': {
+                type: 'select',
+                label: 'Hover Effect',
+                group: 'Animation Config',
+                options: ['speedUp', 'pause', 'reverse', 'grow'],
+                applyTo: ['circular']
+            },
+            'animationConfig.circularSize': {
+                type: 'number',
+                label: 'Circle Size (px)',
+                group: 'Animation Config',
+                min: 100,
+                max: 500,
+                applyTo: ['circular']
+            },
+            'animationConfig.circularFontSize': {
+                type: 'number',
+                label: 'Font Size (px)',
+                group: 'Animation Config',
+                min: 12,
+                max: 48,
+                applyTo: ['circular']
+            },
+            'animationConfig.proximityRadius': {
+                type: 'number',
+                label: 'Proximity Radius (px)',
+                group: 'Animation Config',
+                min: 50,
+                max: 300,
+                applyTo: ['proximity']
+            },
+            'animationConfig.fromFontWeight': {
+                type: 'number',
+                label: 'Min Font Weight',
+                group: 'Animation Config',
+                min: 100,
+                max: 900,
+                step: 100,
+                applyTo: ['proximity']
+            },
+            'animationConfig.toFontWeight': {
+                type: 'number',
+                label: 'Max Font Weight',
+                group: 'Animation Config',
+                min: 100,
+                max: 900,
+                step: 100,
+                applyTo: ['proximity']
+            },
+            // Focus animation config
+            'animationConfig.blurAmount': {
+                type: 'number',
+                label: 'Blur Amount (px)',
+                group: 'Animation Config',
+                min: 0,
+                max: 20,
+                step: 1,
+                applyTo: ['focus']
+            },
+            'animationConfig.focusMode': {
+                type: 'select',
+                label: 'Focus Mode',
+                group: 'Animation Config',
+                options: ['auto', 'manual'],
+                applyTo: ['focus']
+            },
+            'animationConfig.borderColor': {
+                type: 'select',
+                label: 'Border Color',
+                group: 'Animation Config',
+                options: [null, 'primary', 'secondary', 'tertiary', 'success', 'warning', 'error', 'muted'],
+                optionLabels: { null: 'None' },
+                applyTo: ['focus']
+            },
+            'animationConfig.pauseDuration': {
+                type: 'number',
+                label: 'Pause Duration (ms)',
+                group: 'Animation Config',
+                min: 0,
+                max: 5000,
+                step: 100,
+                applyTo: ['focus', 'typewriter']
+            },
+            // Scramble animation config
+            'animationConfig.scrambleRadius': {
+                type: 'number',
+                label: 'Scramble Radius (px)',
+                group: 'Animation Config',
+                min: 50,
+                max: 300,
+                step: 10,
+                applyTo: ['scramble']
+            },
+            'animationConfig.scrambleSpeed': {
+                type: 'number',
+                label: 'Scramble Speed',
+                group: 'Animation Config',
+                min: 0.1,
+                max: 5,
+                step: 0.1,
+                applyTo: ['scramble']
+            },
+            'animationConfig.scrambleChars': {
+                type: 'text',
+                label: 'Scramble Characters',
+                group: 'Animation Config',
+                applyTo: ['scramble']
+            }
+        },
+        description: 'Flexible typography component for all text content with animations'
+    },
     Button: {
         component: Button,
         defaultProps: {
@@ -505,53 +772,7 @@ const COMPONENT_METADATA = {
         description: 'Circular loading spinner with animated rotation'
     },
 
-    Typography: {
-        component: Typography,
-        defaultProps: {
-            children: 'Sample Text',
-            as: 'p',
-            size: 'md',
-            weight: 'normal',
-            color: 'default',
-            font: 'primary',
-            theme: null
-        },
-        propConfigs: {
-            children: { type: 'text', label: 'Text Content', group: 'Content' },
-            size: {
-                type: 'select',
-                label: 'Size',
-                group: 'Appearance',
-                options: EXTENDED_TEXT_SIZES
-            },
-            weight: {
-                type: 'select',
-                label: 'Font Weight',
-                group: 'Appearance',
-                options: ['light', 'normal', 'medium', 'semibold', 'bold']
-            },
-            color: {
-                type: 'select',
-                label: 'Color',
-                group: 'Appearance',
-                options: ['default', 'primary', 'secondary', 'tertiary', 'success', 'warning', 'error', 'muted']
-            },
-            font: {
-                type: 'select',
-                label: 'Font Family',
-                group: 'Appearance',
-                options: ['primary', 'secondary', 'monospace']
-            },
-            theme: {
-                type: 'select',
-                label: 'Theme Override',
-                group: 'Appearance',
-                options: THEME_OVERRIDES,
-                optionLabels: THEME_OPTION_LABELS
-            }
-        },
-        description: 'Flexible typography component for all text content'
-    },
+
 
     Icon: {
         component: Icon,
@@ -1944,7 +2165,7 @@ const COMPONENT_METADATA = {
         description: 'Spinning disc audio player with minimalist design and centered controls'
     },
 };
-const DEFAULT_COMPONENT = 'Button';
+const DEFAULT_COMPONENT = Object.keys(COMPONENT_METADATA)[0];
 
 const cloneDefaultPropsForComponent = (componentName) => {
     const metadata = COMPONENT_METADATA[componentName];
@@ -1962,8 +2183,34 @@ const generateJSXPreview = (componentName, props = {}) => {
 
     // Extract complex props that need special handling
     // We'll add genie props back in a readable format
-    const { children, genie, getNodeGenie, data, options, expandedNodes, selectedNodes, content, diffContent, fieldConfig, genieTrigger, onGenieShow, onGenieHide, ...displayProps } = props;
+    const { 
+        children, 
+        genie, 
+        getNodeGenie, 
+        data, 
+        options, 
+        expandedNodes, 
+        selectedNodes, 
+        content, 
+        diffContent, 
+        fieldConfig, 
+        genieTrigger, 
+        onGenieShow, 
+        onGenieHide, 
+        nodes, 
+        edges, 
+        ...restProps 
+    } = props;
     
+    // Create a mutable copy of props to display
+    const displayProps = { ...restProps };
+
+    // Special handling for Button icon props which are not native to Button but used in demo
+    if (componentName === 'Button') {
+        delete displayProps.icon;
+        delete displayProps.iconPosition;
+    }
+
     // Generate JSX props with proper formatting
     const propStrings = Object.entries(displayProps)
         .filter(([_, value]) => value !== null && value !== undefined)
@@ -1980,6 +2227,35 @@ const generateJSXPreview = (componentName, props = {}) => {
             return `${key}={${JSON.stringify(value)}}`;
         });
     
+    // Add options for Select
+    if (componentName === 'Select' && options) {
+        const optionsPreview = JSON.stringify(options, null, 2).split('\n').join('\n  ');
+        propStrings.push(`options={${optionsPreview}}`);
+    }
+
+    // Add content and diffContent for Editor
+    if (componentName === 'Editor') {
+        if (content) propStrings.push(`content={${JSON.stringify(content)}}`);
+        if (diffContent) propStrings.push(`diffContent={${JSON.stringify(diffContent)}}`);
+    }
+
+    // Add nodes and edges for Flow
+    if (componentName === 'Flow') {
+        if (nodes) {
+             // Abbreviate nodes if too many
+             const nodesPreview = nodes.length > 2 
+                ? `[\n    ${JSON.stringify(nodes[0], null, 2).split('\n').join('\n    ')},\n    // ... ${nodes.length - 1} more nodes\n  ]`
+                : JSON.stringify(nodes, null, 2).split('\n').join('\n  ');
+             propStrings.push(`nodes={${nodesPreview}}`);
+        }
+        if (edges) {
+             const edgesPreview = edges.length > 2
+                ? `[\n    ${JSON.stringify(edges[0], null, 2).split('\n').join('\n    ')},\n    // ... ${edges.length - 1} more edges\n  ]`
+                : JSON.stringify(edges, null, 2).split('\n').join('\n  ');
+             propStrings.push(`edges={${edgesPreview}}`);
+        }
+    }
+
     // Add genie props if present (show in readable format)
     if (genie && typeof genie === 'object') {
         propStrings.push(`genie={{
@@ -2002,7 +2278,21 @@ const generateJSXPreview = (componentName, props = {}) => {
   })}`);
     }
     
-    const childrenText = typeof children === 'string' ? children : '';
+    let childrenText = typeof children === 'string' ? children : '';
+
+    // Special case: Button with icons
+    if (componentName === 'Button' && (props.icon || childrenText)) {
+        const iconElement = props.icon ? `<Icon name="${props.icon}" />` : '';
+        const iconPos = props.iconPosition || 'left';
+        
+        if (props.icon) {
+            if (iconPos === 'left') {
+                childrenText = iconElement ? `${iconElement} ${childrenText}` : childrenText;
+            } else {
+                childrenText = iconElement ? `${childrenText} ${iconElement}` : childrenText;
+            }
+        }
+    }
     
     // Special case: Data component - show abbreviated data and fieldConfig
     if (componentName === 'Data') {
@@ -2211,7 +2501,32 @@ const ComponentDemoRefactoredNew = () => {
 
     // Render prop control based on type
     const renderPropControl = (propName, config) => {
-        const value = componentProps[propName];
+        // Handle nested animationConfig properties
+        const isNestedConfig = propName.startsWith('animationConfig.');
+        const actualPropName = isNestedConfig ? propName.split('.')[1] : propName;
+        
+        // For animation config props, check if they apply to current animation
+        if (isNestedConfig && config.applyTo) {
+            const currentAnimation = componentProps.animation;
+            if (!config.applyTo.includes(currentAnimation)) {
+                return null; // Don't render this control for current animation type
+            }
+        }
+        
+        const value = isNestedConfig 
+            ? componentProps.animationConfig?.[actualPropName]
+            : componentProps[propName];
+
+        const handleChange = (newValue) => {
+            if (isNestedConfig) {
+                handlePropChange('animationConfig', {
+                    ...componentProps.animationConfig,
+                    [actualPropName]: newValue
+                });
+            } else {
+                handlePropChange(propName, newValue);
+            }
+        };
 
         switch (config.type) {
             case 'boolean':
@@ -2226,7 +2541,7 @@ const ComponentDemoRefactoredNew = () => {
                     >
                         <Switch
                             checked={value || false}
-                            onChange={(e) => handlePropChange(propName, e.target.checked)}
+                            onChange={(e) => handleChange(e.target.checked)}
                             label={config.label}
                             size="sm"
                         />
@@ -2250,7 +2565,7 @@ const ComponentDemoRefactoredNew = () => {
                                 const normalized = Array.isArray(selectedValue)
                                     ? selectedValue.map(v => v === 'null' ? null : v)
                                     : selectedValue === 'null' ? null : selectedValue;
-                                handlePropChange(propName, normalized);
+                                handleChange(normalized);
                             }}
                             options={config.options.map(opt => ({
                                 value: opt === null ? 'null' : opt,
@@ -2275,7 +2590,7 @@ const ComponentDemoRefactoredNew = () => {
                             type="number"
                             label={config.label}
                             value={value || ''}
-                            onChange={(e) => handlePropChange(propName, parseFloat(e.target.value) || 0)}
+                            onChange={(e) => handleChange(parseFloat(e.target.value) || 0)}
                             size="sm"
                             variant="outline"
                             {...(config.min !== undefined && { min: config.min })}
@@ -2298,7 +2613,7 @@ const ComponentDemoRefactoredNew = () => {
                             type="text"
                             label={config.label}
                             value={value || ''}
-                            onChange={(e) => handlePropChange(propName, e.target.value)}
+                            onChange={(e) => handleChange(e.target.value)}
                             placeholder={config.placeholder}
                             size="sm"
                             variant="outline"

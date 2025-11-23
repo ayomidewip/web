@@ -46,26 +46,10 @@
     }
 }
 
-/* Snap preview indicator - looks like a shadow/ghost of the button */
+/* Snap preview indicator - semi-transparent clone of the actual button */
 .fab-snap-preview {
     animation: pulse 0.8s ease-in-out infinite alternate;
-    background-color: var(--primary-color, #007bff);
-    border: 2px solid var(--primary-color, #007bff);
-    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
-    /* Inherit the button's styling but with reduced opacity */
     opacity: 0.5;
-}
-
-/* Adjust snap preview colors based on button variant */
-.fab-container[data-theme="modern"] .fab-snap-preview,
-.fab-container[data-theme="dark"] .fab-snap-preview,
-.fab-container[data-theme="minimal"] .fab-snap-preview,
-.fab-container[data-theme="admin"] .fab-snap-preview,
-.fab-container[data-theme="pink"] .fab-snap-preview,
-.fab-container[data-theme="vibrant"] .fab-snap-preview {
-    background-color: var(--primary-color);
-    border-color: var(--primary-color);
-    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.25);
 }
 
 /* Cursor for draggable buttons */

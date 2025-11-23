@@ -1688,9 +1688,9 @@ export const FilesPage = () => {
           justify="between" 
           padding="sm"
           width="100%"
-          backgroundColor="background"
+          
         >
-          <Container layout="flex" align="center" gap="sm">
+          <Container layout="flex" align="center" gap="sm" padding="none">
             {/* Collaboration status indicator for text files */}
             {activeFile.file.type === 'text' && !activeFile.isReadOnly && (
               <Container layout="flex" align="center" gap="xs">

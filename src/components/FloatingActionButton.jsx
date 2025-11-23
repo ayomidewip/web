@@ -61,6 +61,7 @@ export const FloatingActionButton = forwardRef(({
     draggable = false, // Enable dragging of the FAB within its container
     snapToEdges = true, // Enable snapping to container edges when dragging ends
     snapThreshold = 100, // Distance from edge (in pixels) to trigger snapping
+    edgePadding = 16, // Padding from edges when snapping
     ...props
 }, ref) => {
     const {currentTheme: globalTheme} = useTheme();
@@ -160,20 +161,17 @@ export const FloatingActionButton = forwardRef(({
     const getIconSize = () => {
         if (iconSize) return iconSize;
 
-        // Map FAB size to Icon size (one size smaller for better visual balance)
+        // Map FAB size to Icon size (same size for proper visual balance)
         const sizeMap = {
-            xs: 'xs',
-            sm: 'xs',
-            md: 'sm',
-            lg: 'md',
-            xl: 'lg'
+            xs: 'sm',
+            sm: 'md',
+            md: 'lg',
+            lg: 'xl',
+            xl: '2xl'
         };
 
-        return sizeMap[size] || 'sm';
+        return sizeMap[size] || 'lg';
     };
-
-    // Edge padding matches FAB margins from CSS
-    const edgePadding = 16; // var(--spacing-lg) from CSS
 
     const getPositionClass = () => {
         return `fab-position-${position}`;
@@ -567,7 +565,7 @@ export const FloatingActionButton = forwardRef(({
         >
             {/* Snap Preview Indicator - Shows a shadow/ghost of the button where it will snap to */}
             {isDragging && snapPreview && snapPreview.willSnap && (
-                <div
+                <button
                     className={`
             fab-snap-preview
             floating-action-button
@@ -583,15 +581,15 @@ export const FloatingActionButton = forwardRef(({
                         top: `${snapPreview.y - dragPosition.y}px`,
                         pointerEvents: 'none',
                         zIndex: -1,
-                        opacity: 0.5,
                         transform: 'none',
                         transition: 'none'
                     }}
+                    disabled
                 >
-          <span className="button-content" style={{opacity: 0.7}}>
+          <span className="button-content">
             <Icon name={icon} size={getIconSize()}/>
           </span>
-                </div>
+                </button>
             )}
 
             <button
