@@ -268,61 +268,62 @@ export const FloatingActionButton = forwardRef(({
         return {x: initialX, y: initialY};
     }, [position, edgePadding]);
 
-    // Draggable functionality
-    const handleMouseDown = useCallback(
+    // Unified drag handlers that work for both mouse and touch events
+    const handleDragStart = useCallback(
         (e) => {
             if (!draggable || disabled) return;
 
-            // Don't initiate drag on right-click (preserve context menu functionality)
+            // Don't initiate drag on right-click
             if (e.button === 2) return;
 
-            // Prevent default behaviors
             e.preventDefault();
             e.stopPropagation();
 
-            // Get container bounds
+            // Get client coordinates from either mouse or touch event
+            const clientX = e.clientX ?? e.touches?.[0]?.clientX;
+            const clientY = e.clientY ?? e.touches?.[0]?.clientY;
+
+            if (clientX === undefined || clientY === undefined) return;
+
             const containerRect = fabContainerRef.current.parentElement.getBoundingClientRect();
-
-            // Store the initial click offset from the FAB corner
             const fabRect = fabContainerRef.current.getBoundingClientRect();
-            const offsetX = e.clientX - fabRect.left;
-            const offsetY = e.clientY - fabRect.top;
-
-            // Store initial position for reference
+            
             setInitialPosition({
                 x: fabRect.left - containerRect.left,
                 y: fabRect.top - containerRect.top
             });
 
-            // Store offset for drag calculations
-            setOffset({x: offsetX, y: offsetY});
+            setOffset({
+                x: clientX - fabRect.left,
+                y: clientY - fabRect.top
+            });
 
-            // Start dragging
             setIsDragging(true);
         },
         [draggable, disabled]
     );
 
-    const handleMouseMove = useCallback(
+    const handleDragMove = useCallback(
         (e) => {
             if (!isDragging) return;
 
-            // Get container bounds for boundary calculation
+            // Get client coordinates from either mouse or touch event
+            const clientX = e.clientX ?? e.touches?.[0]?.clientX;
+            const clientY = e.clientY ?? e.touches?.[0]?.clientY;
+
+            if (clientX === undefined || clientY === undefined) return;
+
             const containerRect = fabContainerRef.current.parentElement.getBoundingClientRect();
             const fabRect = fabContainerRef.current.getBoundingClientRect();
 
-            // Calculate new position (relative to container)
-            let newX = e.clientX - containerRect.left - offset.x;
-            let newY = e.clientY - containerRect.top - offset.y;
+            let newX = clientX - containerRect.left - offset.x;
+            let newY = clientY - containerRect.top - offset.y;
 
-            // Apply boundaries (with edge padding)
             newX = Math.max(edgePadding, Math.min(newX, containerRect.width - fabRect.width - edgePadding));
             newY = Math.max(edgePadding, Math.min(newY, containerRect.height - fabRect.height - edgePadding));
 
-            // Update position state
             setDragPosition({x: newX, y: newY});
 
-            // Check if we should show snap indicator
             if (snapToEdges) {
                 const snapInfo = calculateSnapPosition(
                     newX,
@@ -340,15 +341,13 @@ export const FloatingActionButton = forwardRef(({
         [isDragging, offset, edgePadding, snapToEdges, calculateSnapPosition]
     );
 
-    const handleMouseUp = useCallback(() => {
+    const handleDragEnd = useCallback(() => {
         if (!isDragging) return;
 
-        // Stop dragging and hide indicators
         setIsDragging(false);
         setIsNearEdge(false);
         setSnapPreview(null);
 
-        // Calculate snap position if enabled
         if (snapToEdges && fabContainerRef.current) {
             const containerRect = fabContainerRef.current.parentElement.getBoundingClientRect();
             const fabRect = fabContainerRef.current.getBoundingClientRect();
@@ -362,12 +361,10 @@ export const FloatingActionButton = forwardRef(({
                 fabRect.height
             );
 
-            // If snap position is different from current position, animate to snap
             if (snapInfo.willSnap && (snapInfo.x !== dragPosition.x || snapInfo.y !== dragPosition.y)) {
                 setIsSnapping(true);
                 setDragPosition({x: snapInfo.x, y: snapInfo.y});
 
-                // Remove snapping class after animation completes
                 setTimeout(() => {
                     setIsSnapping(false);
                 }, 300);
@@ -378,18 +375,24 @@ export const FloatingActionButton = forwardRef(({
     // Add and remove event listeners for drag operations
     useEffect(() => {
         if (isDragging) {
-            document.addEventListener('mousemove', handleMouseMove);
-            document.addEventListener('mouseup', handleMouseUp);
+            document.addEventListener('mousemove', handleDragMove);
+            document.addEventListener('mouseup', handleDragEnd);
+            document.addEventListener('touchmove', handleDragMove, {passive: false});
+            document.addEventListener('touchend', handleDragEnd);
         } else {
-            document.removeEventListener('mousemove', handleMouseMove);
-            document.removeEventListener('mouseup', handleMouseUp);
+            document.removeEventListener('mousemove', handleDragMove);
+            document.removeEventListener('mouseup', handleDragEnd);
+            document.removeEventListener('touchmove', handleDragMove);
+            document.removeEventListener('touchend', handleDragEnd);
         }
 
         return () => {
-            document.removeEventListener('mousemove', handleMouseMove);
-            document.removeEventListener('mouseup', handleMouseUp);
+            document.removeEventListener('mousemove', handleDragMove);
+            document.removeEventListener('mouseup', handleDragEnd);
+            document.removeEventListener('touchmove', handleDragMove);
+            document.removeEventListener('touchend', handleDragEnd);
         };
-    }, [isDragging, handleMouseMove, handleMouseUp]);
+    }, [isDragging, handleDragMove, handleDragEnd]);
 
     // When draggable prop changes, set proper initial position
     useEffect(() => {
@@ -593,7 +596,8 @@ export const FloatingActionButton = forwardRef(({
                     if (onClick) onClick(e);
                     if (triggerProps?.onClick) triggerProps.onClick(e);
                 }}
-                onMouseDown={draggable ? handleMouseDown : undefined}
+                onMouseDown={draggable ? handleDragStart : undefined}
+                onTouchStart={draggable ? handleDragStart : undefined}
                 data-theme={fabTheme}
                 data-theme-source={theme ? 'local' : 'inherited'}
                 data-draggable={draggable}

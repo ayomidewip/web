@@ -6,7 +6,7 @@
     margin: var(--spacing-xs);
     border-radius: var(--button-radius, var(--border-radius-md));
     overflow: visible;
-    gap: var(--spacing-xs) 0;
+    gap: 0;
 }
 
 .button-group .button.themed-button {
