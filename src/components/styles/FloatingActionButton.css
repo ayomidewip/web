@@ -3,12 +3,11 @@
 
 /* FAB Container - holds both FAB and Genie for unified positioning */
 .fab-container {
-    /* Base positioning */
     position: fixed;
-    z-index: 100000; /* Higher than regular components but lower than Genie (999999) */
+    z-index: 100000;
+    touch-action: none;
 }
 
-/* Draggable state */
 .fab-container.fab-draggable {
     position: absolute;
     cursor: move;
