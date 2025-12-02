@@ -2,6 +2,7 @@
 .page,
 .themed-page {
     height: 100vh;
+    height: 100dvh;
     width: 100%;
     background-color: var(--background-color, #ffffff);
     color: var(--text-color, #1a1a1a);
@@ -9,13 +10,10 @@
     transition: background-color 0.3s ease, color 0.3s ease;
     overflow-y: auto;
     overflow-x: hidden;
-    /* Contain floating elements to prevent page expansion */
     position: relative;
-    /* Remove isolation to prevent stacking context issues with dropdowns */
-
-    /* Default to block layout */
     display: block;
     box-sizing: border-box;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 .page-header {

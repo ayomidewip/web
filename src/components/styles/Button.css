@@ -1,7 +1,7 @@
 /* Button component structural styles */
 .button.themed-button {
     display: flex;
-    height: 2.5rem; /* 40px - default md size */
+    height: 2.5rem;
     margin: var(--spacing-sm) 0;
     padding: 0 var(--spacing-md);
     border: 1px solid var(--primary-color);
@@ -14,19 +14,16 @@
     transition: all var(--transition-fast);
     user-select: none;
     white-space: nowrap;
-    /* Normal state: surface color background, primary color text, primary color border */
     background-color: var(--surface-color);
     color: var(--primary-color);
-    /* Required for absolute positioning of floating cards */
     position: relative;
-    /* Prevent stacking context issues */
     isolation: auto;
     justify-content: center;
 }
 
-/* Ensure button content (icon + text) is always horizontally aligned */
 .button.themed-button .button-content {
-    display: inline-flex;
+    display: flex;
+    height: 100%;
     align-items: center;
     justify-content: center;
     min-width: 20px;

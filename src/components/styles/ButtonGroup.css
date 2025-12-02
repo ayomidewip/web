@@ -1,63 +1,52 @@
-/* ===== ButtonGroup Component CSS ===== */
-/* ButtonGroup inherits sizes from Button components - no separate sizing needed */
-/* The group container adapts to the size of buttons passed via the size prop */
-
 .button-group {
     display: inline-flex;
     flex-wrap: wrap;
     align-items: center;
+    justify-content: center;
     margin: var(--spacing-xs);
     border-radius: var(--button-radius, var(--border-radius-md));
-    overflow: hidden;
-    box-shadow: var(--shadow-sm);
-    gap: var(--spacing-xs) 0; /* Vertical gap when wrapping, no horizontal gap */
+    overflow: visible;
+    gap: var(--spacing-xs) 0;
 }
 
-/* Remove margins from buttons inside group and adjust borders */
 .button-group .button.themed-button {
     margin: 0 !important;
-    border-radius: 0 !important;
     position: relative;
     z-index: 1;
+    box-shadow: var(--shadow-sm);
+    border-radius: 0 !important;
 }
 
-/* First button in group */
-.button-group .button.themed-button:first-child {
+.button-group .button.themed-button.button-group-edge-left {
     border-top-left-radius: var(--button-radius, var(--border-radius-md)) !important;
     border-bottom-left-radius: var(--button-radius, var(--border-radius-md)) !important;
 }
 
-/* Last button in group */
-.button-group .button.themed-button:last-child {
+.button-group .button.themed-button.button-group-edge-right {
     border-top-right-radius: var(--button-radius, var(--border-radius-md)) !important;
     border-bottom-right-radius: var(--button-radius, var(--border-radius-md)) !important;
 }
 
-/* Remove double borders between buttons */
-/* Hover states for grouped buttons */
 .button-group .button.themed-button:hover,
 .button-group .button.themed-button.selected {
     z-index: 2;
-    transform: none !important; /* Remove individual button transform */
+    transform: none !important;
 }
 
-/* Group hover effect */
 .button-group:hover {
-    box-shadow: 0 4px 6px var(--shadow-color-hover);
     transform: translateY(-1px);
 }
 
-/* Spaced button group variant */
 .button-group.spaced {
     overflow: visible;
     box-shadow: none;
     background: transparent;
-    gap: var(--spacing-xs); /* Add gap for both horizontal and vertical spacing */
+    gap: var(--spacing-xs);
 }
 
 .button-group.spaced .button.themed-button {
     border-radius: var(--button-radius, var(--border-radius-md)) !important;
-    margin: 0 !important; /* Remove margin, using gap instead */
+    margin: 0 !important;
 }
 
 .button-group.spaced.xs,
@@ -73,13 +62,11 @@
 }
 
 .button-group.spaced .button.themed-button.themed-button-secondary {
-    /* Ensure border is visible on all sides for secondary buttons */
     border-width: 1px !important;
     border-style: solid !important;
     border-color: var(--secondary-color) !important;
 }
 
-/* Ensure border-shadow buttons maintain their distinctive styling in spaced groups */
 .button-group.spaced .button.themed-button.themed-button-border-shadow {
     border: none !important;
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.15) !important;
@@ -92,7 +79,6 @@
     color: var(--text-contrast-color) !important;
 }
 
-/* Border-shadow variant group handling */
 .button-group .button.themed-button.themed-button-border-shadow {
     border: none !important;
     box-shadow: none !important;
@@ -118,18 +104,12 @@
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.15) !important;
 }
 
-/* ===== Genie Integration Support ===== */
-/* Ensure button groups can properly host floating cards */
 .button-group {
-    /* Required for absolute positioning of floating cards */
     position: relative;
-    /* Prevent stacking context issues */
     isolation: auto;
 }
 
-/* Button group hover effects that need to be disabled when floating card is active */
 .button-group.has-genie-active {
-    /* Disable transform-based hover effects */
     transform: none !important;
 }
 
@@ -143,12 +123,9 @@
     box-shadow: var(--shadow-lg) !important;
 }
 
-/* ===== ButtonGroup Container Support ===== */
 .button-group-container {
     position: relative;
     display: inline-block;
-    /* Ensure container doesn't add extra spacing */
     margin: 0;
     padding: 0;
-    /* DO NOT set isolation or z-index to avoid stacking context issues */
 }

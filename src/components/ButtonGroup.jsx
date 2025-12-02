@@ -1,4 +1,4 @@
-import React, { Children, cloneElement, forwardRef, useState } from 'react';
+import React, { Children, cloneElement, forwardRef, useLayoutEffect, useRef, useState } from 'react';
 import { useTheme } from '@contexts/ThemeContext';
 import { ButtonGroupContext } from './Button';
 
@@ -22,13 +22,14 @@ export const ButtonGroup = forwardRef(({
     maxHeight = null, // Maximum height
     marginTop = null, // Margin top: 'none', 'xs', 'sm', 'md', 'lg', 'xl' or custom value
     marginBottom = null, // Margin bottom: 'none', 'xs', 'sm', 'md', 'lg', 'xl' or custom value
-    justify = 'flex-start', // Horizontal alignment of the group within its container
+    justify = 'center', // Horizontal alignment of the group within its container
     align = 'center', // Vertical alignment of the group within its container
     selectable = true, // Whether buttons can be selected (toggled)
     ...props
 }, ref) => {
     const { currentTheme } = useTheme();
     const effectiveTheme = useTheme();
+    const buttonRefs = useRef([]);
 
     // Use theme prop if provided, otherwise use effective theme/current theme from context
     const buttonGroupTheme = theme || effectiveTheme.currentTheme || currentTheme;
@@ -156,7 +157,38 @@ export const ButtonGroup = forwardRef(({
         return spaced ? 'spaced' : '';
     };
 
+    useLayoutEffect(() => {
+        const updateEdges = () => {
+            const buttons = buttonRefs.current.filter(Boolean);
+            if (!buttons.length) return;
+
+            buttons.forEach(btn => btn.classList.remove('button-group-edge-left', 'button-group-edge-right'));
+
+            const rowsMap = new Map();
+            buttons.forEach((button) => {
+                const top = button.offsetTop;
+                if (!rowsMap.has(top)) rowsMap.set(top, []);
+                rowsMap.get(top).push(button);
+            });
+
+            Array.from(rowsMap.values()).forEach(row => {
+                if (row.length) {
+                    row[0].classList.add('button-group-edge-left');
+                    row[row.length - 1].classList.add('button-group-edge-right');
+                }
+            });
+        };
+
+        updateEdges();
+        window.addEventListener('resize', updateEdges);
+
+        return () => {
+            window.removeEventListener('resize', updateEdges);
+        };
+    }, [children, spaced, size, justify, align]);
+
     // Clone children and provide context
+    buttonRefs.current = [];
     const enhancedChildren = Children.map(children, (child, index) => {
         if (React.isValidElement(child)) {
             const buttonId = child.props.id || index;
@@ -177,7 +209,10 @@ export const ButtonGroup = forwardRef(({
                         onButtonSelect: handleButtonSelect
                     }}
                 >
-                    {cloneElement(child, childProps)}
+                    {cloneElement(child, {
+                        ...childProps,
+                        ref: (node) => buttonRefs.current[index] = node
+                    })}
                 </ButtonGroupContext.Provider>
             );
         }
