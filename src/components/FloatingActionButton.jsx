@@ -1,5 +1,5 @@
 import React, { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useEffectiveTheme, useTheme } from '@contexts/ThemeContext';
+import { useTheme } from '@contexts/ThemeContext';
 import { useGeniePortal } from './Genie';
 import Icon from './Icon';
 import Badge from './Badge';
@@ -37,7 +37,6 @@ export const FloatingActionButton = forwardRef(({
     type = 'button',
     onClick,
     icon = 'FiPlus', // Default icon for the FAB
-    iconSize = null, // Icon size: 'xs', 'sm', 'md', 'lg', 'xl' - auto-sized based on FAB size if null
     badge = null, // Badge text (max 10 characters) to display
     position = 'bottom-right', // 'top-left', 'top', 'top-right', 'left', 'right', 'bottom-left', 'bottom', 'bottom-right'
     theme = null, // Optional theme override
@@ -64,8 +63,7 @@ export const FloatingActionButton = forwardRef(({
     edgePadding = 16, // Padding from edges when snapping
     ...props
 }, ref) => {
-    const {currentTheme: globalTheme} = useTheme();
-    const effectiveTheme = useEffectiveTheme();
+    const effectiveTheme = useTheme();
 
     // Use theme prop if provided, otherwise use effective theme from context
     const fabTheme = theme || effectiveTheme.currentTheme;
@@ -155,22 +153,6 @@ export const FloatingActionButton = forwardRef(({
             default:
                 return 'md';
         }
-    };
-
-    // Auto-size icon based on FAB size if iconSize not specified
-    const getIconSize = () => {
-        if (iconSize) return iconSize;
-
-        // Map FAB size to Icon size (same size for proper visual balance)
-        const sizeMap = {
-            xs: 'sm',
-            sm: 'md',
-            md: 'lg',
-            lg: 'xl',
-            xl: '2xl'
-        };
-
-        return sizeMap[size] || 'lg';
     };
 
     const getPositionClass = () => {
@@ -587,7 +569,7 @@ export const FloatingActionButton = forwardRef(({
                     disabled
                 >
           <span className="button-content">
-            <Icon name={icon} size={getIconSize()}/>
+            <Icon name={icon} size={size}/>
           </span>
                 </button>
             )}
@@ -620,7 +602,7 @@ export const FloatingActionButton = forwardRef(({
                 {...(genieConfig?.trigger !== 'click' ? triggerProps : {})}
             >
         <span className="button-content">
-          <Icon name={icon} size={getIconSize()}/>
+          <Icon name={icon} size={size}/>
         </span>
         </button>
 

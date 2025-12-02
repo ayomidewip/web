@@ -1,5 +1,5 @@
 /**
- * Flow - Interactive flow flow component with React Flow
+ * Flow - Interactive flow diagram component with React Flow
  * 
  * Properly leverages @xyflow/react features:
  * ✓ useNodesState/useEdgesState - Hook-based state management (passed directly to ReactFlow)
@@ -7,6 +7,7 @@
  * ✓ Handle component - Bidirectional handles (both source & target) on all four sides
  * ✓ Position enum - Proper handle positioning (Top, Left, Right, Bottom)
  * ✓ Custom node types - EditableNode for inline editing with typography controls
+ * ✓ Built-in group nodes - Subflow support with parent-child relationships using type: 'group'
  * ✓ Uncontrolled component - Internal state is source of truth
  * ✓ Parent notifications - onChange fires on every state change (notification only, not bidirectional)
  * ✓ addEdge utility - Properly handles new connections
@@ -14,13 +15,20 @@
  * ✓ Panel component available (imported but can be used by consumers)
  * 
  * Features:
- * - Right-click context menu (Genie) for node editing: label, color, shape, typography (size/weight/align)
+ * - Right-click context menu (Genie) for node editing: label, color, shape, type, typography (size/weight/align)
  * - Right-click context menu (Genie) for edge editing: type, color, width, animation, arrows, labels
- * - Shift+click node creation with editable type
+ * - Ctrl/Cmd+click or Alt+click node creation with editable type
  * - Double-click inline editing on editable nodes
  * - Full bidirectional connectivity (any handle can connect to any other handle)
+ * - Subflow support: nodes with type 'group' can contain child nodes using parentId, extent, and expandParent
  * - Theme integration
  * - All React Flow props passthrough
+ * 
+ * Subflow Usage:
+ * - Set node type to 'group' to create a container node (uses React Flow's built-in group styling)
+ * - Add parentId to child nodes to nest them inside a group
+ * - Use extent: 'parent' to constrain child movement within parent bounds
+ * - Set expandParent: true to auto-expand parent when child is dragged to edge
  */
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -45,6 +53,8 @@ import { Button } from './Button';
 import { Container } from './Container';
 import { Typography } from './Typography';
 import { Select } from './Select';
+import { Icon } from './Icon';
+import { Card } from './Card';
 
 const DEFAULT_NODE_SHAPE = 'rectangle';
 const DEFAULT_NODE_COLOR_TOKEN = 'primary';
@@ -152,10 +162,22 @@ const sanitizeNode = (node) => {
   const shape = node.data?.shape || DEFAULT_NODE_SHAPE;
   const cleanedStyle = stripNodeColorStyle(node.style);
   const { style: _prevStyle, ...rest } = node;
+  
+  // Add class for group nodes to handle coloring
+  const isGroup = node.type === 'group';
+  const colorClass = isGroup ? getNodeColorClass(colorToken) : '';
+  const existingClasses = (node.className || '').split(' ').filter(c => !c.startsWith('flow-node-color-'));
+  const className = isGroup ? [...existingClasses, colorClass].join(' ') : node.className;
+
   return {
     ...rest,
+    className,
     data: { ...node.data, color: colorToken, shape },
-    ...(cleanedStyle ? { style: cleanedStyle } : {})
+    ...(cleanedStyle ? { style: cleanedStyle } : {}),
+    // Preserve subflow properties
+    ...(node.parentId ? { parentId: node.parentId } : {}),
+    ...(node.extent ? { extent: node.extent } : {}),
+    ...(node.expandParent !== undefined ? { expandParent: node.expandParent } : {})
   };
 };
 
@@ -252,8 +274,14 @@ const EditableNode = ({ data, id }) => {
   );
 };
 
+// Simple GroupNode to render label since native group doesn't render it by default
+const GroupNode = ({ data }) => (
+  <>{data.label}</>
+);
+
 const nodeTypes = {
-  editable: EditableNode
+  editable: EditableNode,
+  group: GroupNode
 };
 
 export const Flow = ({
@@ -275,7 +303,7 @@ export const Flow = ({
   zoomable = true,
   pannable = false,
   enableNodeCreation = false,
-  nodeCreationKey = 'shift',
+  nodeCreationKey = 'ctrl',
   defaultNodeData = { label: 'New Node', color: DEFAULT_NODE_COLOR_TOKEN, shape: DEFAULT_NODE_SHAPE },
   defaultNodeStyle = {},
   controls = true,
@@ -387,7 +415,10 @@ export const Flow = ({
       shape,
       fontSize: node.data?.fontSize ?? 'md',
       fontWeight: node.data?.fontWeight ?? 'semibold',
-      textAlign: node.data?.textAlign ?? 'center'
+      textAlign: node.data?.textAlign ?? 'center',
+      nodeType: node.type ?? 'editable',
+      parentId: node.parentId ?? '',
+      extent: node.extent ?? ''
     });
     setEdgeEditor(null);
     onNodeContextMenu?.(e, node);
@@ -418,14 +449,32 @@ export const Flow = ({
     const fontSize = nodeEditor.fontSize || 'md';
     const fontWeight = nodeEditor.fontWeight || 'semibold';
     const textAlign = nodeEditor.textAlign || 'center';
+    const nodeType = nodeEditor.nodeType || 'editable';
+    const parentId = nodeEditor.parentId || undefined;
+    const extent = nodeEditor.extent || undefined;
 
     setNodes((nds) =>
       nds.map((n) => {
         if (n.id !== nodeEditor.nodeId) return n;
         const sanitizedStyle = stripNodeColorStyle(n.style);
         const { style: _omit, ...rest } = n;
+        
+        // Set default style for group nodes
+        const groupStyle = nodeType === 'group' ? {
+          ...sanitizedStyle,
+          width: sanitizedStyle?.width || 300,
+          height: sanitizedStyle?.height || 200
+        } : sanitizedStyle;
+        
+        const isGroup = nodeType === 'group';
+        const colorClass = isGroup ? getNodeColorClass(colorToken) : '';
+        const existingClasses = (n.className || '').split(' ').filter(c => !c.startsWith('flow-node-color-'));
+        const className = isGroup ? [...existingClasses, colorClass].join(' ') : n.className;
+
         return {
           ...rest,
+          type: nodeType,
+          className,
           data: { 
             ...n.data, 
             label: nodeEditor.label, 
@@ -435,7 +484,10 @@ export const Flow = ({
             fontWeight,
             textAlign
           },
-          ...(sanitizedStyle ? { style: sanitizedStyle } : {})
+          ...(groupStyle ? { style: groupStyle } : {}),
+          ...(parentId ? { parentId } : {}),
+          ...(extent ? { extent } : {}),
+          ...(parentId ? { expandParent: true } : {})
         };
       })
     );
@@ -469,7 +521,6 @@ export const Flow = ({
     setEdgeEditor(null);
     if (enableNodeCreation) {
       const keyMatch = !nodeCreationKey || nodeCreationKey === 'none' ||
-        (nodeCreationKey === 'shift' && e.shiftKey) ||
         (nodeCreationKey === 'ctrl' && (e.ctrlKey || e.metaKey)) ||
         (nodeCreationKey === 'alt' && e.altKey);
       
@@ -516,6 +567,20 @@ export const Flow = ({
     reactFlowInstanceRef.current = instance;
     onInit?.(instance);
   }, [onInit]);
+
+  // Screen size detection - Flow only works on larger screens (tablets and above)
+  const [isLargeScreen, setIsLargeScreen] = useState(true);
+  
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsLargeScreen(window.innerWidth >= 768);
+    };
+    
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
   
   return (
     <div 
@@ -524,6 +589,45 @@ export const Flow = ({
       style={containerStyle}
       data-theme={theme || currentTheme}
     >
+      {!isLargeScreen ? (
+        <Container 
+          layout="flex" 
+          align="center" 
+          justify="center" 
+          padding="xl"
+          width="100%"
+          height="100%"
+          minHeight={containerStyle.minHeight}
+        >
+          <Card 
+            padding="xl" 
+            layout="flex-column" 
+            align="center" 
+            justify="center" 
+            gap="lg"
+            maxWidth="500px"
+            backgroundColor="surface"
+          >
+            <Icon name="FiMonitor" size="xl" color="warning" />
+            <Typography variant="h3" size="lg" weight="bold" align="center" color="warning">
+              Tablet or Desktop View Required
+            </Typography>
+            <Typography size="md" align="center" color="muted">
+              Flow diagrams are optimized for larger screens and require a tablet or desktop device to view and interact with.
+            </Typography>
+            <Typography size="sm" align="center" color="muted">
+              Please switch to a device with a screen width of at least 768px to view this content.
+            </Typography>
+            <Container layout="flex" gap="sm" align="center" marginTop="md">
+              <Icon name="FiInfo" size="sm" color="primary" />
+              <Typography size="xs" color="muted">
+                Current screen width: {window.innerWidth}px
+              </Typography>
+            </Container>
+          </Card>
+        </Container>
+      ) : (
+        <>
       <div
         ref={anchorRef}
         style={{
@@ -550,100 +654,165 @@ export const Flow = ({
 
       {/* Node Editor Genie */}
       <Genie visible={Boolean(nodeEditor)} triggerRef={anchorRef} onClose={() => setNodeEditor(null)} variant="menu" animation="scale" layout="flex-column" padding="md" width="280px">
-        <Container layout="flex-column" gap="sm" padding="none" width="100%">
-          <Typography size="sm" weight="semibold">Edit Node</Typography>
-          <Typography size="xs" color="muted">Update label, color, and shape. Press Enter to save.</Typography>
-          <Input 
-            label="Label" 
-            value={nodeEditor?.label ?? ''} 
-            onChange={(e) => setNodeEditor((s) => s ? { ...s, label: e.target.value } : s)} 
-            onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), saveNode())} 
-            size="sm" 
-            width="100%" 
-          />
-          <Select
-            label="Color"
-            value={nodeEditor?.color ?? DEFAULT_NODE_COLOR_TOKEN}
-            onChange={(value) => setNodeEditor((s) => (s ? { ...s, color: value } : s))}
-            size="sm"
-            width="100%"
-            options={COLOR_OPTIONS}
-          />
-          <Select
-            label="Shape"
-            value={nodeEditor?.shape ?? DEFAULT_NODE_SHAPE}
-            onChange={(value) => setNodeEditor((s) => (s ? { ...s, shape: value } : s))}
-            size="sm"
-            width="100%"
-            options={NODE_SHAPE_OPTIONS}
-          />
-          <Select
-            label="Font Size"
-            value={nodeEditor?.fontSize ?? 'md'}
-            onChange={(value) => setNodeEditor((s) => (s ? { ...s, fontSize: value } : s))}
-            size="sm"
-            width="100%"
-            options={[
-              { value: 'xs', label: 'Extra Small' },
-              { value: 'sm', label: 'Small' },
-              { value: 'md', label: 'Medium' },
-              { value: 'lg', label: 'Large' },
-              { value: 'xl', label: 'Extra Large' },
-              { value: '2xl', label: '2X Large' }
-            ]}
-          />
-          <Select
-            label="Font Weight"
-            value={nodeEditor?.fontWeight ?? 'semibold'}
-            onChange={(value) => setNodeEditor((s) => (s ? { ...s, fontWeight: value } : s))}
-            size="sm"
-            width="100%"
-            options={[
-              { value: 'light', label: 'Light' },
-              { value: 'normal', label: 'Normal' },
-              { value: 'medium', label: 'Medium' },
-              { value: 'semibold', label: 'Semibold' },
-              { value: 'bold', label: 'Bold' },
-              { value: 'extrabold', label: 'Extra Bold' }
-            ]}
-          />
-          <Select
-            label="Text Align"
-            value={nodeEditor?.textAlign ?? 'center'}
-            onChange={(value) => setNodeEditor((s) => (s ? { ...s, textAlign: value } : s))}
-            size="sm"
-            width="100%"
-            options={[
-              { value: 'left', label: 'Left' },
-              { value: 'center', label: 'Center' },
-              { value: 'right', label: 'Right' }
-            ]}
-          />
-          <div className="flow-node-preview">
-            <div
-              className={`flow-node-surface ${getNodeColorClass(nodeEditor?.color ?? DEFAULT_NODE_COLOR_TOKEN)}`}
-              data-shape={nodeEditor?.shape ?? DEFAULT_NODE_SHAPE}
-              data-color={nodeEditor?.color ?? DEFAULT_NODE_COLOR_TOKEN}
-              data-font-size={nodeEditor?.fontSize ?? 'md'}
-              data-font-weight={nodeEditor?.fontWeight ?? 'semibold'}
-              data-text-align={nodeEditor?.textAlign ?? 'center'}
-            >
-              <div className="flow-node-geometry" aria-hidden="true" />
-              <span className="flow-node-label">{nodeEditor?.label || 'Preview'}</span>
-            </div>
-          </div>
-          <Container layout="flex" justify="end" gap="sm" padding="none">
-            <Button size="sm" color="secondary" onClick={() => setNodeEditor(null)}>Cancel</Button>
-            <Button size="sm" color="primary" onClick={saveNode}>Save</Button>
+        {nodeEditor?.nodeType === 'group' ? (
+          <Container layout="flex-column" gap="sm" padding="none" width="100%">
+            <Typography size="sm" weight="semibold">Edit Group</Typography>
+            <Typography size="xs">Update group label and background.</Typography>
+            <Input 
+              label="Label" 
+              value={nodeEditor?.label ?? ''} 
+              onChange={(e) => setNodeEditor((s) => s ? { ...s, label: e.target.value } : s)} 
+              onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), saveNode())} 
+              size="sm" 
+              width="100%" 
+            />
+            <Select
+              label="Background Color"
+              value={nodeEditor?.color ?? DEFAULT_NODE_COLOR_TOKEN}
+              onChange={(value) => setNodeEditor((s) => (s ? { ...s, color: value } : s))}
+              size="sm"
+              width="100%"
+              options={COLOR_OPTIONS}
+            />
+            <Container layout="flex" justify="end" gap="sm" padding="none">
+              <Button size="sm" color="secondary" onClick={() => setNodeEditor(null)}>Cancel</Button>
+              <Button size="sm" color="primary" onClick={saveNode}>Save</Button>
+            </Container>
           </Container>
-        </Container>
+        ) : (
+          <Container layout="flex-column" gap="sm" padding="none" width="100%">
+            <Typography size="sm" weight="semibold">Edit Node</Typography>
+            <Typography size="xs">Update label, color, and shape. Press Enter to save.</Typography>
+            <Input 
+              label="Label" 
+              value={nodeEditor?.label ?? ''} 
+              onChange={(e) => setNodeEditor((s) => s ? { ...s, label: e.target.value } : s)} 
+              onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), saveNode())} 
+              size="sm" 
+              width="100%" 
+            />
+            <Select
+              label="Color"
+              value={nodeEditor?.color ?? DEFAULT_NODE_COLOR_TOKEN}
+              onChange={(value) => setNodeEditor((s) => (s ? { ...s, color: value } : s))}
+              size="sm"
+              width="100%"
+              options={COLOR_OPTIONS}
+            />
+            <Select
+              label="Shape"
+              value={nodeEditor?.shape ?? DEFAULT_NODE_SHAPE}
+              onChange={(value) => setNodeEditor((s) => (s ? { ...s, shape: value } : s))}
+              size="sm"
+              width="100%"
+              options={NODE_SHAPE_OPTIONS}
+            />
+            <Select
+              label="Font Size"
+              value={nodeEditor?.fontSize ?? 'md'}
+              onChange={(value) => setNodeEditor((s) => (s ? { ...s, fontSize: value } : s))}
+              size="sm"
+              width="100%"
+              options={[
+                { value: 'xs', label: 'Extra Small' },
+                { value: 'sm', label: 'Small' },
+                { value: 'md', label: 'Medium' },
+                { value: 'lg', label: 'Large' },
+                { value: 'xl', label: 'Extra Large' },
+                { value: '2xl', label: '2X Large' }
+              ]}
+            />
+            <Select
+              label="Node Type"
+              value={nodeEditor?.nodeType ?? 'editable'}
+              onChange={(value) => setNodeEditor((s) => (s ? { ...s, nodeType: value } : s))}
+              size="sm"
+              width="100%"
+              options={[
+                { value: 'editable', label: 'Editable Node' },
+                { value: 'group', label: 'Group (Subflow)' }
+              ]}
+            />
+            <Select
+              label="Parent Node (Optional)"
+              value={nodeEditor?.parentId ?? ''}
+              onChange={(value) => setNodeEditor((s) => (s ? { ...s, parentId: value, extent: value ? 'parent' : undefined } : s))}
+              size="sm"
+              width="100%"
+              options={[
+                { value: '', label: 'None (Top Level)' },
+                ...(nodes
+                  .filter(n => n.id !== nodeEditor?.nodeId && (n.type === 'group' || n.data?.shape === 'group'))
+                  .map(n => ({ value: n.id, label: n.data?.label || n.id }))
+                )
+              ]}
+            />
+            {nodeEditor?.parentId && (
+              <Select
+                label="Movement Constraint"
+                value={nodeEditor?.extent ?? 'parent'}
+                onChange={(value) => setNodeEditor((s) => (s ? { ...s, extent: value } : s))}
+                size="sm"
+                width="100%"
+                options={[
+                  { value: 'parent', label: 'Constrained to Parent' },
+                  { value: '', label: 'Free Movement' }
+                ]}
+              />
+            )}
+            <Select
+              label="Font Weight"
+              value={nodeEditor?.fontWeight ?? 'semibold'}
+              onChange={(value) => setNodeEditor((s) => (s ? { ...s, fontWeight: value } : s))}
+              size="sm"
+              width="100%"
+              options={[
+                { value: 'light', label: 'Light' },
+                { value: 'normal', label: 'Normal' },
+                { value: 'medium', label: 'Medium' },
+                { value: 'semibold', label: 'Semibold' },
+                { value: 'bold', label: 'Bold' },
+                { value: 'extrabold', label: 'Extra Bold' }
+              ]}
+            />
+            <Select
+              label="Text Align"
+              value={nodeEditor?.textAlign ?? 'center'}
+              onChange={(value) => setNodeEditor((s) => (s ? { ...s, textAlign: value } : s))}
+              size="sm"
+              width="100%"
+              options={[
+                { value: 'left', label: 'Left' },
+                { value: 'center', label: 'Center' },
+                { value: 'right', label: 'Right' }
+              ]}
+            />
+            <div className="flow-node-preview">
+              <div
+                className={`flow-node-surface ${getNodeColorClass(nodeEditor?.color ?? DEFAULT_NODE_COLOR_TOKEN)}`}
+                data-shape={nodeEditor?.shape ?? DEFAULT_NODE_SHAPE}
+                data-color={nodeEditor?.color ?? DEFAULT_NODE_COLOR_TOKEN}
+                data-font-size={nodeEditor?.fontSize ?? 'md'}
+                data-font-weight={nodeEditor?.fontWeight ?? 'semibold'}
+                data-text-align={nodeEditor?.textAlign ?? 'center'}
+              >
+                <div className="flow-node-geometry" aria-hidden="true" />
+                <span className="flow-node-label">{nodeEditor?.label || 'Preview'}</span>
+              </div>
+            </div>
+            <Container layout="flex" justify="end" gap="sm" padding="none">
+              <Button size="sm" color="secondary" onClick={() => setNodeEditor(null)}>Cancel</Button>
+              <Button size="sm" color="primary" onClick={saveNode}>Save</Button>
+            </Container>
+          </Container>
+        )}
       </Genie>
 
       {/* Edge Editor Genie */}
       <Genie visible={Boolean(edgeEditor)} triggerRef={edgeAnchorRef} onClose={() => setEdgeEditor(null)} variant="menu" animation="scale" layout="flex-column" padding="md" width="300px">
         <Container layout="flex-column" gap="sm" padding="none" width="100%">
           <Typography size="sm" weight="semibold">Edit Connector</Typography>
-          <Typography size="xs" color="muted">Customize connector appearance and style.</Typography>
+          <Typography size="xs">Customize connector appearance and style.</Typography>
           
           <Input 
             label="Label (optional)" 
@@ -805,6 +974,8 @@ export const Flow = ({
           />
         )}
       </ReactFlow>
+      </>
+      )}
     </div>
   );
 };

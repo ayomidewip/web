@@ -1,5 +1,5 @@
 import React, { forwardRef, useMemo, useRef } from 'react';
-import { ThemeProvider, useEffectiveTheme, useTheme } from '@contexts/ThemeContext';
+import { ThemeProvider, useTheme } from '@contexts/ThemeContext';
 import { useGeniePortal } from './Genie';
 
 /**
@@ -41,7 +41,7 @@ export const Card = forwardRef(({
     ...props
 }, ref) => {
     const {currentTheme: globalTheme} = useTheme();
-    const effectiveTheme = useEffectiveTheme();
+    const effectiveTheme = useTheme();
 
     // Use theme prop if provided, otherwise use effective theme from context
     const cardTheme = theme || effectiveTheme.currentTheme;

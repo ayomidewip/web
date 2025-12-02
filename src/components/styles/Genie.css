@@ -12,6 +12,8 @@
     isolation: isolate;
     /* Completely hide when not visible */
     visibility: hidden;
+    /* Remove focus outline */
+    outline: none;
 }
 
 .genie-container.visible {

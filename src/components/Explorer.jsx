@@ -80,7 +80,7 @@ const CreateFileForm = ({targetPath, onSuccess}) => {
             <Typography variant="h6" size="sm" weight="semibold">
                 📄 New File
             </Typography>
-            <Typography size="xs" color="muted">
+            <Typography size="xs">
                 Creating in: {targetPath}
             </Typography>
 
@@ -141,7 +141,7 @@ const CreateDirectoryForm = ({targetPath, onSuccess}) => {
             <Typography variant="h6" size="sm" weight="semibold">
                 📁 New Directory
             </Typography>
-            <Typography size="xs" color="muted">
+            <Typography size="xs">
                 Creating in: {targetPath}
             </Typography>
 
@@ -199,7 +199,7 @@ const DeleteConfirmForm = ({filePath, isDirectory, onSuccess}) => {
             <Typography variant="h6" size="sm" weight="semibold" color="error">
                 🗑️ Delete {isDirectory ? 'Directory' : 'File'}
             </Typography>
-            <Typography size="xs" color="muted">
+            <Typography size="xs">
                 {filePath}
             </Typography>
 
@@ -269,7 +269,7 @@ const CopyMoveForm = ({filePath, operation, fileTree, onSuccess}) => {
             <Typography variant="h6" size="sm" weight="semibold">
                 {operation === 'copy' ? '📋 Copy' : '📦 Move'} Item
             </Typography>
-            <Typography size="xs" color="muted">
+            <Typography size="xs">
                 Source: {filePath}
             </Typography>
 
@@ -328,7 +328,7 @@ const RenameForm = ({filePath, isDirectory, onSuccess}) => {
             <Typography variant="h6" size="sm" weight="semibold">
                 ✏️ Rename {isDirectory ? 'Directory' : 'File'}
             </Typography>
-            <Typography size="xs" color="muted">
+            <Typography size="xs">
                 {filePath}
             </Typography>
 
@@ -389,7 +389,7 @@ const UploadForm = ({targetPath, onSuccess}) => {
             <Typography variant="h6" size="sm" weight="semibold">
                 📤 Upload Files
             </Typography>
-            <Typography size="xs" color="muted">
+            <Typography size="xs">
                 Upload to: {targetPath}
             </Typography>
 
@@ -406,12 +406,12 @@ const UploadForm = ({targetPath, onSuccess}) => {
                         Selected files ({files.length}):
                     </Typography>
                     {files.slice(0, 3).map((file, index) => (
-                        <Typography key={index} size="xs" color="muted">
+                        <Typography key={index} size="xs">
                             • {file.name} ({(file.size / 1024).toFixed(1)} KB)
                         </Typography>
                     ))}
                     {files.length > 3 && (
-                        <Typography size="xs" color="muted">
+                        <Typography size="xs">
                             ... and {files.length - 3} more
                         </Typography>
                     )}
@@ -453,7 +453,7 @@ const PublishForm = ({filePath, onSuccess}) => {
             <Typography variant="h6" size="sm" weight="semibold">
                 📦 Publish File
             </Typography>
-            <Typography size="xs" color="muted">
+            <Typography size="xs">
                 {filePath}
             </Typography>
 
@@ -548,7 +548,7 @@ export const ShareForm = ({filePath, isDirectory, onSuccess}) => {
             <Typography weight="semibold" size="sm">
                 � Share {isDirectory ? 'Directory' : 'File'}
             </Typography>
-            <Typography size="xs" color="muted">
+            <Typography size="xs">
                 {filePath}
             </Typography>
 
@@ -684,7 +684,7 @@ const DirectorySelector = ({fileTree, onSelect, selectedPath = '', width = '100%
                     searchPlaceholder="Search directories..."
                 />
             ) : (
-                <Typography size="sm" color="muted">
+                <Typography size="sm">
                     No directories available
                 </Typography>
             )}
@@ -959,7 +959,7 @@ const Explorer = ({
                                                     <Typography as="h6" size="sm" weight="semibold">
                                                         {isDirectory ? '📁' : '📄'} {displayName}
                                                     </Typography>
-                                                    <Typography size="xs" color="muted">
+                                                    <Typography size="xs">
                                                         {filePath}
                                                     </Typography>
 
@@ -1222,7 +1222,7 @@ const Explorer = ({
                                     } : undefined}
                                 />
                             ) : (
-                                <Typography size="sm" color="muted">
+                                <Typography size="sm">
                                     No directories available
                                 </Typography>
                             )}

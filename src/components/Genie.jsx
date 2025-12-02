@@ -1,6 +1,6 @@
 import React, { forwardRef, useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
-import { useTheme, useEffectiveTheme } from '@contexts/ThemeContext';
+import { useTheme } from '@contexts/ThemeContext';
 import { Card } from './Card';
 
 // Simple global z-index counter for nested Genies
@@ -118,7 +118,7 @@ export const Genie = forwardRef(({
     ...props
 }, ref) => {
   const { currentTheme: globalTheme } = useTheme();
-  const effectiveTheme = useEffectiveTheme();
+  const effectiveTheme = useTheme();
   
   // Auto-detect theme from trigger element if no theme prop is provided
   // This allows Genie to automatically inherit the theme from any component that triggers it

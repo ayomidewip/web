@@ -1,5 +1,5 @@
 import React, { forwardRef, useMemo, useRef } from 'react';
-import { ThemeProvider, useEffectiveTheme } from '@contexts/ThemeContext';
+import { ThemeProvider, useTheme } from '@contexts/ThemeContext';
 import { useGeniePortal } from './Genie';
 
 /**
@@ -37,6 +37,7 @@ export const Container = forwardRef(({
     backgroundColor = 'transparent', // 'transparent', 'background', 'surface', 'surface-alt', 'primary', 'secondary', 'success', 'warning', 'error', 'tertiary'
     theme = null, // Optional theme override for this container and its children
     justifySelf = null, // CSS justify-self property: 'auto', 'start', 'end', 'center', 'stretch'
+    as: Component = 'div', // Component to render as (default: div)
     // Genie integration props
     genie = null, // Genie content to show OR object with {trigger, content, position}
     genieTrigger = 'click', // 'click', 'hover', 'contextmenu'
@@ -44,7 +45,7 @@ export const Container = forwardRef(({
     onGenieHide = null, // Callback when genie hides
     ...props
 }, ref) => {
-    const effectiveTheme = useEffectiveTheme();
+    const effectiveTheme = useTheme();
 
     // Use theme prop if provided, otherwise use effective theme from context
     const containerTheme = theme || effectiveTheme.currentTheme;
@@ -237,7 +238,7 @@ export const Container = forwardRef(({
     };
 
     const containerElement = (
-        <div
+        <Component
             ref={containerRef}
             {...domProps}
             {...triggerProps}
@@ -252,7 +253,7 @@ export const Container = forwardRef(({
 
             {/* Genie Integration */}
             {GeniePortal}
-        </div>
+        </Component>
     );
 
     // If theme prop is provided, wrap with ThemeProvider for inheritance

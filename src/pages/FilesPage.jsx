@@ -394,7 +394,7 @@ const UploadForm = ({ targetPath, onSuccess, onCancel }) => {
       />
       
       {files.length > 0 && (
-        <Typography size="xs" color="muted">
+        <Typography size="xs">
           Selected: {files.length} file(s)
         </Typography>
       )}
@@ -538,7 +538,7 @@ const VersionManagement = ({ file, onSuccess }) => {
       <Typography variant="h6" size="sm" weight="semibold">
         🔄 Version Management
       </Typography>
-      <Typography size="xs" color="muted">
+      <Typography size="xs">
         File: {file?.name || 'Unknown'}
       </Typography>
 
@@ -561,7 +561,7 @@ const VersionManagement = ({ file, onSuccess }) => {
             <CircularProgress size="sm" />
           </Container>
         ) : versions.length === 0 ? (
-          <Typography size="xs" color="muted" padding="sm">
+          <Typography size="xs" padding="sm">
             No versions published yet
           </Typography>
         ) : (
@@ -573,10 +573,10 @@ const VersionManagement = ({ file, onSuccess }) => {
                     <Typography size="xs" weight="semibold">
                       Version {version.version}
                     </Typography>
-                    <Typography size="xs" color="muted">
+                    <Typography size="xs">
                       {version.message || 'No message'}
                     </Typography>
-                    <Typography size="xs" color="muted">
+                    <Typography size="xs">
                       {new Date(version.timestamp).toLocaleString()}
                     </Typography>
                   </Container>
@@ -732,7 +732,7 @@ const FileSharing = ({ file, onSuccess }) => {
       <Typography variant="h6" size="sm" weight="semibold">
         👥 File Sharing
       </Typography>
-      <Typography size="xs" color="muted">
+      <Typography size="xs">
         File: {file?.name || 'Unknown'}
       </Typography>
 
@@ -754,7 +754,7 @@ const FileSharing = ({ file, onSuccess }) => {
             <CircularProgress size="sm" />
           </Container>
         ) : collaborators.length === 0 ? (
-          <Typography size="xs" color="muted" padding="sm">
+          <Typography size="xs" padding="sm">
             File not shared with anyone
           </Typography>
         ) : (
@@ -766,7 +766,7 @@ const FileSharing = ({ file, onSuccess }) => {
                     <Typography size="xs" weight="semibold">
                       {collaborator.email || collaborator.username || 'Unknown User'}
                     </Typography>
-                    <Typography size="xs" color="muted">
+                    <Typography size="xs">
                       {collaborator.permission || 'read'} access
                     </Typography>
                   </Container>
@@ -808,7 +808,7 @@ const QuickActions = ({ targetPath, fileTree, onActionComplete }) => {
         <Typography as="h6" weight="semibold">
           Quick Actions
         </Typography>
-        <Typography size="sm" color="muted">
+        <Typography size="sm">
           Choose an action for: {targetPath || '/'}
         </Typography>
         
@@ -933,12 +933,12 @@ const FileMetadata = ({ file, isReadOnly, onDownload, onVersionLoaded, onSave, i
         <Container layout="flex" align="center" gap="sm" padding="none">
           {file.type === 'text' && (
             <Container layout="flex" align="center" gap="xs">
-              <Icon name="FiGitBranch" size="xs" color="muted" />
-              <Typography size="xs" color="muted">
+              <Icon name="FiGitBranch" size="xs" />
+              <Typography size="xs">
                 {hasVersions ? `${metadata.versions.length} versions` : 'No versions'}
               </Typography>
               {latestVersion && (
-                <Typography size="xs" color="muted">
+                <Typography size="xs">
                   | Latest: v{latestVersion.version}
                 </Typography>
               )}
@@ -946,16 +946,16 @@ const FileMetadata = ({ file, isReadOnly, onDownload, onVersionLoaded, onSave, i
           )}
 
           <Container layout="flex" align="center" gap="xs">
-            <Icon name="FiShare2" size="xs" color="muted" />
-            <Typography size="xs" color="muted">
+            <Icon name="FiShare2" size="xs" />
+            <Typography size="xs">
               {hasCollaborators ? `Shared with ${metadata.collaborators.length} users` : 'Private'}
             </Typography>
           </Container>
 
           {metadata.info?.size != null && (
             <Container layout="flex" align="center" gap="xs">
-              <Icon name="FiHardDrive" size="xs" color="muted" />
-              <Typography size="xs" color="muted">
+              <Icon name="FiHardDrive" size="xs" />
+              <Typography size="xs">
                 {formatFileSize(metadata.info.size)}
               </Typography>
             </Container>
@@ -963,8 +963,8 @@ const FileMetadata = ({ file, isReadOnly, onDownload, onVersionLoaded, onSave, i
 
           {lastModified && (
             <Container layout="flex" align="center" gap="xs">
-              <Icon name="FiClock" size="xs" color="muted" />
-              <Typography size="xs" color="muted">
+              <Icon name="FiClock" size="xs" />
+              <Typography size="xs">
                 Modified {formatDate(lastModified)}
               </Typography>
             </Container>
@@ -1607,7 +1607,7 @@ export const FilesPage = () => {
                 <Icon name="FiArrowLeft" size="sm" />
                 Back to Current Version
               </Button>
-              <Typography size="xs" color="muted">
+              <Typography size="xs">
                 {versionView.originalFile.filePath}
               </Typography>
             </Container>
@@ -1630,7 +1630,7 @@ export const FilesPage = () => {
             <Container layout="flex" align="center" justify="between" width="100%" padding="none">
               <Container layout="flex" align="center" gap="sm" padding="none">
                 <Icon name="FiInfo" size="xs" color="info" />
-                <Typography size="xs" color="muted">
+                <Typography size="xs">
                   {versionView.versionMessage || 'No message'}
                 </Typography>
               </Container>
@@ -1664,9 +1664,9 @@ export const FilesPage = () => {
       return (
         <Container layout="flex" align="center" justify="center" minHeight="100vh" width="100%">
           <Container layout="flex-column" align="center" gap="md">
-            <Icon name="FiFile" size="48" color="muted" />
-            <Typography size="lg" color="muted">Select a file to view its content</Typography>
-            <Typography size="sm" color="muted">
+            <Icon name="FiFile" size="48" />
+            <Typography size="lg">Select a file to view its content</Typography>
+            <Typography size="sm">
               Use the file explorer on the left to browse and select files
             </Typography>
           </Container>
@@ -1708,8 +1708,8 @@ export const FilesPage = () => {
                 )}
                 {connectionStatus === 'disconnected' && (
                   <>
-                    <Icon name="FiWifiOff" size="sm" color="muted" />
-                    <Typography size="xs" color="muted">Disconnected</Typography>
+                    <Icon name="FiWifiOff" size="sm" />
+                    <Typography size="xs">Disconnected</Typography>
                   </>
                 )}
                 {connectionStatus === 'error' && (
@@ -1742,7 +1742,7 @@ export const FilesPage = () => {
             {activeFile.file.isBinary && (
                 <Container layout="flex" align="center" gap="sm">
                     <Icon name="FiFile" size="sm" />
-                    <Typography size="xs" color="muted">BINARY</Typography>
+                    <Typography size="xs">BINARY</Typography>
                 </Container>
             )}
             {/* Version indicator */}
@@ -1766,7 +1766,7 @@ export const FilesPage = () => {
             {activeFile.isReadOnly && (
               <Typography size="xs" color="warning">Read-only access</Typography>
             )}
-            <Typography size="xs" color="muted">
+            <Typography size="xs">
               {activeFile.file.filePath}
             </Typography>
           </Container>
@@ -1860,9 +1860,9 @@ export const FilesPage = () => {
           ) : (
             <Container layout="flex" align="center" justify="center" minHeight="400px">
               <Container layout="flex-column" align="center" gap="md">
-                <Icon name="FiFile" size="48" color="muted" />
-                <Typography size="lg" color="muted">Binary File</Typography>
-                <Typography size="sm" color="muted">
+                <Icon name="FiFile" size="48" />
+                <Typography size="lg">Binary File</Typography>
+                <Typography size="sm">
                   This file cannot be edited directly. Use the download button above.
                 </Typography>
               </Container>

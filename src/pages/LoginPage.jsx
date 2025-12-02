@@ -71,13 +71,14 @@ export const LoginPage = () => {
               <Typography as="h1" size="2xl" weight="bold" color="primary">
                 Sign In
               </Typography>
-              <Typography color="muted" align="center">
+              <Typography align="center">
                 Welcome back! Please sign in to your account.
               </Typography>
             </Container>
 
             {/* Login Form */}
               <Container
+                as="form"
                 style={{ width: '80%' }}
                 gap="md"
                 padding="none"
@@ -97,6 +98,7 @@ export const LoginPage = () => {
                   onChange={handleInputChange}
                   required
                   width="100%"
+                  autoComplete="username"
                 />
 
                 <Input
@@ -108,6 +110,7 @@ export const LoginPage = () => {
                   onChange={handleInputChange}
                   required
                   width="100%"
+                  autoComplete="current-password"
                 />
 
                 <Button
@@ -142,7 +145,7 @@ export const LoginPage = () => {
               </Button>
 
               <Container layout="flex" justify="center" gap="sm">
-                <Typography size="sm" color="muted">
+                <Typography size="sm">
                   Don't have an account?
                 </Typography>
                 <Button

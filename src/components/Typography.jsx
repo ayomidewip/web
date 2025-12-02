@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import { useEffectiveTheme } from '@contexts/ThemeContext';
+import { useTheme } from '@contexts/ThemeContext';
 import { useSpring, useSprings, animated } from '@react-spring/web';
 
 // Hook to handle animation configuration defaults
@@ -89,7 +89,7 @@ const useTextSplitting = (text, animation, splitBy) => {
 
 // Hook to handle animation triggers
 const useAnimationTrigger = (ref, animation, animateOn, onStart) => {
-    const [shouldAnimate, setShouldAnimate] = useState(false);
+    const [shouldAnimate, setShouldAnimate] = useState(animation !== 'none' && animateOn === 'mount');
     const [isHovering, setIsHovering] = useState(false);
     const hasStartedRef = useRef(false);
     
@@ -284,7 +284,6 @@ const getColorStyle = (color) => {
         'error': 'var(--error-color)',
         'neutral': 'var(--neutral-color)',
         'info': 'var(--tertiary-color)',
-        'muted': 'var(--text-muted)',
         'header': 'var(--header-text-color, var(--text-color))',
         'contrast': 'var(--text-contrast-color)'
     };
@@ -495,17 +494,23 @@ const GradientAnimation = React.memo(({
     animationDuration,
     animationDelay,
     shouldAnimate,
-    children
+    children,
+    notifyAnimationComplete
 }) => {
     const colorStyle = getColorStyle(color);
     const baseColor = colorStyle.color || 'var(--primary-color)';
+    
+    // Create a seamless repeating gradient pattern
+    // Duplicate the sequence so the end matches the start
     const gradientStops = Array.isArray(animConfig.colors) && animConfig.colors.length > 0
-        ? animConfig.colors
+        ? [...animConfig.colors, animConfig.colors[0]] // Add first color at end for seamless loop
         : [
             baseColor,
             'var(--primary-accent-color)',
             baseColor,
             'var(--secondary-accent-color)',
+            baseColor,
+            'var(--primary-accent-color)',  // Repeat to create seamless loop
             baseColor,
         ];
 
@@ -522,6 +527,8 @@ const GradientAnimation = React.memo(({
                 animationPlayState: shouldAnimate ? 'running' : 'paused',
             }}
             data-animation-role="gradient"
+            onAnimationIteration={notifyAnimationComplete}
+            onAnimationEnd={notifyAnimationComplete}
         >
             <span className="typography-animation-gradient-text" style={{ animationPlayState: shouldAnimate ? 'running' : 'paused' }}>
                 {children}
@@ -535,20 +542,31 @@ const ShinyAnimation = React.memo(({
     animationDuration,
     animationDelay,
     shouldAnimate,
-    children
+    children,
+    notifyAnimationComplete
 }) => {
     const baseColor = color !== 'default' ? (getColorStyle(color).color || 'var(--text-color)') : '#b5b5b5a4';
+    const [key, setKey] = useState(0);
+
+    const handleAnimationEnd = useCallback(() => {
+        notifyAnimationComplete();
+        setKey(prev => prev + 1);
+    }, [notifyAnimationComplete]);
 
     return (
         <span
+            key={key}
             className="typography-animation-shiny"
             style={{
                 '--typography-shiny-color': baseColor,
                 '--typography-animation-duration': `${Math.max(animationDuration, 16)}ms`,
                 '--typography-animation-delay': `${animationDelay}ms`,
                 animationPlayState: shouldAnimate ? 'running' : 'paused',
+                animationIterationCount: '1'
             }}
             data-animation-role="shiny"
+            onAnimationIteration={notifyAnimationComplete}
+            onAnimationEnd={handleAnimationEnd}
         >
             {children}
         </span>
@@ -622,8 +640,10 @@ const TypewriterAnimation = React.memo(({
                 }
 
                 if (index === 0) {
+                    // Always notify when cycle completes (text deleted)
+                    notifyAnimationComplete();
+
                     if (!shouldLoop) {
-                        notifyAnimationComplete();
                         return;
                     }
                     
@@ -689,7 +709,8 @@ const GlitchAnimation = React.memo(({
     animationDuration,
     animationDelay,
     shouldAnimate,
-    children
+    children,
+    notifyAnimationComplete
 }) => {
     const textColor = color !== 'default' ? (getColorStyle(color).color || 'var(--text-color)') : 'var(--text-color)';
     const accentOne = Array.isArray(animConfig.colors) && animConfig.colors.length > 0
@@ -713,6 +734,8 @@ const GlitchAnimation = React.memo(({
                 animationPlayState: shouldAnimate ? 'running' : 'paused',
             }}
             data-animation-role="glitch"
+            onAnimationIteration={notifyAnimationComplete}
+            onAnimationEnd={notifyAnimationComplete}
         >
             {children}
         </span>
@@ -725,7 +748,8 @@ const CircularAnimation = React.memo(({
     animationDelay,
     shouldAnimate,
     animateOn,
-    stringContent
+    stringContent,
+    notifyAnimationComplete
 }) => {
     const [hovered, setHovered] = useState(false);
     
@@ -735,7 +759,10 @@ const CircularAnimation = React.memo(({
     const rotationSpring = useSpring({
         from: { rotate: 0 },
         to: { rotate: 360 },
-        loop: true,
+        loop: () => {
+            notifyAnimationComplete();
+            return true;
+        },
         delay: animationDelay,
         config: { duration: hovered && onHoverEffect === 'speedUp' ? spinDuration / 3 : spinDuration },
         pause: !shouldAnimate || (hovered && onHoverEffect === 'pause'),
@@ -943,7 +970,8 @@ const ScrambleAnimation = React.memo(({
     animConfig,
     animationDuration,
     animationDelay,
-    shouldAnimate
+    shouldAnimate,
+    notifyAnimationComplete
 }) => {
     const letters = useMemo(() => {
         return Array.from(stringContent).map((char, index) => ({
@@ -1019,11 +1047,12 @@ const ScrambleAnimation = React.memo(({
                 frameRef.current = requestAnimationFrame(loop);
             } else {
                 isLoopRunning.current = false;
+                notifyAnimationComplete();
             }
         };
         
         frameRef.current = requestAnimationFrame(loop);
-    }, [letters, scrambleChars, updateInterval]);
+    }, [letters, scrambleChars, updateInterval, notifyAnimationComplete]);
 
     useEffect(() => {
         if (!isReady) return;
@@ -1094,12 +1123,14 @@ const FocusAnimation = React.memo(({
     animationDuration,
     animationDelay,
     shouldAnimate,
-    containerRef
+    containerRef,
+    notifyAnimationComplete
 }) => {
     const words = useMemo(() => stringContent.split(' '), [stringContent]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const wordRefs = useRef([]);
     const [focusRect, setFocusRect] = useState({ x: 0, y: 0, width: 0, height: 0 });
+    const prevIndexRef = useRef(currentIndex);
     
     const blurAmount = animConfig.blurAmount || 5;
     const mode = animConfig.focusMode || 'auto';
@@ -1121,6 +1152,14 @@ const FocusAnimation = React.memo(({
             setCurrentIndex(0);
         }
     }, [words.length]);
+
+    // Notify on cycle complete
+    useEffect(() => {
+        if (mode === 'auto' && shouldAnimate && prevIndexRef.current === words.length - 1 && currentIndex === 0) {
+            notifyAnimationComplete();
+        }
+        prevIndexRef.current = currentIndex;
+    }, [currentIndex, mode, shouldAnimate, words.length, notifyAnimationComplete]);
 
     // Auto-cycle through words
     useEffect(() => {
@@ -1257,7 +1296,7 @@ export const Typography = ({
     
     ...props
 }) => {
-    const effectiveTheme = useEffectiveTheme();
+    const effectiveTheme = useTheme();
     const containerRef = useRef(null);
 
     // Use theme prop if provided, otherwise use effective theme from context
@@ -1278,26 +1317,17 @@ export const Typography = ({
     // Handle animation triggers
     const { shouldAnimate, isHovering, setIsHovering } = useAnimationTrigger(containerRef, animation, animateOn, onAnimationStart);
 
-    const hasCompletedRef = useRef(false);
     const prevShouldAnimateRef = useRef(shouldAnimate);
 
     useEffect(() => {
-        if (shouldAnimate && !prevShouldAnimateRef.current) {
-            hasCompletedRef.current = false;
-        }
-
-        if (!shouldAnimate) {
-            hasCompletedRef.current = false;
-        }
-
         prevShouldAnimateRef.current = shouldAnimate;
     }, [shouldAnimate]);
 
     const notifyAnimationComplete = useCallback(() => {
-        if (!shouldAnimate || hasCompletedRef.current) {
+        if (!shouldAnimate) {
             return;
         }
-        hasCompletedRef.current = true;
+        
         if (onAnimationComplete) {
             onAnimationComplete();
         }

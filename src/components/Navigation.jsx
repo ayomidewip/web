@@ -55,10 +55,19 @@ export const Navigation = ({
         if (user) {
             // Dashboard/Home
             items.push({
+                id: 'home',
+                label: 'Home',
+                icon: 'FiHome',
+                path: '/',
+                roles: ['USER', 'CREATOR', 'ADMIN', 'OWNER'],
+                requireAuth: true
+            });
+
+            items.push({
                 id: 'components',
                 label: 'Components',
                 icon: 'FiCode',
-                path: '/',
+                path: '/components',
                 roles: ['USER', 'CREATOR', 'ADMIN', 'OWNER'],
                 requireAuth: true
             });
@@ -87,10 +96,18 @@ export const Navigation = ({
             });
         } else {
             items.push({
+                id: 'home-guest',
+                label: 'Home',
+                icon: 'FiHome',
+                path: '/',
+                publicOnly: true
+            });
+
+            items.push({
                 id: 'components-demo',
                 label: 'Explore Components',
                 icon: 'FiGrid',
-                path: '/',
+                path: '/components',
                 publicOnly: true
             });
 
@@ -189,7 +206,7 @@ export const Navigation = ({
 
             {/* Navigation Items */}
             <Container layout="flex-column" gap="xs" width="100%">
-                <Typography as="p" size="xs" weight="medium" color="muted">
+                <Typography as="p" size="xs" weight="medium">
                     MENU
                 </Typography>
                 {navigationItems.map(item => (
@@ -201,10 +218,10 @@ export const Navigation = ({
                         onClick={() => handleNavigation(item.path)}
                         disabled={isNavigating}
                     >
-                        <Icon name={item.icon} size="sm"/>
+                        <Icon name={item.icon} size="xs"/>
                         {item.label}
                         {item.badge && (
-                            <Badge color="tertiary" size="sm">
+                            <Badge color="tertiary" size="xs">
                                 {item.badge}
                             </Badge>
                         )}
@@ -214,7 +231,7 @@ export const Navigation = ({
 
             {/* Theme Switcher */}
             <Container layout="flex-column" gap="xs">
-                <Typography as="p" size="xs" weight="medium" color="muted">
+                <Typography as="p" size="xs" weight="medium">
                     THEME
                 </Typography>
                 <Container layout="flex" gap="xs" wrap>
@@ -234,7 +251,7 @@ export const Navigation = ({
             {/* Actions */}
             {user ? (
                 <Container layout="flex-column" gap="xs" width="100%">
-                    <Typography as="p" size="xs" weight="medium" color="muted">
+                    <Typography as="p" size="xs" weight="medium">
                         ACCOUNT
                     </Typography>
                     <Button
@@ -246,7 +263,7 @@ export const Navigation = ({
                         color="error"
                         disabled={isNavigating}
                     >
-                        <Icon name="FiLogOut" size="sm"/>
+                        <Icon name="FiLogOut" size="xs"/>
                         Sign Out
                     </Button>
                 </Container>
@@ -282,8 +299,7 @@ export const Navigation = ({
             size={size}
             position={position}
             draggable={draggable}
-            icon={isNavigating ? 'FiLoader' : 'FiMenu'}
-            iconSize={size === 'sm' ? 'sm' : size === 'lg' ? 'lg' : 'md'}
+            icon={isNavigating ? 'FiLoader' : 'FiMap'}
             theme={theme}
             disabled={isNavigating}
             genie={{
@@ -332,7 +348,7 @@ export const RouteAccessControl = ({children, path}) => {
             <Page layout="flex-column" align="center" justify="center" gap="lg" padding="xl">
                 <Icon name="FiLock" size="xl" variant="error"/>
                 <Typography size="xl" weight="bold">Access Denied</Typography>
-                <Typography size="md" color="muted" align="center">
+                <Typography size="md" align="center">
                     Admin access required.
                 </Typography>
             </Page>

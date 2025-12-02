@@ -1,5 +1,5 @@
 import React from 'react';
-import { useEffectiveTheme, useTheme } from '@contexts/ThemeContext';
+import { useTheme } from '@contexts/ThemeContext';
 import { Typography } from './Typography';
 
 /**
@@ -30,7 +30,7 @@ export const ProgressBar = ({
     ...props
 }) => {
     const {currentTheme: globalTheme} = useTheme();
-    const effectiveTheme = useEffectiveTheme();
+    const effectiveTheme = useTheme();
 
     // Use theme prop if provided, otherwise use effective theme from context
     const progressTheme = theme || effectiveTheme.currentTheme;

@@ -47,6 +47,10 @@ api.interceptors.response.use(
 export { api as sharedAPI };
 
 export const appService = {
+    async submitContactForm(data) {
+        return api.post('/contact', data);
+    },
+
     async getHealth() {
         return await api.get('/health');
     },

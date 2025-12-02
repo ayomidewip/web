@@ -6,6 +6,7 @@ import { NotificationProvider } from '@contexts/NotificationContext';
 
 // Import all pages
 import ComponentDemo from './pages/ComponentDemo';
+import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
@@ -40,7 +41,7 @@ function AppRouter() {
         {/* Application routes - access control handled by RouteAccessControl */}
         <Route path="/" element={
           <RouteAccessControl path="/">
-            <ComponentDemo />
+            <HomePage />
           </RouteAccessControl>
         } />
         <Route path="/components" element={

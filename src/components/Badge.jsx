@@ -1,5 +1,5 @@
 import React from 'react';
-import { useEffectiveTheme, useTheme } from '@contexts/ThemeContext';
+import { useTheme } from '@contexts/ThemeContext';
 
 /**
  * Badge - Themed badge component for status indicators
@@ -24,7 +24,7 @@ export const Badge = ({
     ...props
 }) => {
     const {currentTheme: globalTheme} = useTheme();
-    const effectiveTheme = useEffectiveTheme();
+    const effectiveTheme = useTheme();
 
     // Use theme prop if provided, otherwise use effective theme from context
     const badgeTheme = theme || effectiveTheme.currentTheme;

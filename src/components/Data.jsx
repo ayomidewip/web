@@ -1,5 +1,5 @@
 import React, { forwardRef, useCallback, useMemo, useRef, useState } from 'react';
-import { ThemeProvider, useEffectiveTheme, useTheme } from '@contexts/ThemeContext';
+import { ThemeProvider, useTheme } from '@contexts/ThemeContext';
 import Card from './Card';
 import Container from './Container';
 import Select from './Select';
@@ -67,10 +67,9 @@ export const Data = forwardRef(({
     ...props
 }, ref) => {
         const {currentTheme: globalTheme} = useTheme();
-        const effectiveTheme = useEffectiveTheme();
 
         // Use theme prop if provided, otherwise use effective theme from context
-        const dataTheme = theme || effectiveTheme.currentTheme;
+        const dataTheme = theme || globalTheme;
 
         // State management
         const [currentVariant, setCurrentVariant] = useState(variant);
@@ -404,7 +403,7 @@ export const Data = forwardRef(({
                             }}
                         >
                             <Typography as="span" size={getTypographySize()}>{getPreviewValue(value)}</Typography>
-                            <Icon name="FiEye" size={getIconSize()} color="muted"/>
+                            <Icon name="FiEye" size={getIconSize()}/>
                         </Container>
                     );
                 }
@@ -448,7 +447,7 @@ export const Data = forwardRef(({
                         }}
                     >
                         <Component {...componentProps} size={getTypographySize()} />
-                        <Icon name="FiEye" size={getIconSize()} color="muted"/>
+                        <Icon name="FiEye" size={getIconSize()}/>
                     </Container>
                 );
             }
@@ -725,7 +724,7 @@ export const Data = forwardRef(({
                 >
                     {paginatedFilteredData.length === 0 ? (
                         <Card padding="lg">
-                            <Typography color="muted" size={getTypographySize()}>No data available</Typography>
+                            <Typography size={getTypographySize()}>No data available</Typography>
                         </Card>
                     ) : (
                         paginatedFilteredData.map((item, index) => {
@@ -764,7 +763,7 @@ export const Data = forwardRef(({
                                                     {visibleFields.map((field) => (
                                                         <Container key={field} layout="flex" gap="sm" align="center"
                                                                    padding="none">
-                                                            <Typography weight="medium" size={getIconSize()} color="muted"
+                                                            <Typography weight="medium" size={getIconSize()}
                                                                         style={{minWidth: '80px', flex: '0 0 auto'}}>
                                                                 {formatFieldName(field)}:
                                                             </Typography>
@@ -780,7 +779,7 @@ export const Data = forwardRef(({
                                                 {visibleFields.map((field) => (
                                                     <Container key={field} layout="flex" gap="sm" align="center"
                                                                padding="none">
-                                                        <Typography weight="medium" size={getIconSize()} color="muted"
+                                                        <Typography weight="medium" size={getIconSize()}
                                                                     style={{minWidth: '80px', flex: '0 0 auto'}}>
                                                             {formatFieldName(field)}:
                                                         </Typography>
@@ -806,7 +805,7 @@ export const Data = forwardRef(({
                 <Container layout="flex-column" gap="sm" padding="none" className="data-item-container">
                     {paginatedFilteredData.length === 0 ? (
                         <Card padding="md">
-                            <Typography color="muted" size={getTypographySize()}>No data available</Typography>
+                            <Typography size={getTypographySize()}>No data available</Typography>
                         </Card>
                     ) : (
                         paginatedFilteredData.map((item, index) => {
@@ -847,7 +846,7 @@ export const Data = forwardRef(({
                                                         <Container key={field} layout="flex-column" gap="xs"
                                                                    padding="none"
                                                                    flexFill={fieldIndex === 0}>
-                                                            <Typography weight="medium" size={getIconSize()} color="muted">
+                                                            <Typography weight="medium" size={getIconSize()}>
                                                                 {formatFieldName(field)}
                                                             </Typography>
                                                             {renderFieldValue(item, field, listItemRef)}
@@ -860,7 +859,7 @@ export const Data = forwardRef(({
                                                 {visibleFields.map((field, fieldIndex) => (
                                                     <Container key={field} layout="flex-column" gap="xs" padding="none"
                                                                flexFill={fieldIndex === 0}>
-                                                        <Typography weight="medium" size={getIconSize()} color="muted">
+                                                        <Typography weight="medium" size={getIconSize()}>
                                                             {formatFieldName(field)}
                                                         </Typography>
                                                         {renderFieldValue(item, field, listItemRef)}
@@ -902,7 +901,7 @@ export const Data = forwardRef(({
                     padding="xl"
                     {...props}
                 >
-                    <Typography as="p" color="muted">No data available</Typography>
+                    <Typography as="p">No data available</Typography>
                 </Container>
             );
         }
@@ -1115,7 +1114,7 @@ export const Data = forwardRef(({
                                                     size={getButtonSize()}
                                                     variant="floating"
                                                 />
-                                                <Typography size={getIconSize()} color="muted">to</Typography>
+                                                <Typography size={getIconSize()}>to</Typography>
                                                 <Input
                                                     type="date"
                                                     label={formatFieldName(field) + ' (End)'}
@@ -1151,7 +1150,7 @@ export const Data = forwardRef(({
                                             />
                                         )}
                                         {hasOptions && options.length > 20 && (
-                                            <Typography as="span" size={getIconSize()} color="muted">
+                                            <Typography as="span" size={getIconSize()}>
                                                 {options.length} unique values
                                             </Typography>
                                         )}

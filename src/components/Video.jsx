@@ -6,7 +6,7 @@ import React, {
     useRef,
     useState
 } from 'react';
-import { ThemeProvider, useEffectiveTheme } from '@contexts/ThemeContext';
+import { useTheme } from '@contexts/ThemeContext';
 import Button from './Button';
 import Icon from './Icon';
 import Typography from './Typography';
@@ -115,7 +115,7 @@ export const Video = forwardRef(({
     onDurationChange,
     ...playerProps
 }, forwardedRef) => {
-    const effectiveTheme = useEffectiveTheme();
+    const effectiveTheme = useTheme();
     const videoTheme = theme || effectiveTheme.currentTheme;
 
     const buttonColor = useMemo(() => getMediaButtonColor(color), [color]);

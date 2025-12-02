@@ -7,7 +7,7 @@ import React, {
     useState
 } from 'react';
 import { AudioWave, useMediaAudio } from '@audiowave/react';
-import { ThemeProvider, useEffectiveTheme } from '@contexts/ThemeContext';
+import { ThemeProvider, useTheme } from '@contexts/ThemeContext';
 import { clamp, formatTime, getMediaButtonColor, useMediaKeyboardShortcuts } from './Video';
 import Button from './Button';
 import Icon from './Icon';
@@ -69,7 +69,7 @@ export const Audio = forwardRef(({
     onTimeUpdate,
     onDurationChange
 }, forwardedRef) => {
-    const effectiveTheme = useEffectiveTheme();
+        const effectiveTheme = useTheme();
     const audioTheme = theme || effectiveTheme.currentTheme;
 
     const buttonColor = useMemo(() => getMediaButtonColor(color), [color]);

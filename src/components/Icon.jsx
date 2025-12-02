@@ -1,5 +1,6 @@
-import React from 'react';
-import { useEffectiveTheme, useTheme } from '@contexts/ThemeContext';
+import React, { useContext } from 'react';
+import { useTheme } from '@contexts/ThemeContext';
+import { ButtonContext } from './Button';
 import * as Icons from 'react-icons/fi'; // Feather icons
 import * as MdIcons from 'react-icons/md'; // Material Design icons
 import * as HiIcons from 'react-icons/hi'; // Heroicons
@@ -32,7 +33,7 @@ const getIcon = (iconName) => {
 export const Icon = ({
     name = 'FiHelpCircle',
     color = 'primary', // 'primary', 'secondary', 'tertiary', 'success', 'warning', 'error', 'text'
-    size = 'md', // 'xs', 'sm', 'md', 'lg', 'xl', '2xl'
+    size, // 'xs', 'sm', 'md', 'lg', 'xl', '2xl' - defaults to 'md' or inherits from ButtonContext
     className = '',
     hover = false,
     clickable = false,
@@ -51,7 +52,11 @@ export const Icon = ({
     ...props
 }) => {
     const {currentTheme: globalTheme} = useTheme();
-    const effectiveTheme = useEffectiveTheme();
+    const effectiveTheme = useTheme();
+    const buttonContext = useContext(ButtonContext);
+
+    // Determine effective size: prop > context > default
+    const effectiveSize = size || buttonContext?.size || 'md';
 
     // Use theme prop if provided, otherwise use effective theme from context
     const iconTheme = theme || effectiveTheme.currentTheme;
@@ -105,7 +110,7 @@ export const Icon = ({
     };
 
     // Build class names
-    const classes = ['themed-icon', `icon-${color}`, `icon-${size}`, hover && 'icon-hover', clickable && 'icon-clickable', getJustifySelfClass(), className].filter(Boolean).join(' ');
+    const classes = ['themed-icon', `icon-${color}`, `icon-${effectiveSize}`, hover && 'icon-hover', clickable && 'icon-clickable', getJustifySelfClass(), className].filter(Boolean).join(' ');
 
     return (
         <IconComponent

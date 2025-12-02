@@ -287,43 +287,43 @@
 .flow-node-surface.flow-node-color-primary {
   --flow-node-fill: var(--primary-color);
   --flow-node-border: var(--primary-accent-color, var(--primary-color));
-  --flow-node-text: var(--text-contrast-color, #ffffff);
+  --flow-node-text: var(--text-contrast-color);
 }
 
 .flow-node-surface.flow-node-color-secondary {
   --flow-node-fill: var(--secondary-color);
   --flow-node-border: var(--secondary-accent-color, var(--secondary-color));
-  --flow-node-text: var(--text-contrast-color, #ffffff);
+  --flow-node-text: var(--text-contrast-color);
 }
 
 .flow-node-surface.flow-node-color-tertiary {
   --flow-node-fill: var(--tertiary-color);
   --flow-node-border: var(--tertiary-accent-color, var(--tertiary-color));
-  --flow-node-text: var(--text-contrast-color, #ffffff);
+  --flow-node-text: var(--text-contrast-color);
 }
 
 .flow-node-surface.flow-node-color-success {
   --flow-node-fill: var(--success-color);
   --flow-node-border: var(--success-accent-color, var(--success-color));
-  --flow-node-text: var(--text-contrast-color, #ffffff);
+  --flow-node-text: var(--text-contrast-color);
 }
 
 .flow-node-surface.flow-node-color-warning {
   --flow-node-fill: var(--warning-color);
   --flow-node-border: var(--warning-accent-color, var(--warning-color));
-  --flow-node-text: var(--text-color, #0f172a);
+  --flow-node-text: var(--text-contrast-color, #ffffff);
 }
 
 .flow-node-surface.flow-node-color-error {
   --flow-node-fill: var(--error-color);
   --flow-node-border: var(--error-accent-color, var(--error-color));
-  --flow-node-text: var(--text-contrast-color, #ffffff);
+  --flow-node-text: var(--text-contrast-color);
 }
 
 .flow-node-surface.flow-node-color-neutral {
-  --flow-node-fill: var(--neutral-color, var(--text-muted, #64748b));
-  --flow-node-border: var(--neutral-accent-color, var(--neutral-color, var(--text-muted, #64748b)));
-  --flow-node-text: var(--text-contrast-color, #ffffff);
+  --flow-node-fill: var(--neutral-color);
+  --flow-node-border: var(--neutral-accent-color, var(--neutral-color));
+  --flow-node-text: var(--text-contrast-color);
 }
 
 .flow-node-surface.flow-node-color-surface {
@@ -453,7 +453,7 @@
 }
 
 .themed-flow .react-flow__node-editable:hover .flow-node-geometry {
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.18);
+  box-shadow: var(--shadow-lg);
 }
 
 .themed-flow .react-flow__node-editable:hover .flow-node-surface {
@@ -461,7 +461,7 @@
 }
 
 .themed-flow .react-flow__node-editable.selected .flow-node-geometry {
-  box-shadow: 0 0 0 3px var(--primary-color, #2563eb);
+  box-shadow: 0 0 0 3px var(--primary-color);
 }
 
 .themed-flow .react-flow__node-editable.selected .flow-node-surface {
@@ -547,3 +547,88 @@
 .flow-node-preview .flow-node-geometry::after {
   display: none;
 }
+
+/* ===== Group Node Styles (Subflows) - Override React Flow defaults ===== */
+
+/* React Flow's built-in group nodes with theme integration */
+.themed-flow .react-flow__node-group {
+  /* Simple transparent background using color-mix for modern browser support */
+  background-color: color-mix(in srgb, var(--surface-color), transparent 80%);
+  border: 2px dashed var(--border-color);
+  border-radius: var(--border-radius-md);
+  padding: 12px 16px;
+  transition: border-color 0.2s ease;
+  
+  /* Ensure text is visible */
+  color: var(--text-color);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-lg);
+}
+
+.themed-flow .react-flow__node-group:hover {
+  border-style: solid;
+  background-color: color-mix(in srgb, var(--surface-color), transparent 70%);
+}
+
+.themed-flow .react-flow__node-group.selected {
+  border-style: solid;
+  border-width: 3px;
+  box-shadow: 0 0 0 1px var(--primary-color);
+  background-color: color-mix(in srgb, var(--surface-color), transparent 60%);
+}
+
+/* Colored Group Variants - Simple background tints */
+.themed-flow .react-flow__node-group.flow-node-color-primary {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  background-color: color-mix(in srgb, var(--primary-color), transparent 90%);
+}
+
+.themed-flow .react-flow__node-group.flow-node-color-secondary {
+  border-color: var(--secondary-color);
+  color: var(--secondary-color);
+  background-color: color-mix(in srgb, var(--secondary-color), transparent 90%);
+}
+
+.themed-flow .react-flow__node-group.flow-node-color-tertiary {
+  border-color: var(--tertiary-color);
+  color: var(--tertiary-color);
+  background-color: color-mix(in srgb, var(--tertiary-color), transparent 90%);
+}
+
+.themed-flow .react-flow__node-group.flow-node-color-success {
+  border-color: var(--success-color);
+  color: var(--success-color);
+  background-color: color-mix(in srgb, var(--success-color), transparent 90%);
+}
+
+.themed-flow .react-flow__node-group.flow-node-color-warning {
+  border-color: var(--warning-color);
+  color: var(--warning-color);
+  background-color: color-mix(in srgb, var(--warning-color), transparent 90%);
+}
+
+.themed-flow .react-flow__node-group.flow-node-color-error {
+  border-color: var(--error-color);
+  color: var(--error-color);
+  background-color: color-mix(in srgb, var(--error-color), transparent 90%);
+}
+
+.themed-flow .react-flow__node-group.flow-node-color-neutral {
+  border-color: var(--neutral-color);
+  color: var(--neutral-color);
+  background-color: color-mix(in srgb, var(--neutral-color), transparent 90%);
+}
+
+.themed-flow .react-flow__node-group.flow-node-color-surface {
+  border-color: var(--border-color);
+  color: var(--text-color);
+  background-color: color-mix(in srgb, var(--surface-color), transparent 50%);
+}
+
+.themed-flow .react-flow__node-group.flow-node-color-background {
+  border-color: var(--border-color);
+  color: var(--text-color);
+  background-color: color-mix(in srgb, var(--background-color), transparent 50%);
+}
+

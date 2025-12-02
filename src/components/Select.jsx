@@ -1,5 +1,5 @@
 import React, { useEffect, useId, useRef, useState } from 'react';
-import { useEffectiveTheme, useTheme } from '@contexts/ThemeContext';
+import { useTheme } from '@contexts/ThemeContext';
 import Icon from './Icon';
 import Badge from './Badge';
 import './styles/Select.css';
@@ -47,7 +47,7 @@ export const Select = ({
     ...props
 }) => {
     const {currentTheme: globalTheme} = useTheme();
-    const effectiveTheme = useEffectiveTheme();
+    const effectiveTheme = useTheme();
 
     // Use theme prop if provided, otherwise use effective theme from context
     const selectTheme = theme || effectiveTheme.currentTheme;

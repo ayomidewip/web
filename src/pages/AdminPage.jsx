@@ -1600,7 +1600,7 @@ export const AdminPage = () => {
               <Typography as="h2" size="2xl" weight="semibold">
                 Cache Management
               </Typography>
-              <Typography size="sm" color="muted" marginTop="xs">
+              <Typography size="sm" marginTop="xs">
                 Manage cached data and view cleanup service status
               </Typography>
             </Container>
@@ -1640,7 +1640,7 @@ export const AdminPage = () => {
                 <Typography weight="semibold" size="sm" color="info">
                   Check Cleanup Status
                 </Typography>
-                <Typography size="sm" color="muted">
+                <Typography size="sm">
                   View the automated cleanup service configuration and statistics. Shows service status, 
                   next scheduled run, and historical cleanup data.
                 </Typography>
@@ -1649,7 +1649,7 @@ export const AdminPage = () => {
                 <Typography weight="semibold" size="sm" color="success">
                   Run Cleanup Now (Conservative)
                 </Typography>
-                <Typography size="sm" color="muted">
+                <Typography size="sm">
                   Manually trigger the conservative cleanup process that removes expired entries and temporary data. 
                   Safe operation that preserves valid cache data.
                 </Typography>
@@ -1658,7 +1658,7 @@ export const AdminPage = () => {
                 <Typography weight="semibold" size="sm" color="warning">
                   Clear All Cache Data (Emergency)
                 </Typography>
-                <Typography size="sm" color="muted">
+                <Typography size="sm">
                   Immediately removes ALL cached data using Redis flushAll(). Use for emergency situations, 
                   troubleshooting, or after major system updates.
                 </Typography>

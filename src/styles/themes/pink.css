@@ -41,7 +41,7 @@
   --border-color: #155946;
   --border-light: #f3f4f6;
   --text-color: #853251;
-  --text-contrast-color: #ecf3fe; /* Contrast text color matches surface color */
+  --text-contrast-color: #ecf3fe;
 
   /* Shadow System - Pink theme uses subtle pink-tinted shadows */
   --shadow-color: rgba(252, 15, 90, 0.315);

@@ -43,7 +43,7 @@ const STATUS_COLORS = ['primary', 'secondary', 'tertiary', 'success', 'warning',
 const BADGE_COLORS = ['default', ...STATUS_COLORS];
 const PROGRESS_COLORS = ['default', ...STATUS_COLORS];
 const TREEVIEW_COLORS = ['default', 'primary', 'secondary', 'tertiary', 'background'];
-const THEME_OVERRIDES = [null, 'modern', 'dark', 'minimal', 'vibrant', 'admin', 'pink', 'fancy'];
+const THEME_OVERRIDES = [null, 'modern', 'dark', 'minimal', 'vibrant', 'admin', 'pink'];
 const THEME_OPTION_LABELS = {
     null: 'Inherit Theme',
     modern: 'Modern',
@@ -51,8 +51,7 @@ const THEME_OPTION_LABELS = {
     minimal: 'Minimal',
     vibrant: 'Vibrant',
     admin: 'Admin',
-    pink: 'Pink',
-    fancy: 'Fancy'
+    pink: 'Pink'
 };
 const FAB_SIZES = STANDARD_SIZES; // ['xs', 'sm', 'md', 'lg', 'xl']
 const FAB_VARIANTS = STATUS_COLORS;
@@ -73,8 +72,8 @@ const createDataRowGenieConfig = (trigger = 'click') => ({
     content: (item) => (
         <Container layout="flex-column" gap="xs" padding="sm" width="220px">
             <Typography size="sm" weight="semibold">{item.name}</Typography>
-            <Typography size="xs" color="muted">{item.email}</Typography>
-            <Typography size="xs" color="muted">Role: {item.role}</Typography>
+            <Typography size="xs">{item.email}</Typography>
+            <Typography size="xs">Role: {item.role}</Typography>
             <Badge size="sm" color={item.status === 'Active' ? 'success' : 'warning'}>
                 {item.status}
             </Badge>
@@ -193,13 +192,13 @@ const COMPONENT_METADATA = {
                 type: 'select',
                 label: 'Font Weight',
                 group: 'Appearance',
-                options: ['light', 'normal', 'medium', 'semibold', 'bold']
+                options: ['light', 'normal', 'medium', 'semibold', 'bold', 'extrabold', 'black']
             },
             color: {
                 type: 'select',
                 label: 'Color',
                 group: 'Appearance',
-                options: ['default', 'primary', 'secondary', 'tertiary', 'success', 'warning', 'error', 'muted']
+                options: ['default', 'primary', 'secondary', 'tertiary', 'success', 'warning', 'error']
             },
             font: {
                 type: 'select',
@@ -380,7 +379,7 @@ const COMPONENT_METADATA = {
                 type: 'select',
                 label: 'Border Color',
                 group: 'Animation Config',
-                options: [null, 'primary', 'secondary', 'tertiary', 'success', 'warning', 'error', 'muted'],
+                options: [null, 'primary', 'secondary', 'tertiary', 'success', 'warning', 'error'],
                 optionLabels: { null: 'None' },
                 applyTo: ['focus']
             },
@@ -819,26 +818,42 @@ const COMPONENT_METADATA = {
     Card: {
         component: Card,
         defaultProps: {
-            children: 'Card content goes here',
             padding: 'lg',
             layout: 'block',
             gap: 'lg',
             columns: 1,
             align: 'start',
             justify: 'start',
-            wrap: true,
             hover: true,
+            elevation: 'md',
             backgroundColor: null,
             genie: createCardGenieConfig('click'),
             genieTrigger: 'click'
         },
         propConfigs: {
-            children: { type: 'text', label: 'Content', group: 'Content' },
             padding: {
                 type: 'select',
                 label: 'Padding',
                 group: 'Spacing',
                 options: COMMON_PADDING
+            },
+            elevation: {
+                type: 'select',
+                label: 'Elevation',
+                group: 'Appearance',
+                options: ['none', 'sm', 'md', 'lg', 'xl']
+            },
+            width: {
+                type: 'text',
+                label: 'Width',
+                group: 'Layout',
+                placeholder: 'e.g., fit-content, 300px'
+            },
+            height: {
+                type: 'text',
+                label: 'Height',
+                group: 'Layout',
+                placeholder: 'e.g., fit-content, 200px'
             },
             layout: {
                 type: 'select',
@@ -870,7 +885,6 @@ const COMPONENT_METADATA = {
                 group: 'Layout',
                 options: JUSTIFY_OPTIONS
             },
-            wrap: { type: 'boolean', label: 'Wrap Children (flex layouts)', group: 'Layout' },
             hover: { type: 'boolean', label: 'Enable Hover Effects', group: 'Appearance' },
             backgroundColor: {
                 type: 'select',
@@ -892,43 +906,25 @@ const COMPONENT_METADATA = {
     Container: {
         component: Container,
         defaultProps: {
-            children: 'Container content',
-            layout: 'block',
-            gap: 'lg',
-            padding: 'md',
-            columns: 1,
-            align: 'start',
-            justify: 'start',
-            wrap: true,
+            layout: 'flex',
+            align: 'center',
+            justify: 'center',
             backgroundColor: null,
             genie: createContainerGenieConfig('click'),
             genieTrigger: 'click'
         },
         propConfigs: {
-            children: { type: 'text', label: 'Content', group: 'Content' },
-            layout: {
-                type: 'select',
-                label: 'Layout Type',
+            width: {
+                type: 'text',
+                label: 'Width',
                 group: 'Layout',
-                options: COMMON_LAYOUTS
+                placeholder: 'e.g., 100%, 300px'
             },
-            gap: {
-                type: 'select',
-                label: 'Gap',
-                group: 'Spacing',
-                options: COMMON_GAPS
-            },
-            padding: {
-                type: 'select',
-                label: 'Padding',
-                group: 'Spacing',
-                options: COMMON_PADDING
-            },
-            columns: {
-                type: 'select',
-                label: 'Grid Columns',
+            height: {
+                type: 'text',
+                label: 'Height',
                 group: 'Layout',
-                options: [1, 2, 3, 4, 5, 6, 'auto']
+                placeholder: 'e.g., 100%, 200px'
             },
             align: {
                 type: 'select',
@@ -942,7 +938,13 @@ const COMPONENT_METADATA = {
                 group: 'Layout',
                 options: JUSTIFY_OPTIONS
             },
-            wrap: { type: 'boolean', label: 'Wrap Children (flex layouts)', group: 'Layout' },
+            backgroundColor: {
+                type: 'select',
+                label: 'Background Variant',
+                group: 'Appearance',
+                options: [null, 'surface', 'background', 'primary', 'secondary', 'tertiary', 'success', 'warning', 'error'],
+                optionLabels: { null: 'Theme Default' }
+            },
             genieTrigger: {
                 type: 'select',
                 label: 'Genie Trigger',
@@ -1382,13 +1384,26 @@ const COMPONENT_METADATA = {
         component: Flow,
         defaultProps: {
             nodes: [
-                // Column 1: Entry Point
+                // Backend Services Group (Subflow Container)
+                {
+                    id: 'backend-group',
+                    type: 'group',
+                    position: { x: 400, y: 100 },
+                    style: { width: 600, height: 450 },
+                    data: { 
+                        label: 'Backend Services', 
+                        color: 'primary',
+                        fontSize: 'lg',
+                        fontWeight: 'bold'
+                    }
+                },
+                // Entry Point
                 {
                     id: 'start',
                     type: 'editable',
-                    position: { x: 50, y: 300 },
+                    position: { x: 50, y: 200 },
                     data: { 
-                        label: 'User Request', 
+                        label: 'Client Request', 
                         shape: 'circle', 
                         color: 'success',
                         fontSize: 'md',
@@ -1396,11 +1411,13 @@ const COMPONENT_METADATA = {
                         textAlign: 'center'
                     }
                 },
-                // Column 2: API Gateway
+                // Nodes inside Backend Group (positions are relative to group)
                 {
                     id: 'gateway',
                     type: 'editable',
-                    position: { x: 320, y: 280 },
+                    position: { x: 30, y: 80 },
+                    parentId: 'backend-group',
+                    extent: 'parent',
                     data: { 
                         label: 'API Gateway', 
                         shape: 'rectangle', 
@@ -1410,41 +1427,29 @@ const COMPONENT_METADATA = {
                         textAlign: 'center'
                     }
                 },
-                // Column 3: Authentication Decision
                 {
                     id: 'auth',
                     type: 'editable',
-                    position: { x: 610, y: 290 },
+                    position: { x: 230, y: 80 },
+                    parentId: 'backend-group',
+                    extent: 'parent',
                     data: { 
-                        label: 'Authenticated?', 
-                        shape: 'diamond', 
+                        label: 'Auth Service', 
+                        shape: 'rectangle', 
                         color: 'warning',
                         fontSize: 'sm',
                         fontWeight: 'medium',
                         textAlign: 'center'
                     }
                 },
-                // Error branch (top)
                 {
-                    id: 'auth-fail',
+                    id: 'business-logic',
                     type: 'editable',
-                    position: { x: 630, y: 80 },
+                    position: { x: 430, y: 80 },
+                    parentId: 'backend-group',
+                    extent: 'parent',
                     data: { 
-                        label: '401 Error', 
-                        shape: 'circle', 
-                        color: 'error',
-                        fontSize: 'sm',
-                        fontWeight: 'bold',
-                        textAlign: 'center'
-                    }
-                },
-                // Column 4: Database Query (main path)
-                {
-                    id: 'query',
-                    type: 'editable',
-                    position: { x: 920, y: 280 },
-                    data: { 
-                        label: 'Fetch Data', 
+                        label: 'Business Logic', 
                         shape: 'rectangle', 
                         color: 'secondary',
                         fontSize: 'sm',
@@ -1452,111 +1457,28 @@ const COMPONENT_METADATA = {
                         textAlign: 'center'
                     }
                 },
-                // Database (directly below)
                 {
                     id: 'database',
                     type: 'editable',
-                    position: { x: 920, y: 480 },
+                    position: { x: 230, y: 280 },
+                    parentId: 'backend-group',
+                    extent: 'parent',
                     data: { 
                         label: 'Database', 
                         shape: 'cylinder', 
                         color: 'tertiary',
-                        fontSize: 'lg',
-                        fontWeight: 'extrabold',
-                        textAlign: 'center'
-                    }
-                },
-                // Column 5: Business Logic
-                {
-                    id: 'process',
-                    type: 'editable',
-                    position: { x: 1220, y: 280 },
-                    data: { 
-                        label: 'Process Logic', 
-                        shape: 'rectangle', 
-                        color: 'primary',
-                        fontSize: 'md',
-                        fontWeight: 'semibold',
-                        textAlign: 'center'
-                    }
-                },
-                // Column 6: Validation Decision
-                {
-                    id: 'validate',
-                    type: 'editable',
-                    position: { x: 1520, y: 290 },
-                    data: { 
-                        label: 'Valid Data?', 
-                        shape: 'diamond', 
-                        color: 'warning',
-                        fontSize: 'sm',
-                        fontWeight: 'medium',
-                        textAlign: 'center'
-                    }
-                },
-                // Error branch (top)
-                {
-                    id: 'validation-fail',
-                    type: 'editable',
-                    position: { x: 1540, y: 80 },
-                    data: { 
-                        label: '400 Error', 
-                        shape: 'circle', 
-                        color: 'error',
-                        fontSize: 'sm',
-                        fontWeight: 'bold',
-                        textAlign: 'center'
-                    }
-                },
-                // Column 7: Cache Update (main path)
-                {
-                    id: 'cache-update',
-                    type: 'editable',
-                    position: { x: 1830, y: 280 },
-                    data: { 
-                        label: 'Update Cache', 
-                        shape: 'rectangle', 
-                        color: 'primary',
-                        fontSize: 'sm',
-                        fontWeight: 'medium',
-                        textAlign: 'center'
-                    }
-                },
-                // Redis (directly below)
-                {
-                    id: 'cache',
-                    type: 'editable',
-                    position: { x: 1830, y: 480 },
-                    data: { 
-                        label: 'Redis', 
-                        shape: 'cylinder', 
-                        color: 'secondary',
                         fontSize: 'md',
                         fontWeight: 'bold',
                         textAlign: 'center'
                     }
                 },
-                // Column 8: Success Response
+                // External nodes
                 {
                     id: 'response',
                     type: 'editable',
-                    position: { x: 2130, y: 280 },
+                    position: { x: 1150, y: 200 },
                     data: { 
-                        label: 'Send Response', 
-                        shape: 'rectangle', 
-                        color: 'primary',
-                        fontSize: 'md',
-                        fontWeight: 'semibold',
-                        textAlign: 'center'
-                    }
-                },
-                // Column 9: End Point
-                {
-                    id: 'success',
-                    type: 'editable',
-                    position: { x: 2430, y: 300 },
-                    data: { 
-                        label: '200 OK', 
+                        label: 'Response', 
                         shape: 'circle', 
                         color: 'success',
                         fontSize: 'md',
@@ -1566,188 +1488,77 @@ const COMPONENT_METADATA = {
                 }
             ],
             edges: [
-                // Main flow path (left to right)
+                // External to group
                 { 
                     id: 'e-start-gateway', 
                     source: 'start', 
                     target: 'gateway',
                     sourceHandle: 'right-source',
                     targetHandle: 'left-target',
-                    label: 'POST /api/data',
+                    label: 'HTTP Request',
                     type: 'default', 
                     animated: true,
                     data: { color: 'primary' },
                     markerEnd: { type: 'arrowclosed' }
                 },
+                // Internal group connections
                 { 
                     id: 'e-gateway-auth', 
                     source: 'gateway', 
                     target: 'auth',
                     sourceHandle: 'right-source',
                     targetHandle: 'left-target',
-                    label: 'Check JWT',
                     type: 'default', 
                     animated: true,
                     data: { color: 'primary' },
                     markerEnd: { type: 'arrowclosed' }
                 },
-                // Auth failure branch (up)
                 { 
-                    id: 'e-auth-fail', 
+                    id: 'e-auth-logic', 
                     source: 'auth', 
-                    target: 'auth-fail',
-                    sourceHandle: 'top-source',
-                    targetHandle: 'bottom-target',
-                    label: 'No',
-                    type: 'default', 
-                    animated: false,
-                    data: { color: 'error' },
-                    style: { strokeWidth: 2 },
-                    markerEnd: { type: 'arrowclosed' }
-                },
-                // Auth success to query
-                { 
-                    id: 'e-auth-query', 
-                    source: 'auth', 
-                    target: 'query',
+                    target: 'business-logic',
                     sourceHandle: 'right-source',
                     targetHandle: 'left-target',
-                    label: 'Yes',
                     type: 'default', 
                     animated: true,
                     data: { color: 'success' },
                     markerEnd: { type: 'arrowclosed' }
                 },
-                // Database interaction (bidirectional with offset paths)
                 { 
-                    id: 'e-query-db', 
-                    source: 'query', 
+                    id: 'e-logic-db', 
+                    source: 'business-logic', 
                     target: 'database',
                     sourceHandle: 'bottom-source',
-                    targetHandle: 'left-target',
-                    label: 'SELECT',
+                    targetHandle: 'top-target',
+                    label: 'Query',
                     type: 'default', 
-                    animated: false,
+                    animated: true,
                     data: { color: 'secondary' },
-                    style: { strokeWidth: 2 },
                     markerEnd: { type: 'arrowclosed' }
                 },
                 { 
-                    id: 'e-db-query', 
+                    id: 'e-db-logic', 
                     source: 'database', 
-                    target: 'query',
+                    target: 'business-logic',
                     sourceHandle: 'right-source',
                     targetHandle: 'bottom-target',
-                    label: 'Results',
+                    label: 'Data',
                     type: 'default', 
-                    animated: false,
+                    animated: true,
                     data: { color: 'tertiary' },
                     markerEnd: { type: 'arrowclosed' }
                 },
-                // Query to process
+                // Group to external
                 { 
-                    id: 'e-query-process', 
-                    source: 'query', 
-                    target: 'process',
-                    sourceHandle: 'right-source',
-                    targetHandle: 'left-target',
-                    label: 'Transform',
-                    type: 'default', 
-                    animated: true,
-                    data: { color: 'primary' },
-                    markerEnd: { type: 'arrowclosed' }
-                },
-                // Process to validate
-                { 
-                    id: 'e-process-validate', 
-                    source: 'process', 
-                    target: 'validate',
-                    sourceHandle: 'right-source',
-                    targetHandle: 'left-target',
-                    label: 'Check Rules',
-                    type: 'default', 
-                    animated: true,
-                    data: { color: 'primary' },
-                    markerEnd: { type: 'arrowclosed' }
-                },
-                // Validation failure branch (up)
-                { 
-                    id: 'e-validate-fail', 
-                    source: 'validate', 
-                    target: 'validation-fail',
-                    sourceHandle: 'top-source',
-                    targetHandle: 'bottom-target',
-                    label: 'No',
-                    type: 'default', 
-                    animated: false,
-                    data: { color: 'error' },
-                    style: { strokeWidth: 2 },
-                    markerEnd: { type: 'arrowclosed' }
-                },
-                // Validation success to cache
-                { 
-                    id: 'e-validate-cache', 
-                    source: 'validate', 
-                    target: 'cache-update',
-                    sourceHandle: 'right-source',
-                    targetHandle: 'left-target',
-                    label: 'Yes',
-                    type: 'default', 
-                    animated: true,
-                    data: { color: 'success' },
-                    markerEnd: { type: 'arrowclosed' }
-                },
-                // Cache interaction (bidirectional with offset paths)
-                { 
-                    id: 'e-cache-redis', 
-                    source: 'cache-update', 
-                    target: 'cache',
-                    sourceHandle: 'bottom-source',
-                    targetHandle: 'left-target',
-                    label: 'SET key',
-                    type: 'default', 
-                    animated: false,
-                    data: { color: 'primary' },
-                    style: { strokeWidth: 2 },
-                    markerEnd: { type: 'arrowclosed' }
-                },
-                { 
-                    id: 'e-redis-cache', 
-                    source: 'cache', 
-                    target: 'cache-update',
-                    sourceHandle: 'right-source',
-                    targetHandle: 'bottom-target',
-                    label: 'OK',
-                    type: 'default', 
-                    animated: false,
-                    data: { color: 'secondary' },
-                    markerEnd: { type: 'arrowclosed' }
-                },
-                // Cache to response
-                { 
-                    id: 'e-cache-response', 
-                    source: 'cache-update', 
+                    id: 'e-logic-response', 
+                    source: 'business-logic', 
                     target: 'response',
                     sourceHandle: 'right-source',
                     targetHandle: 'left-target',
-                    label: 'Format JSON',
-                    type: 'default', 
-                    animated: true,
-                    data: { color: 'primary' },
-                    markerEnd: { type: 'arrowclosed' }
-                },
-                // Response to success
-                { 
-                    id: 'e-response-success', 
-                    source: 'response', 
-                    target: 'success',
-                    sourceHandle: 'right-source',
-                    targetHandle: 'left-target',
-                    label: 'Complete',
+                    label: 'Success',
                     type: 'default', 
                     animated: true,
                     data: { color: 'success' },
-                    style: { strokeWidth: 3 },
                     markerEnd: { type: 'arrowclosed' }
                 }
             ],
@@ -1760,7 +1571,7 @@ const COMPONENT_METADATA = {
             pannable: false,
             selectable: true,
             enableNodeCreation: false,
-            nodeCreationKey: 'shift',
+            nodeCreationKey: 'ctrl',
             defaultNodeData: {
                 label: 'New Node',
                 color: 'primary',
@@ -1792,9 +1603,8 @@ const COMPONENT_METADATA = {
                 type: 'select',
                 label: 'Node Creation Key',
                 group: 'Interaction',
-                options: ['shift', 'ctrl', 'alt', 'none'],
+                options: ['ctrl', 'alt', 'none'],
                 optionLabels: {
-                    'shift': 'Shift + Click',
                     'ctrl': 'Ctrl/Cmd + Click',
                     'alt': 'Alt + Click',
                     'none': 'Click Only'
@@ -1829,7 +1639,7 @@ const COMPONENT_METADATA = {
                 }
             }
         },
-        description: 'Interactive flow diagrams with React Flow - draggable, zoomable, connectable nodes with right-click Genie editing for shapes, colors, and typography (font size, weight, alignment)'
+        description: 'Interactive flow diagrams with React Flow - draggable, zoomable, connectable nodes. Features:\n\n• Right-click nodes to edit: label, color, shape, type, font size/weight/align\n• Right-click edges to customize: type, color, width, animation, labels\n• Double-click nodes for quick label editing\n• Create subflows: Right-click a node → Set "Node Type" to "Group (Subflow)" → Then assign other nodes as children by selecting a parent in their menu\n• Ctrl+Click to add new nodes (when enabled)\n• Drag nodes to reposition, connect handles to create edges\n\nSubflow Demo: The "Backend Services" group contains Auth, API Gateway, Business Logic, and Database nodes. Child nodes are constrained within parent bounds and can be edited independently.'
     },
 
     FloatingActionButton: {
@@ -1841,7 +1651,6 @@ const COMPONENT_METADATA = {
             position: 'bottom-right',
             disabled: false,
             draggable: false,
-            iconSize: null,
             badge: null,
             snapToEdges: true,
             snapThreshold: 100,
@@ -1878,13 +1687,6 @@ const COMPONENT_METADATA = {
             },
             disabled: { type: 'boolean', label: 'Disabled', group: 'State' },
             draggable: { type: 'boolean', label: 'Draggable', group: 'Behavior' },
-            iconSize: {
-                type: 'select',
-                label: 'Icon Size Override',
-                group: 'Appearance',
-                options: [null, 'xs', 'sm', 'md', 'lg', 'xl', '2xl'],
-                optionLabels: { null: 'Auto (based on button size)' }
-            },
             badge: {
                 type: 'text',
                 label: 'Badge Text',
@@ -2738,7 +2540,7 @@ const ComponentDemoRefactoredNew = () => {
                     }}
                 >
                     <Container padding="none" width="100%">
-                        <Typography size="sm" color="muted">
+                        <Typography size="sm">
                             FAB is positioned relative to this container
                         </Typography>
                     </Container>
@@ -2751,7 +2553,7 @@ const ComponentDemoRefactoredNew = () => {
 
         if (selectedComponent === 'Card') {
             // Extract layout-related props from componentProps
-            const { layout, gap, align, justify, columns, wrap, padding, elevation, backgroundColor, children, ...restProps } = effectiveProps;
+            const { layout, gap, align, justify, columns, padding, elevation, backgroundColor, children, ...restProps } = effectiveProps;
             
             return (
                 <ComponentToRender
@@ -2760,80 +2562,43 @@ const ComponentDemoRefactoredNew = () => {
                     align={align}
                     justify={justify}
                     columns={columns}
-                    wrap={wrap}
                     padding={padding}
                     elevation={elevation}
                     backgroundColor={backgroundColor}
-                    width="100%"
-                    minHeight="300px"
+                    width="fit-content"
+                    height="fit-content"
                     {...restProps}
                 >
-                    {/* Card with natural width (no width prop) */}
-                    <Card padding="sm" elevation="sm" backgroundColor="surface">
-                        <Typography size="xs" weight="semibold" color="primary">
-                            Natural Width
-                        </Typography>
-                        <Typography size="xl" weight="bold">1,234</Typography>
-                        <Typography size="xs" color="muted">No width set</Typography>
+                    <Card padding="md" backgroundColor="primary">
+                        <Typography weight="bold" color="white">Primary</Typography>
+                    </Card>
+                    
+                    <Card padding="md" backgroundColor="secondary">
+                        <Typography weight="bold" color="white">Secondary</Typography>
                     </Card>
 
-                    {/* Card with flexFill (stretches to fill available space) */}
-                    <Card padding="sm" elevation="sm" backgroundColor="surface" flexFill>
-                        <Typography size="xs" weight="semibold" color="success">
-                            With flexFill
-                        </Typography>
-                        <Typography size="xl" weight="bold">98%</Typography>
-                        <Typography size="xs" color="muted">Stretches to fill</Typography>
+                    <Card padding="md" backgroundColor="tertiary">
+                        <Typography weight="bold" color="white">Tertiary</Typography>
                     </Card>
 
-                    {/* Card with fixed width */}
-                    <Card padding="sm" elevation="sm" backgroundColor="surface" width="200px">
-                        <Typography size="xs" weight="semibold" color="warning">
-                            Fixed Width
-                        </Typography>
-                        <Typography size="xl" weight="bold">200px</Typography>
-                        <Typography size="xs" color="muted">width="200px"</Typography>
+                    <Card padding="md" backgroundColor="success">
+                        <Typography weight="bold" color="white">Success</Typography>
                     </Card>
 
-                    {/* Card with minWidth */}
-                    <Card padding="sm" elevation="sm" backgroundColor="surface" minWidth="150px">
-                        <Typography size="xs" weight="semibold" color="error">
-                            Min Width
-                        </Typography>
-                        <Typography size="xl" weight="bold">150px+</Typography>
-                        <Typography size="xs" color="muted">minWidth="150px"</Typography>
+                    <Card padding="md" backgroundColor="warning">
+                        <Typography weight="bold" color="white">Warning</Typography>
                     </Card>
 
-                    {/* Card with maxWidth */}
-                    <Card padding="sm" elevation="sm" backgroundColor="surface" maxWidth="180px">
-                        <Typography size="xs" weight="semibold" color="tertiary">
-                            Max Width
-                        </Typography>
-                        <Typography size="xl" weight="bold">≤180px</Typography>
-                        <Typography size="xs" color="muted">maxWidth="180px"</Typography>
+                    <Card padding="md" backgroundColor="error">
+                        <Typography weight="bold" color="white">Error</Typography>
                     </Card>
 
-                    {/* Card demonstrating padding variations */}
-                    <Card padding="xs" elevation="sm" backgroundColor="surface">
-                        <Typography size="xs" weight="semibold">XS Padding</Typography>
-                        <Typography size="xs" color="muted">padding="xs"</Typography>
+                    <Card padding="md" backgroundColor="surface">
+                        <Typography weight="bold">Surface</Typography>
                     </Card>
 
-                    {/* Card demonstrating elevation */}
-                    <Card padding="sm" elevation="lg" backgroundColor="surface">
-                        <Typography size="xs" weight="semibold">High Elevation</Typography>
-                        <Typography size="xs" color="muted">elevation="lg"</Typography>
-                    </Card>
-
-                    {/* Summary card with flexFill and nested content */}
-                    <Card padding="md" elevation="sm" backgroundColor="surface" layout="flex-column" gap="xs" flexFill>
-                        <Typography size="sm" weight="semibold">Summary Card (flexFill)</Typography>
-                        <Typography size="xs">Demonstrates flexFill with nested badges and content that adapts to parent layout.</Typography>
-                        <Container layout="flex" gap="xs" wrap>
-                            <Badge size="sm" color="success">Active</Badge>
-                            <Badge size="sm" color="primary">Featured</Badge>
-                            <Badge size="sm" color="warning">Updated</Badge>
-                        </Container>
+                    <Card padding="md" backgroundColor="background">
+                        <Typography weight="bold">Background</Typography>
                     </Card>
                 </ComponentToRender>
             );
@@ -2841,124 +2606,27 @@ const ComponentDemoRefactoredNew = () => {
 
         if (selectedComponent === 'Container') {
             // Extract layout-related props from componentProps
-            const { layout, gap, align, justify, columns, wrap, padding, backgroundColor, children, ...restProps } = effectiveProps;
+            const { layout, align, justify, backgroundColor, children, width, height, ...restProps } = effectiveProps;
             
             return (
                 <ComponentToRender
                     layout={layout}
-                    gap={gap}
                     align={align}
                     justify={justify}
-                    columns={columns}
-                    wrap={wrap}
-                    padding={padding}
                     backgroundColor={backgroundColor}
-                    width="100%"
-                    minHeight="300px"
+                    width={width || "300px"}
+                    height={height || "200px"}
                     style={{
-                        border: '2px solid var(--border-color)',
+                        border: '1px dashed var(--border-color)',
                         borderRadius: 'var(--border-radius)'
                     }}
                     {...restProps}
                 >
-                    {/* Nested containers and content demonstrating layout capabilities */}
-                    <Container 
-                        padding="md" 
-                        backgroundColor="surface"
-                        style={{
-                            border: '1px solid var(--border-color)',
-                            borderRadius: 'var(--border-radius-sm)'
-                        }}
-                    >
-                        <Container layout="flex-column" gap="xs" padding="none">
-                            <Typography size="sm" weight="semibold" color="primary">
-                                Content Block 1
-                            </Typography>
-                            <Typography size="xs">Adapts to parent layout</Typography>
-                        </Container>
-                    </Container>
-
-                    <Container 
-                        padding="md" 
-                        backgroundColor="surface"
-                        style={{
-                            border: '1px solid var(--border-color)',
-                            borderRadius: 'var(--border-radius-sm)'
-                        }}
-                    >
-                        <Container layout="flex-column" gap="xs" padding="none">
-                            <Typography size="sm" weight="semibold" color="secondary">
-                                Content Block 2
-                            </Typography>
-                            <Typography size="xs">Responds to gap</Typography>
-                        </Container>
-                    </Container>
-
-                    <Container 
-                        padding="md" 
-                        backgroundColor="surface"
-                        style={{
-                            border: '1px solid var(--border-color)',
-                            borderRadius: 'var(--border-radius-sm)'
-                        }}
-                    >
-                        <Container layout="flex-column" gap="xs" padding="none">
-                            <Typography size="sm" weight="semibold" color="tertiary">
-                                Content Block 3
-                            </Typography>
-                            <Typography size="xs">Follows justify rules</Typography>
-                        </Container>
-                    </Container>
-
-                    <Container 
-                        padding="md" 
-                        backgroundColor="surface"
-                        style={{
-                            border: '1px solid var(--border-color)',
-                            borderRadius: 'var(--border-radius-sm)'
-                        }}
-                    >
-                        <Container layout="flex-column" gap="xs" padding="none">
-                            <Typography size="sm" weight="semibold" color="success">
-                                Content Block 4
-                            </Typography>
-                            <Typography size="xs">Aligns as configured</Typography>
-                        </Container>
-                    </Container>
-
-                    <Container 
-                        padding="md" 
-                        backgroundColor="surface"
-                        layout="flex" 
-                        gap="xs"
-                        wrap
-                        style={{
-                            border: '1px solid var(--border-color)',
-                            borderRadius: 'var(--border-radius-sm)'
-                        }}
-                    >
-                        <Badge size="sm" color="primary">Tag 1</Badge>
-                        <Badge size="sm" color="secondary">Tag 2</Badge>
-                        <Badge size="sm" color="tertiary">Tag 3</Badge>
-                        <Badge size="sm" color="success">Tag 4</Badge>
-                    </Container>
-
-                    <Container 
-                        padding="md" 
-                        backgroundColor="surface"
-                        layout="flex-column"
-                        gap="xs"
-                        style={{
-                            border: '1px solid var(--border-color)',
-                            borderRadius: 'var(--border-radius-sm)'
-                        }}
-                    >
-                        <Typography size="xs" weight="semibold">Action Items</Typography>
-                        <Container layout="flex" gap="xs" wrap>
-                            <Button size="xs" color="primary">Action</Button>
-                            <Button size="xs" color="secondary" variant="outline">Cancel</Button>
-                        </Container>
-                    </Container>
+                    <Typography color="muted" align="center" size="sm">
+                        Invisible Container
+                        <br/>
+                        (Borders added for visibility)
+                    </Typography>
                 </ComponentToRender>
             );
         }
@@ -3037,7 +2705,7 @@ const ComponentDemoRefactoredNew = () => {
                                         width="fit-content"
                                         maxWidth="320px"
                                     >
-                                        <Typography size="xs" weight="semibold" color="muted">
+                                        <Typography size="xs" weight="semibold">
                                             Current Props (JSX)
                                         </Typography>
                                         <Typography
@@ -3081,7 +2749,7 @@ const ComponentDemoRefactoredNew = () => {
                                 {metadata && propEntries.length > 0 ? (
                                     propEntries.map(([propName, config]) => renderPropControl(propName, config))
                                 ) : (
-                                    <Typography size="sm" color="muted">
+                                    <Typography size="sm">
                                         No configurable props for this component.
                                     </Typography>
                                 )}

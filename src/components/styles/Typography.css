@@ -540,7 +540,7 @@
     right: 0;
     bottom: 0;
     background-image: var(--typography-gradient-definition, linear-gradient(90deg, var(--primary-color), var(--secondary-accent-color)));
-    background-size: 300% 100%;
+    background-size: 400% 100%;
     animation: typography-gradient var(--typography-animation-duration, 2000ms) linear infinite;
     border-radius: inherit;
     z-index: 0;
@@ -567,7 +567,7 @@
     position: relative;
     z-index: 2;
     background-image: var(--typography-gradient-definition, linear-gradient(90deg, var(--primary-color), var(--secondary-accent-color)));
-    background-size: 300% 100%;
+    background-size: 400% 100%;
     background-clip: text;
     -webkit-background-clip: text;
     color: transparent;
@@ -589,7 +589,7 @@
     position: relative;
     display: inline-block;
     background-image: linear-gradient(120deg, var(--typography-shiny-color, var(--text-color)) 40%, rgba(255, 255, 255, 0.8) 50%, var(--typography-shiny-color, var(--text-color)) 60%);
-    background-size: 200% 100%;
+    background-size: 300% 100%;
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -611,7 +611,7 @@
         background-position: 100%;
     }
     100% {
-        background-position: -100%;
+        background-position: 0%;
     }
 }
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useId, useRef, useState } from 'react';
-import { useEffectiveTheme, useTheme } from '@contexts/ThemeContext';
+import { useTheme } from '@contexts/ThemeContext';
 import Icon from './Icon';
 
 const INPUT_VALIDATION_STATES = new Set(['default', 'success', 'warning', 'error']);
@@ -51,7 +51,7 @@ export const Input = ({
     ...props
 }) => {
     const {currentTheme: globalTheme} = useTheme();
-    const effectiveTheme = useEffectiveTheme();
+    const effectiveTheme = useTheme();
 
     // Use theme prop if provided, otherwise use effective theme from context
     const inputTheme = theme || effectiveTheme.currentTheme;
@@ -489,7 +489,7 @@ export const Input = ({
                     className={`input-field-wrapper ${effectiveIcon ? `has-icon has-icon-${effectiveIconPosition}` : ''} ${getStateClasses()} ${getColorClass()}`}>
                     {effectiveIcon && effectiveIconPosition === 'left' && (
                         <span className="input-icon input-icon-left">
-              <Icon name={effectiveIcon} color="muted" size="sm"/>
+              <Icon name={effectiveIcon} size="sm"/>
             </span>
                     )}
                     {renderInput()}
@@ -503,7 +503,7 @@ export const Input = ({
                     </label>
                     {effectiveIcon && effectiveIconPosition === 'right' && (
                         <span className="input-icon input-icon-right">
-              <Icon name={effectiveIcon} color="muted" size="sm"/>
+              <Icon name={effectiveIcon} size="sm"/>
             </span>
                     )}
                     {isPasswordType && (
@@ -516,7 +516,7 @@ export const Input = ({
                             title={`${showPassword ? 'Hide' : 'Show'} password (Ctrl+Shift+P)`}
                             tabIndex={0}
                         >
-                            <Icon name={showPassword ? 'FiEyeOff' : 'FiEye'} color="muted" size="sm"/>
+                            <Icon name={showPassword ? 'FiEyeOff' : 'FiEye'} size="sm"/>
                         </button>
                     )}
                 </div>
@@ -581,13 +581,13 @@ export const Input = ({
                 className={`input-field-wrapper ${effectiveIcon ? `has-icon has-icon-${effectiveIconPosition}` : ''} ${getStateClasses()} ${getColorClass()}`}>
                 {effectiveIcon && effectiveIconPosition === 'left' && (
                     <span className="input-icon input-icon-left">
-            <Icon name={effectiveIcon} color="muted" size="sm"/>
+            <Icon name={effectiveIcon} size="sm"/>
           </span>
                 )}
                 {renderInput()}
                                 {effectiveIcon && effectiveIconPosition === 'right' && (
                                         <span className="input-icon input-icon-right">
-                        <Icon name={effectiveIcon} color="muted" size="sm"/>
+                        <Icon name={effectiveIcon} size="sm"/>
                     </span>
                                 )}
                                 {isPasswordType && (
@@ -600,7 +600,7 @@ export const Input = ({
                     title={`${showPassword ? 'Hide' : 'Show'} password (Ctrl+Shift+P)`}
                     tabIndex={0}
                 >
-                    <Icon name={showPassword ? 'FiEyeOff' : 'FiEye'} color="muted" size="sm"/>
+                    <Icon name={showPassword ? 'FiEyeOff' : 'FiEye'} size="sm"/>
                 </button>)}
             </div>
             {(getEffectiveHelpText() || helpText) && (

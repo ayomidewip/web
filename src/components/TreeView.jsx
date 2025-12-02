@@ -1,5 +1,5 @@
 import React, { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useEffectiveTheme, useTheme } from '@contexts/ThemeContext';
+import { useTheme } from '@contexts/ThemeContext';
 import { Icon } from './Icon';
 import Input from './Input';
 import { useGeniePortal } from './Genie';
@@ -333,7 +333,7 @@ export const TreeView = forwardRef(({
     ...props
 }, ref) => {
     const {currentTheme: globalTheme} = useTheme();
-    const effectiveTheme = useEffectiveTheme();
+    const effectiveTheme = useTheme();
 
     // Use theme prop if provided, otherwise use effective theme from context
     const treeViewTheme = theme || effectiveTheme.currentTheme;
@@ -460,21 +460,16 @@ export const TreeView = forwardRef(({
     ].filter(Boolean).join(' ');
 
     // Determine icon size based on size prop if not explicitly set
-    const sizeToIconSize = {
+    // TreeView icons look better when slightly smaller than the text
+    const treeSizeToIconSize = {
         xs: 'xs',
-        sm: 'sm',
-        md: 'md',
-        lg: 'lg',
-        xl: 'xl'
+        sm: 'xs',
+        md: 'sm',
+        lg: 'md',
+        xl: 'lg'
     };
 
-    const legacySizeToIconSize = {
-        small: 'sm',
-        default: 'md',
-        large: 'lg'
-    };
-
-    const resolvedIconSize = iconSize || sizeToIconSize[normalizedSize] || legacySizeToIconSize[providedSize] || 'md';
+    const resolvedIconSize = iconSize || treeSizeToIconSize[normalizedSize] || 'sm';
 
     // Flatten tree for search functionality
     const flattenTree = useCallback((nodes, level = 0, parentPath = []) => {

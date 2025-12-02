@@ -113,6 +113,7 @@ export const SignupPage = () => {
 
                         {/* Signup Form */}
                         <Container
+                          as="form"
                           layout="flex-column"
                           gap="md"
                           align="center"
@@ -133,6 +134,7 @@ export const SignupPage = () => {
                                     onChange={handleInputChange}
                                     required
                                     icon="FaUser"
+                                    autoComplete="given-name"
                                 />
 
                                 <Input
@@ -144,6 +146,7 @@ export const SignupPage = () => {
                                     onChange={handleInputChange}
                                     required
                                     icon="FaUser"
+                                    autoComplete="family-name"
                                 />
 
                                 {/* Username and Email */}
@@ -156,6 +159,7 @@ export const SignupPage = () => {
                                     onChange={handleInputChange}
                                     required
                                     icon="FaAt"
+                                    autoComplete="username"
                                 />
 
                                 <Input
@@ -167,6 +171,7 @@ export const SignupPage = () => {
                                     onChange={handleInputChange}
                                     required
                                     icon="FaEnvelope"
+                                    autoComplete="email"
                                 />
                             </Container>
                               {/* Role Selection */}
@@ -192,6 +197,7 @@ export const SignupPage = () => {
                                 onChange={handleInputChange}
                                 required
                                 icon="FaLock"
+                                autoComplete="new-password"
                             />
 
                             <Input
@@ -204,6 +210,7 @@ export const SignupPage = () => {
                                 required
                                 icon="FaLock"
                                 confirmField={formData.password}
+                                autoComplete="new-password"
                             />
                             </Container>
 
@@ -229,8 +236,8 @@ export const SignupPage = () => {
                         </Container>
 
                         {/* Switch to Login */}
-                        <Container layout="flex" align="center" gap="sm">
-                            <Typography size="sm" color="muted">
+                        <Container layout="flex" justify="center" gap="sm">
+                            <Typography size="sm">
                                 Already have an account?
                             </Typography>
                             <Button

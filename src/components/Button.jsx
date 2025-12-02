@@ -1,5 +1,5 @@
 import React, { createContext, forwardRef, useContext, useMemo, useRef } from 'react';
-import { useEffectiveTheme, useTheme } from '@contexts/ThemeContext';
+import { useTheme } from '@contexts/ThemeContext';
 import { useGeniePortal } from './Genie';
 
 const BUTTON_COLOR_TOKENS = {
@@ -13,6 +13,9 @@ const BUTTON_COLOR_TOKENS = {
 
 // Context for ButtonGroup to manage selection
 export const ButtonGroupContext = createContext(null);
+
+// Context for Button to share state with children (like Icon)
+export const ButtonContext = createContext(null);
 
 /**
  * Button - Enhanced themed button component with Genie integration
@@ -54,10 +57,8 @@ export const Button = forwardRef(({
     ...props
 }, ref) => {
     const {currentTheme: globalTheme} = useTheme();
-    const effectiveTheme = useEffectiveTheme();
-
     // Use theme prop if provided, otherwise use effective theme from context
-    const buttonTheme = theme || effectiveTheme.currentTheme;
+    const buttonTheme = theme || globalTheme;
 
     // Helper function to convert margin prop to CSS style
     const getMarginStyle = () => {
@@ -179,21 +180,7 @@ export const Button = forwardRef(({
         return BUTTON_COLOR_TOKENS[color] || color || BUTTON_COLOR_TOKENS.primary;
     };
 
-    const getSizeClass = () => {
-        switch (size) {
-            case 'xs':
-                return 'xs';
-            case 'sm':
-                return 'sm';
-            case 'lg':
-                return 'lg';
-            case 'xl':
-                return 'xl';
-            case 'md':
-            default:
-                return 'md';
-        }
-    };
+    const getSizeClass = () => ['xs', 'sm', 'lg', 'xl'].includes(size) ? size : 'md';
 
     const getSelectedClass = () => {
         return isSelected ? 'selected' : '';
@@ -209,7 +196,7 @@ export const Button = forwardRef(({
     const variantColorValue = getVariantColorValue();
 
     return (
-        <>
+        <ButtonContext.Provider value={{ size }}>
             <button
                 ref={buttonRef}
                 type={type}
@@ -228,7 +215,7 @@ export const Button = forwardRef(({
             </button>
             {/* Genie Integration using Portal */}
             {GeniePortal}
-        </>
+        </ButtonContext.Provider>
     );
 });
 

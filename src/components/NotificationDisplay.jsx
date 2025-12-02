@@ -99,12 +99,11 @@ export const NotificationDisplay = ({
                             backgroundColor: `var(--${getNotificationVariant(notification.type)}-color-10, var(--surface-color))`,
                         }}
                     >
-                        <Container layout="flex" gap="sm" align="start">
+                        <Container layout="flex" gap="sm" align="center">
                             <Icon
                                 name={getNotificationIcon(notification.type)}
                                 size="md"
                                 variant={getNotificationVariant(notification.type)}
-                                style={{flexShrink: 0, marginTop: '2px'}}
                             />
 
                             <Container layout="flex-column" gap="xs" flexFill>
@@ -122,7 +121,6 @@ export const NotificationDisplay = ({
                                 <Typography
                                     as="p"
                                     size="sm"
-                                    color="text"
                                 >
                                     {notification.message}
                                 </Typography>

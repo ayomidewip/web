@@ -26,7 +26,7 @@ import {
     toolbarPlugin,
     UndoRedo
 } from '@mdxeditor/editor';
-import {ThemeProvider, useEffectiveTheme, useTheme} from '../contexts/ThemeContext';
+import {ThemeProvider, useTheme} from '../contexts/ThemeContext';
 
 /**
  * Editor - Enhanced MDX Editor component with full theme integration and diff support
@@ -92,7 +92,7 @@ export const Editor = forwardRef(({
     ...props
 }, ref) => {
     const {currentTheme: globalTheme} = useTheme();
-    const effectiveTheme = useEffectiveTheme();
+    const effectiveTheme = useTheme();
     const editorRef = useRef(null);
 
     // Use content prop directly - no Yjs management here

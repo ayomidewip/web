@@ -61,10 +61,10 @@ export const ForgotPasswordPage = () => {
                             <Typography as="h1" size="2xl" weight="bold" color="primary">
                                 Check Your Email
                             </Typography>
-                            <Typography color="muted" align="center">
+                            <Typography align="center">
                                 We've sent password reset instructions to <strong>{email}</strong>
                             </Typography>
-                            <Typography color="muted" align="center" size="sm">
+                            <Typography align="center" size="sm">
                                 Please check your email and click the reset link to continue.
                             </Typography>
                             <Button
@@ -93,7 +93,7 @@ export const ForgotPasswordPage = () => {
                             <Typography as="h1" size="2xl" weight="bold" color="primary">
                                 Forgot Password?
                             </Typography>
-                            <Typography color="muted">
+                            <Typography>
                                 No worries! Enter your email address and we'll send you reset instructions.
                             </Typography>
                         </Container>

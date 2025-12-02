@@ -9,6 +9,7 @@
     background: transparent;
     border: none;
     box-shadow: none;
+    font-family: var(--font-family, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
 
     /* Layout foundation */
     position: relative;
@@ -97,6 +98,17 @@
 
 .container.grid-auto-lg, .themed-container.grid-auto-lg {
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.container.grid-auto-4, .themed-container.grid-auto-4 {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    max-width: 100%;
+}
+
+@media (min-width: 1400px) {
+    .container.grid-auto-4, .themed-container.grid-auto-4 {
+        grid-template-columns: repeat(4, 1fr);
+    }
 }
 
 /* ===== Multi-column System ===== */

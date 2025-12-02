@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useImperativeHandle, useMemo, useCallback } from 'react';
-import { useTheme } from '../contexts/ThemeContext';
+import { useTheme } from '@contexts/ThemeContext';
 import Button from './Button';
 import Container from './Container';
 import FloatingActionButton from './FloatingActionButton';

@@ -1,5 +1,5 @@
 import React, { Children, cloneElement, forwardRef, useState } from 'react';
-import { useEffectiveTheme, useTheme } from '@contexts/ThemeContext';
+import { useTheme } from '@contexts/ThemeContext';
 import { ButtonGroupContext } from './Button';
 
 /**
@@ -24,10 +24,11 @@ export const ButtonGroup = forwardRef(({
     marginBottom = null, // Margin bottom: 'none', 'xs', 'sm', 'md', 'lg', 'xl' or custom value
     justify = 'flex-start', // Horizontal alignment of the group within its container
     align = 'center', // Vertical alignment of the group within its container
+    selectable = true, // Whether buttons can be selected (toggled)
     ...props
 }, ref) => {
     const { currentTheme } = useTheme();
-    const effectiveTheme = useEffectiveTheme();
+    const effectiveTheme = useTheme();
 
     // Use theme prop if provided, otherwise use effective theme/current theme from context
     const buttonGroupTheme = theme || effectiveTheme.currentTheme || currentTheme;
@@ -130,7 +131,9 @@ export const ButtonGroup = forwardRef(({
     const [selectedButton, setSelectedButton] = useState(null);
 
     const handleButtonSelect = (buttonId) => {
-        setSelectedButton(buttonId);
+        if (selectable) {
+            setSelectedButton(buttonId);
+        }
     };
 
     const getSizeClass = () => {

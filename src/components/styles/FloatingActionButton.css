@@ -64,7 +64,8 @@
 .floating-action-button {
     /* Remove positioning from button since container handles it */
     position: relative;
-    z-index: inherit; /* Remove all padding for perfect circular shape */
+    z-index: inherit; /* Keep button layering consistent with container */
+    padding: var(--spacing-sm) !important; /* Default inner padding for medium FABs */
 
     /* Override Button component styles for perfect circular shape */
     border-radius: 50% !important; /* Force circular shape; Override button border radius */
@@ -158,6 +159,7 @@
     min-width: 32px;
     min-height: 32px;
     margin: 0 !important;
+    padding: var(--spacing-xs) !important;
 }
 
 .floating-action-button.sm {
@@ -166,6 +168,7 @@
     min-width: 40px;
     min-height: 40px;
     margin: 0 !important;
+    padding: var(--spacing-sm) !important;
 }
 
 .floating-action-button.md {
@@ -173,6 +176,7 @@
     height: 56px;
     min-width: 56px;
     min-height: 56px;
+    padding: var(--spacing-md) !important;
 }
 
 .floating-action-button.lg {
@@ -181,6 +185,7 @@
     min-width: 72px;
     min-height: 72px;
     margin: var(--spacing-sm) !important;
+    padding: var(--spacing-lg) !important;
 }
 
 .floating-action-button.xl {
@@ -189,6 +194,7 @@
     min-width: 88px;
     min-height: 88px;
     margin: var(--spacing-md) !important;
+    padding: var(--spacing-xl) !important;
 }
 
 /* ===== Position Variants ===== */

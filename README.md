@@ -98,8 +98,7 @@ The application includes 7 professionally designed themes:
 | **Minimal** | Ultra-clean design focused on content and readability | Advent Pro & Nova Mono | Documentation, reading apps |
 | **Vibrant** | Colorful, energetic design with bold styling | Gloria Hallelujah & VT323 | Creative apps, portfolios |
 | **Admin** | Professional enterprise interface with subtle shadows | Jura & Roboto Mono | Admin dashboards, enterprise |
-| **Pink** | Playful, modern design with pink accent colors | Josefin Sans & JetBrains Mono | Personal apps, creative tools |
-| **Fancy** | Elegant, sophisticated design with premium feel | Custom fonts | Premium applications |
+| **Pink** | Playful and vibrant design with a pink color palette | Custom fonts | Creative applications |
 
 ## 🧩 Component Library
 
